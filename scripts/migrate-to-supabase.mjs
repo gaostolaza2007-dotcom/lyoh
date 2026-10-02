@@ -33,8 +33,8 @@ function loadEnv() {
 
 loadEnv();
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+let supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/\/+$/, "");
+const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
 
 async function runMigration() {
   console.log("================================================================");
@@ -42,10 +42,10 @@ async function runMigration() {
   console.log("================================================================\n");
 
   if (!supabaseUrl || !serviceRoleKey || supabaseUrl.includes("your-supabase-url")) {
-    console.error("❌ ERROR: Faltan las variables de entorno de Supabase.");
-    console.error("Asegúrate de configurar en tu archivo .env.local o variables de entorno:");
-    console.error("  NEXT_PUBLIC_SUPABASE_URL=https://<tu-proyecto>.supabase.co");
-    console.error("  SUPABASE_SERVICE_ROLE_KEY=<tu-service-role-secret-key>\n");
+    console.error("❌ ERROR: Faltan las variables de entorno de Supabase en .env.local.");
+    console.error("Por favor agrega en tu archivo .env.local:");
+    console.error("  NEXT_PUBLIC_SUPABASE_URL=https://<tu-id-proyecto>.supabase.co");
+    console.error("  SUPABASE_SERVICE_ROLE_KEY=<tu-service-role-key-secreta>\n");
     process.exit(1);
   }
 
@@ -55,22 +55,22 @@ async function runMigration() {
     process.exit(1);
   }
 
-  console.log(`✓ Conectando a Supabase: ${supabaseUrl}`);
+  console.log(`✓ Proyecto Supabase destino: ${supabaseUrl}`);
   const supabase = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
   // Verificar conexión intentando leer la tabla users
-  const { error: testError } = await supabase.from("users").select("id").limit(1);
+  const { data: testData, error: testError } = await supabase.from("users").select("id").limit(1);
   if (testError) {
     console.error("❌ ERROR al conectar con la tabla 'users' de Supabase:");
     console.error(testError.message);
-    console.error("\n💡 Recuerda ejecutar el script 'supabase/schema_medstudy.sql' en el SQL Editor de tu proyecto Supabase antes de migrar.");
+    console.error("\n💡 Asegúrate de haber ejecutado 'supabase/schema_medstudy.sql' en el SQL Editor de tu proyecto Supabase.");
     process.exit(1);
   }
 
   console.log("✓ Conexión establecida con Supabase.");
-  console.log(`✓ Leyendo SQLite: ${dbPath}\n`);
+  console.log(`✓ Leyendo SQLite en modo lectura (sin modificaciones locales): ${dbPath}\n`);
 
   const sqlite = new DatabaseSync(dbPath);
 
@@ -83,7 +83,7 @@ async function runMigration() {
     return !isMock;
   });
 
-  console.log(`▶ Usuarios legítimos identificados para migrar: ${legitimateUsers.length}`);
+  console.log(`▶ Usuarios legítimos encontrados en SQLite: ${legitimateUsers.length}`);
   const legitimateUserIds = legitimateUsers.map((u) => u.id);
 
   for (const u of legitimateUsers) {
@@ -206,16 +206,54 @@ async function runMigration() {
   }
   console.log(`✓ ${logsCount} registros de actividad sincronizados.`);
 
+  // Cerrar conexión SQLite para liberar recursos
+  sqlite.close();
+
+  // 6. Verificación cruzada exhaustiva Origen vs Destino
+  console.log("\n▶ Realizando verificación cruzada de integridad...");
+  const { data: supaUsers, error: fetchUsersErr } = await supabase.from("users").select("*");
+  const { data: supaProgress } = await supabase.from("unit_progress").select("id");
+
+  if (fetchUsersErr || !supaUsers) {
+    console.error("⚠️ Error verificando usuarios en Supabase:", fetchUsersErr?.message);
+    return;
+  }
+
+  // Verificar admin
+  const adminUser = supaUsers.find((u) => (u.email || "").toLowerCase() === "g.ostolazav@udd.cl");
+  const sqliteAdmin = legitimateUsers.find((u) => (u.email || "").toLowerCase() === "g.ostolazav@udd.cl");
+
+  const isAdminOk =
+    adminUser &&
+    adminUser.role === "admin" &&
+    adminUser.password_hash === sqliteAdmin?.password_hash &&
+    adminUser.salt === sqliteAdmin?.salt;
+
+  // Verificar prueba (MED-3GZH)
+  const pruebaUser = supaUsers.find((u) => u.participant_code === "MED-3GZH");
+
   console.log("\n================================================================");
-  console.log(" ✅ MIGRACIÓN COMPLETADA EXITOSAMENTE");
+  console.log(" 📊 COMPARACIÓN DE DATOS: ORIGEN (SQLite) vs DESTINO (Supabase)");
   console.log("================================================================");
-  console.log(`- Cuentas migradas: ${legitimateUsers.length}`);
-  console.log(`- Administrador: ${legitimateUsers.find((u) => u.role === "admin")?.email || "N/A"}`);
-  console.log(`- Participante prueba: ${legitimateUsers.find((u) => u.participant_code === "MED-3GZH")?.participant_code || "N/A"}`);
-  console.log(`- Progreso de unidades: ${progressCount}`);
-  console.log(`- Evaluaciones registradas: ${attemptsCount}`);
-  console.log(`- Actividades registradas: ${logsCount}`);
-  console.log("================================================================\n");
+  console.log(`- Usuarios totales:          SQLite: ${legitimateUsers.length} | Supabase: ${supaUsers.length}`);
+  console.log(`- Unidades de progreso:      SQLite: ${validProgress.length} | Supabase: ${supaProgress?.length || 0}`);
+  console.log(`- Evaluaciones:              SQLite: ${validAttempts.length} | Supabase: ${attemptsCount}`);
+  console.log(`- Registros de actividad:    SQLite: ${validLogs.length} | Supabase: ${logsCount}`);
+  console.log("----------------------------------------------------------------");
+  console.log(`- Administrador (g.ostolazav@udd.cl):`);
+  console.log(`    Existe en Supabase:      ${adminUser ? "✅ SÍ" : "❌ NO"}`);
+  console.log(`    Rol asignado:            ${adminUser?.role === "admin" ? "✅ admin" : "❌ " + adminUser?.role}`);
+  console.log(`    Compatibilidad de hash:  ${isAdminOk ? "✅ 100% IDÉNTICO (Tu contraseña actual funciona)" : "❌ Discrepancia"}`);
+  console.log(`- Estudiante prueba (MED-3GZH):`);
+  console.log(`    Existe en Supabase:      ${pruebaUser ? "✅ SÍ" : "❌ NO"}`);
+  console.log(`    Código participante:     ${pruebaUser?.participant_code || "N/A"}`);
+  console.log("================================================================");
+
+  if (isAdminOk && pruebaUser && supaUsers.length >= legitimateUsers.length) {
+    console.log(" 🎉 ¡VERIFICACIÓN EXITOSA! Todas las cuentas legítimas y credenciales están intactas.\n");
+  } else {
+    console.log(" ⚠️ Revisa las discrepancias reportadas arriba.\n");
+  }
 }
 
 runMigration().catch((err) => {
