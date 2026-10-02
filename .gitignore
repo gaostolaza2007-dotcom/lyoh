@@ -1,0 +1,42 @@
+# Dependencias
+/node_modules
+/.pnp
+.pnp.js
+
+# Compilación y entornos de desarrollo Next.js
+/.next/
+/.next_test/
+/out/
+/build
+dist
+
+# Variables de entorno y secretos (NUNCA subir a git)
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# Base de datos local SQLite y respaldos
+/data/*.db*
+/data/backups/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs y depuración
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Sistema operativo y OneDrive
+.DS_Store
+*.pem
+Thumbs.db
+desktop.ini
+
+# TypeScript build info
+*.tsbuildinfo
+next-env.d.ts
