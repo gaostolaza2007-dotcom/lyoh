@@ -94,16 +94,18 @@ export default function DashboardPage() {
     },
     {
       id: "microbiologia",
-      title: CLINICAL_MODULES.microbiologia.name,
-      desc: CLINICAL_MODULES.microbiologia.description,
-      href: CLINICAL_MODULES.microbiologia.href,
+      title: "Agentes Infecciosos",
+      desc: "Microbiología clínica de 140 fichas, morfología estructural y microbiota de los nichos corporales.",
+      href: "/agentes-infecciosos",
       icon: Bug,
       color: CLINICAL_MODULES.microbiologia.color,
       glow: CLINICAL_MODULES.microbiologia.glow,
       enabled: CLINICAL_MODULES.microbiologia.enabled,
       progress: user.unitProgress["microbiologia_patogenos"] || 0,
       subsections: [
-        { label: "Clasificación Gram & Virulencia", href: "/microbiologia", icon: Target },
+        { label: "Microbiología", href: "/agentes-infecciosos/microbiologia", icon: Bug },
+        { label: "Morfología (En prep.)", href: "/agentes-infecciosos/morfologia", icon: Target },
+        { label: "Microbiota (En prep.)", href: "/agentes-infecciosos/microbiota", icon: BookOpen },
       ],
     },
   ];

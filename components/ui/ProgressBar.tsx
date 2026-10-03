@@ -7,7 +7,7 @@ interface ProgressBarProps {
   max?: number;
   label?: string;
   showPercent?: boolean;
-  color?: "purple" | "blue" | "emerald" | "amber" | "slate";
+  color?: "purple" | "blue" | "emerald" | "amber" | "slate" | "cyan";
   className?: string;
 }
 
@@ -27,6 +27,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     emerald: "from-emerald-600 via-teal-500 to-green-400",
     amber: "from-amber-500 via-orange-500 to-red-500",
     slate: "from-slate-600 via-slate-500 to-slate-400",
+    cyan: "from-cyan-500 via-teal-500 to-emerald-400",
   };
 
   return (

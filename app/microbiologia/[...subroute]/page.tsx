@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 
-export default function MicrobiologiaRedirectPage({
+export default function MicrobiologiaSubrouteRedirectPage({
   searchParams,
 }: {
+  params: { subroute?: string[] };
   searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const params = new URLSearchParams();

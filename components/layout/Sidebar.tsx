@@ -68,8 +68,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
     },
     {
       moduleId: "microbiologia",
-      name: "Microbiología",
-      href: "/microbiologia",
+      name: "Agentes infecciosos",
+      href: "/agentes-infecciosos",
       icon: Bug,
       color: "text-cyan-400",
       bgGlow: "group-hover:bg-cyan-500/10",
@@ -106,7 +106,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
           </div>
 
           {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href)) ||
+              (item.href === "/agentes-infecciosos" && pathname.startsWith("/microbiologia"));
             const Icon = item.icon;
 
             // Renderizado para módulos DESHABILITADOS ("Próximamente")

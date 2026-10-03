@@ -184,6 +184,10 @@ async function runTests() {
       { url: "/histologia/otra-subruta", expectLock: true },
       { url: "/anatomia", expectLock: false },
       { url: "/microbiologia", expectLock: false },
+      { url: "/agentes-infecciosos", expectLock: false },
+      { url: "/agentes-infecciosos/microbiologia", expectLock: false },
+      { url: "/agentes-infecciosos/morfologia", expectLock: false },
+      { url: "/agentes-infecciosos/microbiota", expectLock: false },
       { url: "/perfil", expectLock: false },
       { url: "/", expectLock: false },
     ];

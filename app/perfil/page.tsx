@@ -48,7 +48,7 @@ export default function PerfilPage() {
     { id: "anatomia_visor-3d", label: "Anatomía: Visor 3D Cardíaco Three.js", icon: Layers, val: user.unitProgress["anatomia_visor-3d"] || 0 },
     { id: "bioquimica_metabolismo", label: "Bioquímica: Glucólisis & Regulación", icon: FlaskConical, val: user.unitProgress["bioquimica_metabolismo"] || 0 },
     { id: "histologia_tejidos", label: "Histología: Microscopía Glomerular", icon: Microscope, val: user.unitProgress["histologia_tejidos"] || 0 },
-    { id: "microbiologia_patogenos", label: "Microbiología: Catálogo Infeccioso", icon: Bug, val: user.unitProgress["microbiologia_patogenos"] || 0 },
+    { id: "microbiologia_patogenos", label: "Agentes Infecciosos: Catálogo de Patógenos", icon: Bug, val: user.unitProgress["microbiologia_patogenos"] || 0 },
   ];
 
   return (

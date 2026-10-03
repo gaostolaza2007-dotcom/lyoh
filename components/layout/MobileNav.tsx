@@ -21,14 +21,17 @@ export const MobileNav: React.FC = () => {
     { moduleId: "anatomia", name: "Anatomía", href: "/anatomia", icon: Layers, isEnabled: isModuleEnabled("anatomia") },
     { moduleId: "bioquimica", name: "Bioquímica", href: "/bioquimica", icon: FlaskConical, isEnabled: isModuleEnabled("bioquimica") },
     { moduleId: "histologia", name: "Histología", href: "/histologia", icon: Microscope, isEnabled: isModuleEnabled("histologia") },
-    { moduleId: "microbiologia", name: "Micro", href: "/microbiologia", icon: Bug, isEnabled: isModuleEnabled("microbiologia") },
+    { moduleId: "microbiologia", name: "Agentes", href: "/agentes-infecciosos", icon: Bug, isEnabled: isModuleEnabled("microbiologia") },
   ];
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-2xl bg-slate-950/85 border-t border-white/10 px-2 py-1 shadow-2xl safe-area-bottom">
       <div className="flex items-center justify-around">
         {items.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const isActive =
+            pathname === item.href ||
+            (item.href !== "/" && pathname.startsWith(item.href)) ||
+            (item.href === "/agentes-infecciosos" && pathname.startsWith("/microbiologia"));
           const Icon = item.icon;
 
           if (!item.isEnabled) {

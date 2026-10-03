@@ -71,15 +71,15 @@ export const CLINICAL_MODULES: Record<string, ModuleDefinition> = {
   },
   microbiologia: {
     id: "microbiologia",
-    name: "Microbiología Clínica",
-    shortName: "Microbiología",
-    href: "/microbiologia",
-    description: "Catálogo exhaustivo de 140 fichas filtradas por Bacterias, Virus, Hongos y Parásitos con referencias.",
+    name: "Agentes Infecciosos",
+    shortName: "Agentes Infecciosos",
+    href: "/agentes-infecciosos",
+    description: "Estudio integral de microorganismos: microbiología clínica con 140 fichas, morfología estructural y microbiota corporal.",
     color: "from-cyan-600 to-teal-600",
     glow: "cyan",
     enabled: true,
     units: [
-      { id: "microbiologia_patogenos", name: "Microbiología: Catálogo Infeccioso", shortLabel: "Catálogo de 140 Fichas", type: "catalog" },
+      { id: "microbiologia_patogenos", name: "Microbiología: Catálogo de Patógenos", shortLabel: "Catálogo de 140 Fichas", type: "catalog" },
     ],
   },
 };
