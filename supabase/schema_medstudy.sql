@@ -26,6 +26,11 @@ create table if not exists public.users (
   streak_days           integer default 0 check (streak_days >= 0),
   longest_streak        integer default 0 check (longest_streak >= 0),
   last_study_date       date,
+  recovered_from_browser integer default 0,
+  browser_recovered_at  timestamptz,
+  browser_provisional_code text,
+  browser_claimed_xp    integer default 0,
+  browser_claimed_progress_json jsonb default '{}'::jsonb,
   created_at            timestamptz default now() not null,
   updated_at            timestamptz default now() not null,
   last_active_at        timestamptz default now() not null

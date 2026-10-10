@@ -54,6 +54,8 @@ export interface UserProfile {
   lastStudyDate: string | null;
   isLoggedIn: boolean;
   isDemo: boolean;
+  sessionExpired?: boolean;
+  pendingRecoveryCode?: string;
   unitProgress: {
     [key: string]: number; // e.g. "anatomia_flashcards": 0
   };
@@ -82,6 +84,8 @@ const ZERO_INITIAL_PROFILE: UserProfile = {
   lastStudyDate: null,
   isLoggedIn: false,
   isDemo: false,
+  sessionExpired: false,
+  pendingRecoveryCode: undefined,
   unitProgress: {
     "anatomia_flashcards": 0,
     "anatomia_teoria": 0,
@@ -92,6 +96,45 @@ const ZERO_INITIAL_PROFILE: UserProfile = {
   },
 };
 
+export interface RecoverableBrowserProfile {
+  nickname: string;
+  university: string;
+  universityShort: string;
+  career: string;
+  provisionalCode?: string;
+  claimedXp: number;
+  claimedProgress?: Record<string, number>;
+}
+
+export const BROWSER_BACKUP_STORAGE_KEY = "medstudy_browser_backup_profile";
+
+export function safelyPreserveExistingProfileBackup() {
+  if (typeof window === "undefined") return;
+  try {
+    const rawExisting = localStorage.getItem("medstudy_user_profile");
+    if (!rawExisting) return;
+    const parsed = JSON.parse(rawExisting);
+    if (!parsed || typeof parsed !== "object") return;
+
+    const existingBackup = localStorage.getItem(BROWSER_BACKUP_STORAGE_KEY);
+    if (!existingBackup && (parsed.nickname || parsed.participantCode || (parsed.xp && parsed.xp > 0))) {
+      const backupPayload = {
+        backupTimestamp: new Date().toISOString(),
+        nickname: parsed.nickname || "",
+        university: parsed.university || "",
+        universityShort: parsed.universityShort || "",
+        career: parsed.career || "",
+        participantCode: parsed.participantCode || "",
+        xp: Number(parsed.xp) || 0,
+        unitProgress: parsed.unitProgress || {},
+      };
+      localStorage.setItem(BROWSER_BACKUP_STORAGE_KEY, JSON.stringify(backupPayload));
+    }
+  } catch (err) {
+    console.warn("Could not preserve browser backup:", err);
+  }
+}
+
 // ===========================================================================
 // INTERFAZ DEL CONTEXTO DE AUTENTICACIÓN
 // ===========================================================================
@@ -99,6 +142,9 @@ const ZERO_INITIAL_PROFILE: UserProfile = {
 interface AuthContextType {
   user: UserProfile;
   isLoading: boolean;
+  recoverableProfile: RecoverableBrowserProfile | null;
+  recoverBrowserAccount: () => Promise<{ success: boolean; newCode?: string; error?: string }>;
+  dismissBrowserRecovery: () => void;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<{ error?: string }>;
   signUpWithEmail: (email: string, password: string) => Promise<{ error?: string }>;
@@ -109,6 +155,7 @@ interface AuthContextType {
     university: string;
     universityShort: string;
     career: string;
+    clientRequestId?: string;
   }) => Promise<{ participantCode?: string }>;
   resetOnboarding: () => void;
   resetProgressToZero: () => void;
@@ -137,79 +184,122 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile>(ZERO_INITIAL_PROFILE);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [recoverableProfile, setRecoverableProfile] = useState<RecoverableBrowserProfile | null>(null);
 
   // ---------- Inicialización ----------
   useEffect(() => {
     async function initAuth() {
+      // 0. Preservar copia recuperable de cualquier perfil local antes de evaluar sesión
+      safelyPreserveExistingProfileBackup();
+
+      let serverUserObj: any = null;
       try {
         // 1. Consultar sesión verificada en el servidor
         const res = await fetch("/api/auth/me");
         if (res.ok) {
           const data = await res.json();
           if (data?.user) {
-            const serverUser: UserProfile = {
-              ...ZERO_INITIAL_PROFILE,
-              id: data.user.id,
-              participantCode: data.user.participantCode || "",
-              email: data.user.email || "",
-              name: data.user.nickname || "Participante",
-              nickname: data.user.nickname || "",
-              university: data.user.university || "",
-              universityShort: data.user.universityShort || "",
-              career: data.user.career || "",
-              role: data.user.role || "student",
-              onboardingCompleted: Boolean(data.user.onboardingCompleted),
-              xp: data.user.xp || 0,
-              streakDays: data.user.streakDays || 0,
-              longestStreak: data.user.longestStreak || 0,
-              lastStudyDate: data.user.lastStudyDate || null,
-              isLoggedIn: true,
-              isDemo: false,
-              unitProgress: {
-                ...ZERO_INITIAL_PROFILE.unitProgress,
-                ...(data.user.unitProgress || {}),
-              },
-            };
-            const { levelName, rankLevel, nextTarget } = calculateLevel(serverUser.xp);
-            serverUser.level = levelName;
-            serverUser.rankLevel = rankLevel;
-            serverUser.xpToNextLevel = nextTarget;
-
-            setUser(serverUser);
-            try {
-              localStorage.setItem("medstudy_user_profile", JSON.stringify(serverUser));
-            } catch {}
-            setIsLoading(false);
-            return;
+            serverUserObj = data.user;
           }
         }
       } catch (err) {
         console.warn("Could not check server session:", err);
       }
 
-      // Si el servidor indica que no hay sesión activa:
-      // Comprobar si hay un perfil guardado en localStorage que pertenezca a un participante ya registrado
+      if (serverUserObj) {
+        const serverUser: UserProfile = {
+          ...ZERO_INITIAL_PROFILE,
+          id: serverUserObj.id,
+          participantCode: serverUserObj.participantCode || "",
+          email: serverUserObj.email || "",
+          name: serverUserObj.nickname || "Participante",
+          nickname: serverUserObj.nickname || "",
+          university: serverUserObj.university || "",
+          universityShort: serverUserObj.universityShort || "",
+          career: serverUserObj.career || "",
+          role: serverUserObj.role || "student",
+          onboardingCompleted: Boolean(serverUserObj.onboardingCompleted),
+          xp: serverUserObj.xp || 0,
+          streakDays: serverUserObj.streakDays || 0,
+          longestStreak: serverUserObj.longestStreak || 0,
+          lastStudyDate: serverUserObj.lastStudyDate || null,
+          isLoggedIn: true,
+          isDemo: false,
+          unitProgress: {
+            ...ZERO_INITIAL_PROFILE.unitProgress,
+            ...(serverUserObj.unitProgress || {}),
+          },
+        };
+        const { levelName, rankLevel, nextTarget } = calculateLevel(serverUser.xp);
+        serverUser.level = levelName;
+        serverUser.rankLevel = rankLevel;
+        serverUser.xpToNextLevel = nextTarget;
+
+        setUser(serverUser);
+        try {
+          localStorage.setItem("medstudy_user_profile", JSON.stringify(serverUser));
+        } catch {}
+        setRecoverableProfile(null);
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. Si el servidor NO tiene sesión activa:
+      // NUNCA simular que el usuario está conectado solo por tener datos en localStorage.
+      // Una respuesta sin sesión de /api/auth/me JAMÁS debe borrar ni sobrescribir el respaldo.
       try {
-        const saved = localStorage.getItem("medstudy_user_profile");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          // Solo recuperar si ya tenía un código de participante o sesión verificada previa
-          if (parsed && parsed.participantCode && parsed.onboardingCompleted) {
-            setUser((prev) => ({
-              ...prev,
-              ...parsed,
-              isLoggedIn: true,
-            }));
-            setIsLoading(false);
-            return;
+        let unverifiedCandidate: any = null;
+        const backupRaw = localStorage.getItem(BROWSER_BACKUP_STORAGE_KEY);
+        if (backupRaw) {
+          try {
+            unverifiedCandidate = JSON.parse(backupRaw);
+          } catch {}
+        }
+        if (!unverifiedCandidate) {
+          const saved = localStorage.getItem("medstudy_user_profile");
+          if (saved) {
+            try {
+              unverifiedCandidate = JSON.parse(saved);
+            } catch {}
           }
         }
+
+        if (unverifiedCandidate && (unverifiedCandidate.nickname || unverifiedCandidate.participantCode)) {
+          // Si aún no se ha marcado como recuperado con un código oficial:
+          if (!unverifiedCandidate.officialAssignedCode) {
+            setRecoverableProfile({
+              nickname: unverifiedCandidate.nickname || "",
+              university: unverifiedCandidate.university || "",
+              universityShort: unverifiedCandidate.universityShort || "UDD",
+              career: unverifiedCandidate.career || "",
+              provisionalCode: unverifiedCandidate.participantCode || undefined,
+              claimedXp: Number(unverifiedCandidate.xp) || 0,
+              claimedProgress: unverifiedCandidate.unitProgress || {},
+            });
+          }
+
+          setUser({
+            ...ZERO_INITIAL_PROFILE,
+            participantCode: unverifiedCandidate.participantCode || "",
+            nickname: unverifiedCandidate.nickname || "",
+            university: unverifiedCandidate.university || "",
+            universityShort: unverifiedCandidate.universityShort || "",
+            career: unverifiedCandidate.career || "",
+            onboardingCompleted: false,
+            isLoggedIn: false,
+            sessionExpired: true,
+            pendingRecoveryCode: unverifiedCandidate.participantCode || undefined,
+          });
+          setIsLoading(false);
+          return;
+        }
       } catch (e) {
-        console.warn("Could not read profile from localStorage", e);
+        console.warn("Could not read profile candidate from localStorage", e);
       }
 
       // Nuevo participante sin sesión verificada: iniciar con perfil completamente limpio
       setUser(ZERO_INITIAL_PROFILE);
+      setRecoverableProfile(null);
       setIsLoading(false);
     }
 
@@ -463,9 +553,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     university: string;
     universityShort: string;
     career: string;
-  }): Promise<{ participantCode?: string }> => {
+    clientRequestId?: string;
+  }): Promise<{ participantCode: string }> => {
+    let res: Response;
     try {
-      const res = await fetch("/api/auth/register-participant", {
+      res = await fetch("/api/auth/register-participant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -473,60 +565,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           university: data.university,
           universityShort: data.universityShort,
           career: data.career,
+          clientRequestId: data.clientRequestId,
         }),
       });
-
-      if (res.ok) {
-        const json = await res.json();
-        if (json?.user) {
-          const serverUser: UserProfile = {
-            ...ZERO_INITIAL_PROFILE,
-            id: json.user.id,
-            participantCode: json.user.participantCode || "",
-            email: json.user.email || "",
-            name: json.user.nickname || "Participante",
-            nickname: json.user.nickname || "",
-            university: json.user.university || "",
-            universityShort: json.user.universityShort || "",
-            career: json.user.career || "",
-            role: json.user.role || "student",
-            onboardingCompleted: true,
-            isLoggedIn: true,
-            unitProgress: {
-              ...ZERO_INITIAL_PROFILE.unitProgress,
-              ...(json.user.unitProgress || {}),
-            },
-          };
-          setUser(serverUser);
-          try {
-            localStorage.setItem("medstudy_user_profile", JSON.stringify(serverUser));
-          } catch {}
-          return { participantCode: json.user.participantCode };
-        }
-      }
-    } catch (err) {
-      console.error("Error registering on server:", err);
+    } catch (netErr: any) {
+      console.error("Error de red al conectar con el servidor:", netErr);
+      throw new Error("No fue posible conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.");
     }
 
-    // Fallback local en caso de desconexión
-    const fallbackCode = "MED-" + Math.random().toString(36).substring(2, 6).toUpperCase();
-    const updated: UserProfile = {
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok || !json?.user?.participantCode) {
+      const serverMsg = json?.error || "Error al registrar el expediente en el servidor. Por favor, reintenta.";
+      console.error("Registro rechazado por el servidor:", serverMsg);
+      throw new Error(serverMsg);
+    }
+
+    const serverUser: UserProfile = {
       ...ZERO_INITIAL_PROFILE,
-      id: "local-" + Date.now(),
-      participantCode: fallbackCode,
-      name: data.nickname || "Estudiante",
-      nickname: data.nickname || "Estudiante",
-      university: data.university,
-      universityShort: data.universityShort,
-      career: data.career,
+      id: json.user.id,
+      participantCode: json.user.participantCode,
+      email: json.user.email || "",
+      name: json.user.nickname || "Participante",
+      nickname: json.user.nickname || "",
+      university: json.user.university || "",
+      universityShort: json.user.universityShort || "",
+      career: json.user.career || "",
+      role: json.user.role || "student",
       onboardingCompleted: true,
       isLoggedIn: true,
+      sessionExpired: false,
+      pendingRecoveryCode: undefined,
+      unitProgress: {
+        ...ZERO_INITIAL_PROFILE.unitProgress,
+        ...(json.user.unitProgress || {}),
+      },
     };
-    setUser(updated);
+
+    safelyPreserveExistingProfileBackup();
+    setUser(serverUser);
     try {
-      localStorage.setItem("medstudy_user_profile", JSON.stringify(updated));
+      localStorage.setItem("medstudy_user_profile", JSON.stringify(serverUser));
     } catch {}
-    return { participantCode: fallbackCode };
+    setRecoverableProfile(null);
+
+    return { participantCode: json.user.participantCode };
   }, []);
 
   const loginWithParticipantCode = useCallback(async (code: string): Promise<{ success: boolean; error?: string }> => {
@@ -558,6 +641,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           longestStreak: data.user.longestStreak || 0,
           lastStudyDate: data.user.lastStudyDate || null,
           isLoggedIn: true,
+          sessionExpired: false,
+          pendingRecoveryCode: undefined,
           unitProgress: {
             ...ZERO_INITIAL_PROFILE.unitProgress,
             ...(data.user.unitProgress || {}),
@@ -568,16 +653,129 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         serverUser.rankLevel = rankLevel;
         serverUser.xpToNextLevel = nextTarget;
 
+        safelyPreserveExistingProfileBackup();
         setUser(serverUser);
         try {
           localStorage.setItem("medstudy_user_profile", JSON.stringify(serverUser));
         } catch {}
+        setRecoverableProfile(null);
         return { success: true };
       }
       return { success: false, error: "Datos de usuario inválidos" };
     } catch (err: any) {
       return { success: false, error: err.message || "Error de conexión" };
     }
+  }, []);
+
+  const recoverBrowserAccount = useCallback(async (): Promise<{ success: boolean; newCode?: string; error?: string }> => {
+    if (!recoverableProfile) {
+      return { success: false, error: "No se encontró ningún expediente previo en este navegador para recuperar." };
+    }
+
+    try {
+      safelyPreserveExistingProfileBackup();
+
+      let recoveryRequestId = "";
+      try {
+        const rawBackup = localStorage.getItem(BROWSER_BACKUP_STORAGE_KEY);
+        if (rawBackup) {
+          const parsed = JSON.parse(rawBackup);
+          if (parsed?.recoveryRequestId) {
+            recoveryRequestId = parsed.recoveryRequestId;
+          } else {
+            recoveryRequestId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+            localStorage.setItem(BROWSER_BACKUP_STORAGE_KEY, JSON.stringify({ ...parsed, recoveryRequestId }));
+          }
+        }
+      } catch {}
+      if (!recoveryRequestId) {
+        recoveryRequestId = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+      }
+
+      const res = await fetch("/api/auth/recover-browser-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nickname: recoverableProfile.nickname,
+          university: recoverableProfile.university,
+          universityShort: recoverableProfile.universityShort,
+          career: recoverableProfile.career,
+          provisionalCode: recoverableProfile.provisionalCode,
+          claimedXp: recoverableProfile.claimedXp,
+          claimedProgress: recoverableProfile.claimedProgress,
+          clientRequestId: recoveryRequestId,
+        }),
+      });
+
+      const json = await res.json().catch(() => null);
+      if (!res.ok) {
+        return { success: false, error: json?.error || "Error al registrar la recuperación en el servidor." };
+      }
+
+      if (json?.user && json?.assignedCode) {
+        const serverUser: UserProfile = {
+          ...ZERO_INITIAL_PROFILE,
+          id: json.user.id,
+          participantCode: json.assignedCode,
+          email: json.user.email || "",
+          name: json.user.nickname || "Participante",
+          nickname: json.user.nickname || "",
+          university: json.user.university || "",
+          universityShort: json.user.universityShort || "",
+          career: json.user.career || "",
+          role: "student",
+          onboardingCompleted: true,
+          xp: 0, // El XP verificado en el servidor inicia en 0
+          streakDays: 0,
+          longestStreak: 0,
+          lastStudyDate: null,
+          isLoggedIn: true,
+          sessionExpired: false,
+          pendingRecoveryCode: undefined,
+          unitProgress: {
+            ...ZERO_INITIAL_PROFILE.unitProgress,
+            ...(json.user.unitProgress || {}),
+          },
+        };
+
+        const { levelName, rankLevel, nextTarget } = calculateLevel(0);
+        serverUser.level = levelName;
+        serverUser.rankLevel = rankLevel;
+        serverUser.xpToNextLevel = nextTarget;
+
+        setUser(serverUser);
+
+        try {
+          localStorage.setItem("medstudy_user_profile", JSON.stringify(serverUser));
+        } catch {}
+
+        try {
+          const existingBackup = localStorage.getItem(BROWSER_BACKUP_STORAGE_KEY);
+          if (existingBackup) {
+            const parsed = JSON.parse(existingBackup);
+            localStorage.setItem(
+              BROWSER_BACKUP_STORAGE_KEY,
+              JSON.stringify({
+                ...parsed,
+                recoveredAt: new Date().toISOString(),
+                officialAssignedCode: json.assignedCode,
+              })
+            );
+          }
+        } catch {}
+
+        setRecoverableProfile(null);
+        return { success: true, newCode: json.assignedCode };
+      }
+
+      return { success: false, error: "Respuesta incompleta del servidor." };
+    } catch (err: any) {
+      return { success: false, error: err.message || "Error de conexión." };
+    }
+  }, [recoverableProfile]);
+
+  const dismissBrowserRecovery = useCallback(() => {
+    setRecoverableProfile(null);
   }, []);
 
   const resetOnboarding = useCallback(() => {
@@ -874,6 +1072,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         isLoading,
+        recoverableProfile,
+        recoverBrowserAccount,
+        dismissBrowserRecovery,
         signInWithGoogle,
         signInWithEmail,
         signUpWithEmail,

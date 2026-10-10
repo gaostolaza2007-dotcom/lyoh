@@ -45,6 +45,10 @@ interface AdminParticipantSummary {
   first_attempt_score: number | null;
   latest_attempt_score: number | null;
   top_mistake_topics: { topic: string; count: number }[];
+  recovered_from_browser?: boolean;
+  browser_claimed_xp?: number;
+  browser_provisional_code?: string | null;
+  browser_recovered_at?: string | null;
 }
 
 interface GlobalStats {
@@ -66,6 +70,10 @@ interface ParticipantDetail {
     streak_days: number;
     created_at: string;
     last_active_at: string;
+    recovered_from_browser?: boolean;
+    browser_claimed_xp?: number;
+    browser_provisional_code?: string | null;
+    browser_recovered_at?: string | null;
   };
   unitProgress: any[];
   quizAttempts: any[];
@@ -366,12 +374,27 @@ export default function AdminDashboardPage() {
                       <tr key={p.id} className="hover:bg-white/5 transition-colors">
                         {/* Código y Apodo */}
                         <td className="py-3 px-4">
-                          <div className="font-mono font-bold text-indigo-300 text-xs tracking-wide">
-                            {p.participant_code}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-mono font-bold text-indigo-300 text-xs tracking-wide">
+                              {p.participant_code}
+                            </span>
+                            {p.recovered_from_browser && (
+                              <span
+                                title="Progreso recuperado del navegador: no verificado"
+                                className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                              >
+                                Recuperado (No verificado)
+                              </span>
+                            )}
                           </div>
                           <div className="text-white font-medium truncate max-w-[130px]">
                             {p.nickname}
                           </div>
+                          {p.recovered_from_browser && p.browser_provisional_code && (
+                            <div className="text-[10px] text-amber-400/80 font-mono">
+                              Previo: {p.browser_provisional_code}
+                            </div>
+                          )}
                         </td>
 
                         {/* Universidad y Carrera */}
@@ -545,6 +568,24 @@ export default function AdminDashboardPage() {
                   <div className="py-12 text-center text-slate-400">No se pudo cargar el detalle.</div>
                 ) : (
                   <>
+                    {detailData.user.recovered_from_browser && (
+                      <div className="p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs flex items-start space-x-3">
+                        <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                        <div className="space-y-1">
+                          <div className="font-bold text-amber-300">
+                            Progreso recuperado del navegador: no verificado
+                          </div>
+                          <p className="text-[11px] text-slate-300 leading-relaxed">
+                            Este participante recuperó su expediente desde el navegador
+                            {detailData.user.browser_recovered_at ? ` el ${formatDate(detailData.user.browser_recovered_at)}` : ""}.
+                            {detailData.user.browser_provisional_code ? ` Código provisional previo: ${detailData.user.browser_provisional_code}.` : ""}
+                            {detailData.user.browser_claimed_xp ? ` XP autodeclarado en navegador: ${detailData.user.browser_claimed_xp} XP.` : ""}
+                            {" "}El servidor mantiene este progreso separado de las evaluaciones oficiales.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     {/* DIMENSIÓN 1: DESEMPEÑO EN EVALUACIONES (INTENTOS DE CUESTIONARIOS) */}
                     <div className="space-y-3">
                       <div className="flex items-center space-x-2 text-purple-400 font-bold uppercase tracking-wider text-[11px]">

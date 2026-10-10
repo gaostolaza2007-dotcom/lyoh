@@ -52,19 +52,28 @@ export async function supabaseGetUserByEmail(email: string): Promise<DbUser | nu
   return data as DbUser;
 }
 
-// ===========================================================================
-// REGISTRO Y GESTIÓN DE PARTICIPANTES
-// ===========================================================================
-
-function generateParticipantCode(): string {
-  const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-  let code = "MED-";
-  for (let i = 0; i < 4; i++) {
-    const idx = crypto.randomInt(0, chars.length);
-    code += chars[idx];
-  }
-  return code;
+export function hashClientRequestToken(token?: string): string | null {
+  if (!token || typeof token !== "string" || !token.trim()) return null;
+  return crypto.createHash("sha256").update(token.trim()).digest("hex");
 }
+
+export async function supabaseGetUserByClientTokenHash(tokenHash: string): Promise<DbUser | null> {
+  const supabase = getSupabaseAdmin();
+  const trimmed = tokenHash.trim();
+  if (!trimmed) return null;
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("client_request_token_hash", trimmed)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data as DbUser;
+}
+
+// ===========================================================================
+// REGISTRO Y GESTIÓN DE PARTICIPANTES (TRANSACCIONES ATÓMICAS EN MOTOR BD)
+// ===========================================================================
 
 export async function supabaseRegisterParticipant(data: {
   nickname: string;
@@ -72,75 +81,102 @@ export async function supabaseRegisterParticipant(data: {
   universityShort: string;
   career: string;
   accountSecret?: string;
+  clientRequestId?: string;
 }): Promise<DbUser> {
   const supabase = getSupabaseAdmin();
-  const id = crypto.randomUUID();
-  const now = new Date().toISOString();
+  const tokenHash = hashClientRequestToken(data.clientRequestId);
 
-  let code = generateParticipantCode();
-  let attempts = 0;
-  while (attempts < 10) {
-    const { data: existing } = await supabase
-      .from("users")
-      .select("id")
-      .eq("participant_code", code)
-      .maybeSingle();
-    if (!existing) break;
-    code = generateParticipantCode();
-    attempts++;
+  // Idempotencia: si ya existe un usuario con este hash de token, devolverlo de inmediato
+  if (tokenHash) {
+    const existing = await supabaseGetUserByClientTokenHash(tokenHash);
+    if (existing) {
+      return existing;
+    }
   }
 
-  const { data: insertedUser, error: insertError } = await supabase
-    .from("users")
-    .insert({
-      id,
-      participant_code: code,
-      nickname: data.nickname.trim(),
-      university: data.university.trim(),
-      university_short: data.universityShort.trim(),
-      career: data.career.trim(),
-      role: "student",
-      onboarding_completed: 1,
-      xp: 0,
-      streak_days: 0,
-      longest_streak: 0,
-      account_secret: data.accountSecret || null,
-      created_at: now,
-      updated_at: now,
-      last_active_at: now,
-    })
-    .select()
-    .single();
-
-  if (insertError || !insertedUser) {
-    throw new Error(`Error al registrar participante en Supabase: ${insertError?.message || "desconocido"}`);
-  }
-
-  const standardUnits = [
-    { mod: "anatomia", unit: "flashcards" },
-    { mod: "anatomia", unit: "teoria" },
-    { mod: "anatomia", unit: "visor-3d" },
-    { mod: "bioquimica", unit: "metabolismo" },
-    { mod: "histologia", unit: "tejidos" },
-    { mod: "microbiologia", unit: "patogenos" },
-  ];
-
-  const progressRows = standardUnits.map((u) => ({
-    id: crypto.randomUUID(),
-    user_id: id,
-    module_id: u.mod,
-    unit_id: u.unit,
-    status: "not_started",
-    score: 0,
-    updated_at: now,
-  }));
-
-  await supabase.from("unit_progress").upsert(progressRows, {
-    onConflict: "user_id,module_id,unit_id",
-    ignoreDuplicates: true,
+  // Transacción atómica en motor PostgreSQL mediante PL/pgSQL RPC
+  const { data: rpcUser, error: rpcError } = await supabase.rpc("register_participant_atomic", {
+    p_nickname: data.nickname.trim(),
+    p_university: data.university.trim(),
+    p_university_short: (data.universityShort || "UDD").trim(),
+    p_career: data.career.trim(),
+    p_account_secret: data.accountSecret || null,
+    p_client_request_token_hash: tokenHash,
   });
 
-  return insertedUser as DbUser;
+  if (!rpcError && rpcUser) {
+    return rpcUser as DbUser;
+  }
+
+  if (rpcError) {
+    console.error("[supabaseRegisterParticipant] Error en función atómica register_participant_atomic:", {
+      code: rpcError.code,
+      message: rpcError.message,
+    });
+    throw new Error(
+      `Error al registrar participante en el servidor: ${rpcError.message}. Verifique que la función atómica esté creada en Supabase.`
+    );
+  }
+
+  throw new Error("No se recibió respuesta válida del servidor al registrar participante.");
+}
+
+export async function supabaseRecoverBrowserProfile(data: {
+  nickname: string;
+  university: string;
+  universityShort: string;
+  career: string;
+  provisionalCode?: string;
+  claimedXp?: number;
+  claimedProgress?: Record<string, number>;
+  clientRequestId?: string;
+}): Promise<DbUser> {
+  const supabase = getSupabaseAdmin();
+  const tokenHash = hashClientRequestToken(data.clientRequestId);
+
+  // Idempotencia: controlada exclusivamente por el token seguro del cliente (hash SHA-256)
+  if (tokenHash) {
+    const existing = await supabaseGetUserByClientTokenHash(tokenHash);
+    if (existing) {
+      return existing;
+    }
+  }
+
+  const sanitizedNickname = data.nickname.trim().slice(0, 50);
+  const sanitizedUniversity = data.university.trim().slice(0, 100);
+  const sanitizedUniShort = (data.universityShort || "UDD").trim().slice(0, 20);
+  const sanitizedCareer = data.career.trim().slice(0, 100);
+  const claimedXpNum = Math.max(0, Math.floor(Number(data.claimedXp) || 0));
+  const provisionalCodeMeta = data.provisionalCode?.trim().slice(0, 30) || null;
+
+  // Transacción atómica en PostgreSQL: crea usuario, registra procedencia separada e inicializa unidades
+  // El código provisional es estrictamente un metadato de trazabilidad y jamás bloquea ni vincula cuentas.
+  const { data: rpcUser, error: rpcError } = await supabase.rpc("recover_browser_profile_atomic", {
+    p_nickname: sanitizedNickname,
+    p_university: sanitizedUniversity,
+    p_university_short: sanitizedUniShort,
+    p_career: sanitizedCareer,
+    p_provisional_code: provisionalCodeMeta,
+    p_claimed_xp: claimedXpNum,
+    p_claimed_progress: data.claimedProgress || {},
+    p_client_request_token_hash: tokenHash,
+  });
+
+  if (!rpcError && rpcUser) {
+    return rpcUser as DbUser;
+  }
+
+  if (rpcError) {
+    console.error("[supabaseRecoverBrowserProfile] Error en función atómica recover_browser_profile_atomic:", {
+      code: rpcError.code,
+      message: rpcError.message,
+    });
+    throw new Error(
+      `Error al registrar recuperación en Supabase: ${rpcError.message}. Verifique que la migración SQL esté aplicada.`
+    );
+  }
+
+  throw new Error("No se recibió respuesta válida del servidor al recuperar perfil.");
 }
 
 export async function supabaseUpdateParticipantProfile(
@@ -570,6 +606,10 @@ export async function supabaseGetAdminParticipantsListDb(): Promise<AdminPartici
       first_attempt_score: firstScore,
       latest_attempt_score: latestScore,
       top_mistake_topics: sortedTopics,
+      recovered_from_browser: Boolean(s.recovered_from_browser),
+      browser_claimed_xp: s.browser_claimed_xp ?? 0,
+      browser_provisional_code: s.browser_provisional_code || null,
+      browser_recovered_at: s.browser_recovered_at || null,
     };
   });
 }
@@ -603,6 +643,10 @@ export async function supabaseGetAdminParticipantDetailDb(userId: string): Promi
       streak_days: user.streak_days,
       created_at: user.created_at,
       last_active_at: user.last_active_at,
+      recovered_from_browser: Boolean(user.recovered_from_browser),
+      browser_claimed_xp: user.browser_claimed_xp ?? 0,
+      browser_provisional_code: user.browser_provisional_code || null,
+      browser_recovered_at: user.browser_recovered_at || null,
     },
     unitProgress: unitProgress || [],
     quizAttempts: formattedAttempts,

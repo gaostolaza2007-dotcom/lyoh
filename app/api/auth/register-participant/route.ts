@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { nickname, university, universityShort, career, accountSecret } = body;
+    const { nickname, university, universityShort, career, accountSecret, clientRequestId } = body;
 
     if (!nickname || typeof nickname !== "string" || !nickname.trim()) {
       return NextResponse.json({ error: "El nombre o apodo es obligatorio." }, { status: 400 });
@@ -34,12 +34,22 @@ export async function POST(req: NextRequest) {
       universityShort: (universityShort || "UDD").trim(),
       career: career.trim(),
       accountSecret: typeof accountSecret === "string" ? accountSecret.trim() : undefined,
+      clientRequestId: typeof clientRequestId === "string" ? clientRequestId.trim() : undefined,
     });
 
-    const token = await createSession(participant.id, "student");
-    const cookieHeader = buildSessionCookie(token);
+    let token: string | null = null;
+    try {
+      token = await createSession(participant.id, "student");
+    } catch (sessionErr: any) {
+      console.error("[register-participant] Error creating initial session, retrying once:", sessionErr?.message);
+      try {
+        token = await createSession(participant.id, "student");
+      } catch (retryErr: any) {
+        console.error("[register-participant] Retry creating session also failed:", retryErr?.message);
+      }
+    }
 
-    const unitProgress = await getUserUnitProgress(participant.id);
+    const unitProgress = await getUserUnitProgress(participant.id).catch(() => ({}));
 
     const response = NextResponse.json({
       user: {
@@ -58,14 +68,35 @@ export async function POST(req: NextRequest) {
         createdAt: participant.created_at,
         unitProgress,
       },
+      ...(!token ? { sessionWarning: "Expediente registrado, pero debes ingresar con tu código asignado para iniciar sesión." } : {}),
     });
 
-    response.headers.set("Set-Cookie", cookieHeader);
+    if (token) {
+      const cookieHeader = buildSessionCookie(token);
+      response.headers.set("Set-Cookie", cookieHeader);
+    }
+
     return response;
-  } catch (error) {
-    console.error("Error in /api/auth/register-participant:", error);
+  } catch (error: any) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("[api/auth/register-participant] Registration error:", errorMsg);
+
+    if (errorMsg.includes("Configuración de Supabase no encontrada")) {
+      return NextResponse.json(
+        { error: "El servicio de base de datos no está configurado en el servidor de producción. Por favor, contacta al administrador." },
+        { status: 503 }
+      );
+    }
+
+    if (errorMsg.includes("Demasiados registros")) {
+      return NextResponse.json(
+        { error: errorMsg },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Ocurrió un error al registrar el participante." },
+      { error: "Ocurrió un error al registrar el expediente en el servidor. Por favor intenta nuevamente." },
       { status: 500 }
     );
   }

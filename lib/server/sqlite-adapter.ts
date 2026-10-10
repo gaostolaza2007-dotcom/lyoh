@@ -120,13 +120,34 @@ export function getDb(): DatabaseSync {
     CREATE INDEX IF NOT EXISTS idx_activity_logs_user ON activity_logs(user_id);
   `);
 
+  try { db.exec("ALTER TABLE users ADD COLUMN recovered_from_browser INTEGER DEFAULT 0;"); } catch {}
+  try { db.exec("ALTER TABLE users ADD COLUMN browser_recovered_at TEXT;"); } catch {}
+  try { db.exec("ALTER TABLE users ADD COLUMN browser_provisional_code TEXT;"); } catch {}
+  try { db.exec("ALTER TABLE users ADD COLUMN browser_claimed_xp INTEGER DEFAULT 0;"); } catch {}
+  try { db.exec("ALTER TABLE users ADD COLUMN browser_claimed_progress_json TEXT;"); } catch {}
+  try { db.exec("ALTER TABLE users ADD COLUMN client_request_token_hash TEXT;"); } catch {}
+  try { db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_client_request_token_hash ON users(client_request_token_hash);"); } catch {}
+
   dbInstance = db;
   return dbInstance;
+}
+
+export function hashClientRequestToken(token?: string): string | null {
+  if (!token || typeof token !== "string" || !token.trim()) return null;
+  return crypto.createHash("sha256").update(token.trim()).digest("hex");
 }
 
 export function sqliteGetUserById(id: string): DbUser | null {
   const db = getDb();
   const row = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+  return (row as DbUser) || null;
+}
+
+export function sqliteGetUserByClientTokenHash(tokenHash: string): DbUser | null {
+  const db = getDb();
+  const trimmed = tokenHash.trim();
+  if (!trimmed) return null;
+  const row = db.prepare("SELECT * FROM users WHERE client_request_token_hash = ?").get(trimmed);
   return (row as DbUser) || null;
 }
 
@@ -160,8 +181,19 @@ export function sqliteRegisterParticipant(data: {
   universityShort: string;
   career: string;
   accountSecret?: string;
+  clientRequestId?: string;
 }): DbUser {
   const db = getDb();
+  const tokenHash = hashClientRequestToken(data.clientRequestId);
+
+  // Idempotencia: si ya existe con este hash de token, devolverlo directamente
+  if (tokenHash) {
+    const existing = sqliteGetUserByClientTokenHash(tokenHash);
+    if (existing) {
+      return existing;
+    }
+  }
+
   const id = crypto.randomUUID();
   const now = new Date().toISOString();
 
@@ -174,26 +206,106 @@ export function sqliteRegisterParticipant(data: {
     attempts++;
   }
 
-  const insert = db.prepare(`
-    INSERT INTO users (
-      id, participant_code, nickname, university, university_short, career,
-      role, onboarding_completed, xp, streak_days, longest_streak,
-      last_study_date, account_secret, created_at, updated_at, last_active_at
-    ) VALUES (?, ?, ?, ?, ?, ?, 'student', 1, 0, 0, 0, NULL, ?, ?, ?, ?)
-  `);
+  const standardUnits = [
+    { mod: "anatomia", unit: "flashcards" },
+    { mod: "anatomia", unit: "teoria" },
+    { mod: "anatomia", unit: "visor-3d" },
+    { mod: "bioquimica", unit: "metabolismo" },
+    { mod: "histologia", unit: "tejidos" },
+    { mod: "microbiologia", unit: "patogenos" },
+  ];
 
-  insert.run(
-    id,
-    code,
-    data.nickname.trim(),
-    data.university.trim(),
-    data.universityShort.trim(),
-    data.career.trim(),
-    data.accountSecret || null,
-    now,
-    now,
-    now
-  );
+  // Transacción ACID real a nivel de SQLite (BEGIN IMMEDIATE bloquea escritura concurrente)
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    if (tokenHash) {
+      const lockedExisting = sqliteGetUserByClientTokenHash(tokenHash);
+      if (lockedExisting) {
+        db.exec("ROLLBACK");
+        return lockedExisting;
+      }
+    }
+
+    db.prepare(`
+      INSERT INTO users (
+        id, participant_code, nickname, university, university_short, career,
+        role, onboarding_completed, xp, streak_days, longest_streak,
+        last_study_date, account_secret, client_request_token_hash, created_at, updated_at, last_active_at
+      ) VALUES (?, ?, ?, ?, ?, ?, 'student', 1, 0, 0, 0, NULL, ?, ?, ?, ?, ?)
+    `).run(
+      id,
+      code,
+      data.nickname.trim(),
+      data.university.trim(),
+      data.universityShort.trim(),
+      data.career.trim(),
+      data.accountSecret || null,
+      tokenHash,
+      now,
+      now,
+      now
+    );
+
+    const initProgress = db.prepare(`
+      INSERT OR IGNORE INTO unit_progress (id, user_id, module_id, unit_id, status, score, updated_at)
+      VALUES (?, ?, ?, ?, 'not_started', 0, ?)
+    `);
+
+    for (const u of standardUnits) {
+      initProgress.run(crypto.randomUUID(), id, u.mod, u.unit, now);
+    }
+
+    db.exec("COMMIT");
+  } catch (err: any) {
+    db.exec("ROLLBACK");
+    if (tokenHash) {
+      const raceExisting = sqliteGetUserByClientTokenHash(tokenHash);
+      if (raceExisting) return raceExisting;
+    }
+    throw err;
+  }
+
+  return sqliteGetUserById(id)!;
+}
+
+export function sqliteRecoverBrowserProfile(data: {
+  nickname: string;
+  university: string;
+  universityShort: string;
+  career: string;
+  provisionalCode?: string;
+  claimedXp?: number;
+  claimedProgress?: Record<string, number>;
+  clientRequestId?: string;
+}): DbUser {
+  const db = getDb();
+  const tokenHash = hashClientRequestToken(data.clientRequestId);
+
+  // Idempotencia: controlada exclusivamente por el token seguro del cliente
+  if (tokenHash) {
+    const existing = sqliteGetUserByClientTokenHash(tokenHash);
+    if (existing) {
+      return existing;
+    }
+  }
+
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+
+  let code = generateParticipantCode();
+  let attempts = 0;
+  while (attempts < 10) {
+    const existing = db.prepare("SELECT id FROM users WHERE participant_code = ?").get(code);
+    if (!existing) break;
+    code = generateParticipantCode();
+    attempts++;
+  }
+
+  const sanitizedNickname = data.nickname.trim().slice(0, 50);
+  const sanitizedUniversity = data.university.trim().slice(0, 100);
+  const sanitizedUniShort = (data.universityShort || "UDD").trim().slice(0, 20);
+  const sanitizedCareer = data.career.trim().slice(0, 100);
+  const claimedXpNum = Math.max(0, Math.floor(Number(data.claimedXp) || 0));
 
   const standardUnits = [
     { mod: "anatomia", unit: "flashcards" },
@@ -204,13 +316,72 @@ export function sqliteRegisterParticipant(data: {
     { mod: "microbiologia", unit: "patogenos" },
   ];
 
-  const initProgress = db.prepare(`
-    INSERT OR IGNORE INTO unit_progress (id, user_id, module_id, unit_id, status, score, updated_at)
-    VALUES (?, ?, ?, ?, 'not_started', 0, ?)
-  `);
+  // Transacción ACID real a nivel de SQLite
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    if (tokenHash) {
+      const lockedExisting = sqliteGetUserByClientTokenHash(tokenHash);
+      if (lockedExisting) {
+        db.exec("ROLLBACK");
+        return lockedExisting;
+      }
+    }
 
-  for (const u of standardUnits) {
-    initProgress.run(crypto.randomUUID(), id, u.mod, u.unit, now);
+    db.prepare(`
+      INSERT INTO users (
+        id, participant_code, nickname, university, university_short, career,
+        role, onboarding_completed, xp, streak_days, longest_streak,
+        recovered_from_browser, browser_recovered_at, browser_provisional_code,
+        browser_claimed_xp, browser_claimed_progress_json, client_request_token_hash,
+        created_at, updated_at, last_active_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      id,
+      code,
+      sanitizedNickname,
+      sanitizedUniversity,
+      sanitizedUniShort,
+      sanitizedCareer,
+      "student",
+      1,
+      0, // official verified XP starts at 0
+      0,
+      0,
+      1,
+      now,
+      data.provisionalCode?.trim().slice(0, 30) || null, // metadata only
+      claimedXpNum,
+      JSON.stringify(data.claimedProgress || {}),
+      tokenHash,
+      now,
+      now,
+      now
+    );
+
+    const initProgress = db.prepare(`
+      INSERT OR IGNORE INTO unit_progress (id, user_id, module_id, unit_id, status, score, updated_at)
+      VALUES (?, ?, ?, ?, 'not_started', 0, ?)
+    `);
+
+    for (const u of standardUnits) {
+      initProgress.run(crypto.randomUUID(), id, u.mod, u.unit, now);
+    }
+
+    try {
+      db.prepare(`
+        INSERT INTO activity_logs (id, user_id, module_id, unit_id, activity_type, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).run(crypto.randomUUID(), id, "system", "browser_recovery", "browser_profile_recovered", now);
+    } catch {}
+
+    db.exec("COMMIT");
+  } catch (err: any) {
+    db.exec("ROLLBACK");
+    if (tokenHash) {
+      const raceExisting = sqliteGetUserByClientTokenHash(tokenHash);
+      if (raceExisting) return raceExisting;
+    }
+    throw err;
   }
 
   return sqliteGetUserById(id)!;
@@ -553,6 +724,10 @@ export function sqliteGetAdminParticipantsListDb(): AdminParticipantSummary[] {
       first_attempt_score: firstScore,
       latest_attempt_score: latestScore,
       top_mistake_topics: sortedTopics,
+      recovered_from_browser: Boolean(s.recovered_from_browser),
+      browser_claimed_xp: s.browser_claimed_xp ?? 0,
+      browser_provisional_code: s.browser_provisional_code || null,
+      browser_recovered_at: s.browser_recovered_at || null,
     };
   });
 }
@@ -586,6 +761,10 @@ export function sqliteGetAdminParticipantDetailDb(userId: string) {
       streak_days: user.streak_days,
       created_at: user.created_at,
       last_active_at: user.last_active_at,
+      recovered_from_browser: Boolean(user.recovered_from_browser),
+      browser_claimed_xp: user.browser_claimed_xp ?? 0,
+      browser_provisional_code: user.browser_provisional_code || null,
+      browser_recovered_at: user.browser_recovered_at || null,
     },
     unitProgress,
     quizAttempts,

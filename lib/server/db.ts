@@ -64,12 +64,34 @@ export async function getUserByEmail(email: string): Promise<DbUser | null> {
   return backend.sqlite.sqliteGetUserByEmail(email);
 }
 
+import crypto from "crypto";
+
+export function hashClientRequestToken(token?: string): string | null {
+  if (!token || typeof token !== "string" || !token.trim()) return null;
+  return crypto.createHash("sha256").update(token.trim()).digest("hex");
+}
+
+export async function getUserByClientTokenHash(tokenHash: string): Promise<DbUser | null> {
+  const backend = await getBackend();
+  if (backend.isSupabase) {
+    return backend.supabase.supabaseGetUserByClientTokenHash(tokenHash);
+  }
+  return backend.sqlite.sqliteGetUserByClientTokenHash(tokenHash);
+}
+
+export async function getUserByClientRequestId(clientRequestId: string): Promise<DbUser | null> {
+  const tokenHash = hashClientRequestToken(clientRequestId);
+  if (!tokenHash) return null;
+  return getUserByClientTokenHash(tokenHash);
+}
+
 export async function registerParticipant(data: {
   nickname: string;
   university: string;
   universityShort: string;
   career: string;
   accountSecret?: string;
+  clientRequestId?: string;
 }): Promise<DbUser> {
   const backend = await getBackend();
   if (backend.isSupabase) {
@@ -93,6 +115,23 @@ export async function updateParticipantProfile(
     return backend.supabase.supabaseUpdateParticipantProfile(id, data);
   }
   return backend.sqlite.sqliteUpdateParticipantProfile(id, data);
+}
+
+export async function recoverBrowserProfile(data: {
+  nickname: string;
+  university: string;
+  universityShort: string;
+  career: string;
+  provisionalCode?: string;
+  claimedXp?: number;
+  claimedProgress?: Record<string, number>;
+  clientRequestId?: string;
+}): Promise<DbUser> {
+  const backend = await getBackend();
+  if (backend.isSupabase) {
+    return backend.supabase.supabaseRecoverBrowserProfile(data);
+  }
+  return backend.sqlite.sqliteRecoverBrowserProfile(data);
 }
 
 export async function createSession(userId: string, role: "student" | "admin"): Promise<string> {

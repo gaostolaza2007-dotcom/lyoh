@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -68,7 +68,14 @@ const CAREER_SUGGESTIONS = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { user, completeOnboarding, loginWithParticipantCode } = useAuth();
+  const { 
+    user, 
+    completeOnboarding, 
+    loginWithParticipantCode, 
+    recoverableProfile, 
+    recoverBrowserAccount, 
+    dismissBrowserRecovery 
+  } = useAuth();
 
   // Modo: registro nuevo participante vs reanudar con código existente
   const [mode, setMode] = useState<"register" | "resume">("register");
@@ -82,6 +89,33 @@ export default function OnboardingPage() {
   );
   const [career, setCareer] = useState(user.onboardingCompleted ? user.career : "");
   const [acceptedTransparency, setAcceptedTransparency] = useState(false);
+
+  const handleRecover = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setErrorMsg("");
+
+    try {
+      const res = await recoverBrowserAccount();
+      if (res.success && res.newCode) {
+        try {
+          confetti({
+            particleCount: 70,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ["#a855f7", "#3b82f6", "#22d3ee", "#10b981"],
+          });
+        } catch {}
+        setAssignedCode(res.newCode);
+      } else {
+        setErrorMsg(res.error || "No fue posible registrar la recuperación en el servidor.");
+      }
+    } catch (err: any) {
+      setErrorMsg(err?.message || "Ocurrió un error inesperado al recuperar el expediente.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Reanudar con código
   const [inputCode, setInputCode] = useState("");
@@ -117,8 +151,32 @@ export default function OnboardingPage() {
     );
   }, [uniSearchQuery]);
 
+  const REG_TOKEN_KEY = "medstudy_pending_registration_token";
+
+  const getRegistrationToken = useCallback((): string => {
+    if (typeof window === "undefined") return "";
+    try {
+      let t = sessionStorage.getItem(REG_TOKEN_KEY);
+      if (!t) {
+        t = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+        sessionStorage.setItem(REG_TOKEN_KEY, t);
+      }
+      return t;
+    } catch {
+      return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
+    }
+  }, []);
+
+  const clearRegistrationToken = useCallback((): void => {
+    if (typeof window === "undefined") return;
+    try {
+      sessionStorage.removeItem(REG_TOKEN_KEY);
+    } catch {}
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
 
     if (!nickname.trim()) {
       setErrorMsg("Por favor, ingresa tu nombre o apodo.");
@@ -141,35 +199,35 @@ export default function OnboardingPage() {
     setErrorMsg("");
 
     try {
+      const clientToken = getRegistrationToken();
       const result = await completeOnboarding({
         nickname: nickname.trim(),
         university: selectedUni.name,
         universityShort: selectedUni.short,
         career: career.trim(),
+        clientRequestId: clientToken,
       });
 
-      // Confeti médico
-      try {
-        confetti({
-          particleCount: 70,
-          spread: 80,
-          origin: { y: 0.6 },
-          colors: ["#a855f7", "#3b82f6", "#22d3ee", "#10b981"],
-        });
-      } catch {}
-
       if (result?.participantCode) {
+        clearRegistrationToken();
+        try {
+          confetti({
+            particleCount: 70,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ["#a855f7", "#3b82f6", "#22d3ee", "#10b981"],
+          });
+        } catch {}
         setAssignedCode(result.participantCode);
-        setIsSubmitting(false);
       } else {
-        setTimeout(() => {
-          router.push("/");
-        }, 500);
+        setErrorMsg("El servidor no entregó un código de participante válido.");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      console.error("Error al registrar expediente:", err);
+      // Mantiene todos los campos del formulario intactos para permitir reintentar
+      setErrorMsg(err?.message || "Ocurrió un error al registrar tu expediente en el servidor. Intenta nuevamente.");
+    } finally {
       setIsSubmitting(false);
-      setErrorMsg("Ocurrió un error al registrar tu expediente. Intenta nuevamente.");
     }
   };
 
@@ -263,6 +321,61 @@ export default function OnboardingPage() {
           {errorMsg && (
             <div className="mb-6 p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-medium text-center">
               {errorMsg}
+            </div>
+          )}
+
+          {/* AVISO DE RECUPERACIÓN EXPLÍCITA DE PERFIL PREVIO DEL NAVEGADOR */}
+          {recoverableProfile && !assignedCode && (
+            <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs shadow-lg space-y-3">
+              <div className="flex items-start space-x-2.5">
+                <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-bold text-amber-300 text-xs sm:text-sm">
+                    Expediente previo detectado en este navegador
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Se encontraron datos guardados localmente para <strong className="text-white">{recoverableProfile.nickname}</strong> ({recoverableProfile.universityShort || recoverableProfile.university})
+                    {recoverableProfile.provisionalCode ? <> con código provisional <span className="font-mono text-amber-300">{recoverableProfile.provisionalCode}</span></> : null}.
+                    {recoverableProfile.claimedXp > 0 ? <> Registra {recoverableProfile.claimedXp} XP autodeclarados.</> : null}
+                  </p>
+                  <p className="text-[10px] text-slate-400 leading-relaxed">
+                    Al recuperar, el servidor creará una cuenta oficial de estudiante, le asignará un código verificado y registrará tu avance previo de navegación de forma no alterable ni confusa.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={handleRecover}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-all cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? "Generando cuenta oficial..." : "Crear cuenta oficial con estos datos"}
+                </button>
+                {recoverableProfile.provisionalCode && (
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => {
+                      setMode("resume");
+                      setInputCode(recoverableProfile.provisionalCode || "");
+                      setErrorMsg("");
+                    }}
+                    className="px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/30 text-xs transition-all cursor-pointer"
+                  >
+                    Probar acceso con código previo
+                  </button>
+                )}
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={dismissBrowserRecovery}
+                  className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs transition-all cursor-pointer"
+                >
+                  Descartar y registrar desde cero
+                </button>
+              </div>
             </div>
           )}
 

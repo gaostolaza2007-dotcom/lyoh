@@ -91,6 +91,32 @@ async function runMigration() {
     console.log(`   - ${desc}`);
   }
 
+  // 1b. Consultar Supabase antes de escribir para detectar cuentas previas y evitar sobrescribir
+  console.log("▶ Verificando estado actual de Supabase antes de escribir...");
+  const { data: existingSupaUsers, count: existingCount, error: countErr } = await supabase
+    .from("users")
+    .select("id, participant_code, email, updated_at", { count: "exact" });
+
+  if (countErr) {
+    console.error("❌ Error al consultar usuarios existentes en Supabase:", countErr.message);
+    process.exit(1);
+  }
+
+  console.log(`✓ Cuentas existentes actualmente en Supabase: ${existingCount || 0}`);
+
+  if (existingCount && existingCount > 0) {
+    console.log("⚠️ Detectadas cuentas preexistentes en Supabase. Verificando conflictos...");
+    for (const u of legitimateUsers) {
+      const match = existingSupaUsers.find(
+        (ex) => ex.id === u.id || (u.email && ex.email === u.email) || (u.participant_code && ex.participant_code === u.participant_code)
+      );
+      if (match) {
+        console.warn(`   Conflicto potencial detectado con usuario ID ${match.id} (fecha: ${match.updated_at}). Deteniendo para evitar sobrescritura.`);
+        process.exit(1);
+      }
+    }
+  }
+
   // 2. Migrar usuarios a Supabase (Upsert idempotente)
   console.log("\n▶ Migrando usuarios a Supabase...");
   for (const u of legitimateUsers) {
@@ -123,7 +149,30 @@ async function runMigration() {
   }
   console.log(`✓ ${legitimateUsers.length} usuarios sincronizados en Supabase.`);
 
-  // 3. Migrar unit_progress
+  // 3. Migrar sessions
+  console.log("\n▶ Migrando sesiones...");
+  let rawSessions = [];
+  try {
+    rawSessions = sqlite.prepare("SELECT * FROM sessions").all();
+  } catch {}
+  const validSessions = rawSessions.filter((s) => legitimateUserIds.includes(s.user_id));
+
+  let sessionsCount = 0;
+  for (const s of validSessions) {
+    const sessionPayload = {
+      token: s.token,
+      user_id: s.user_id,
+      role: s.role,
+      expires_at: s.expires_at,
+      created_at: s.created_at,
+    };
+    const { error } = await supabase.from("sessions").upsert(sessionPayload, { onConflict: "token" });
+    if (!error) sessionsCount++;
+    else console.warn(`   ⚠️ Error migrando sesión: ${error.message}`);
+  }
+  console.log(`✓ ${sessionsCount} sesiones sincronizadas.`);
+
+  // 4. Migrar unit_progress
   console.log("\n▶ Migrando progreso de unidades...");
   const rawProgress = sqlite.prepare("SELECT * FROM unit_progress").all();
   const validProgress = rawProgress.filter((p) => legitimateUserIds.includes(p.user_id));
@@ -145,7 +194,7 @@ async function runMigration() {
   }
   console.log(`✓ ${progressCount} registros de progreso sincronizados.`);
 
-  // 4. Migrar quiz_attempts
+  // 5. Migrar quiz_attempts
   console.log("\n▶ Migrando intentos de cuestionarios...");
   const rawAttempts = sqlite.prepare("SELECT * FROM quiz_attempts").all();
   const validAttempts = rawAttempts.filter((a) => legitimateUserIds.includes(a.user_id));
@@ -183,7 +232,7 @@ async function runMigration() {
   }
   console.log(`✓ ${attemptsCount} intentos de cuestionarios sincronizados.`);
 
-  // 5. Migrar activity_logs
+  // 6. Migrar activity_logs
   console.log("\n▶ Migrando logs de actividades...");
   let rawLogs = [];
   try {
@@ -206,13 +255,14 @@ async function runMigration() {
   }
   console.log(`✓ ${logsCount} registros de actividad sincronizados.`);
 
-  // Cerrar conexión SQLite para liberar recursos
+  // Cerrar conexión SQLite
   sqlite.close();
 
-  // 6. Verificación cruzada exhaustiva Origen vs Destino
+  // 7. Verificación cruzada exhaustiva Origen vs Destino (sin imprimir secretos ni PII)
   console.log("\n▶ Realizando verificación cruzada de integridad...");
   const { data: supaUsers, error: fetchUsersErr } = await supabase.from("users").select("*");
   const { data: supaProgress } = await supabase.from("unit_progress").select("id");
+  const { data: supaSessions } = await supabase.from("sessions").select("token");
 
   if (fetchUsersErr || !supaUsers) {
     console.error("⚠️ Error verificando usuarios en Supabase:", fetchUsersErr?.message);
@@ -231,26 +281,31 @@ async function runMigration() {
 
   // Verificar prueba (MED-3GZH)
   const pruebaUser = supaUsers.find((u) => u.participant_code === "MED-3GZH");
+  const isPruebaOk = pruebaUser && pruebaUser.role === "student" && pruebaUser.id === legitimateUsers.find((u) => u.participant_code === "MED-3GZH")?.id;
 
   console.log("\n================================================================");
   console.log(" 📊 COMPARACIÓN DE DATOS: ORIGEN (SQLite) vs DESTINO (Supabase)");
   console.log("================================================================");
   console.log(`- Usuarios totales:          SQLite: ${legitimateUsers.length} | Supabase: ${supaUsers.length}`);
+  console.log(`    * Administradores:       SQLite: ${legitimateUsers.filter(u => u.role === "admin").length} | Supabase: ${supaUsers.filter(u => u.role === "admin").length}`);
+  console.log(`    * Estudiantes:           SQLite: ${legitimateUsers.filter(u => u.role === "student").length} | Supabase: ${supaUsers.filter(u => u.role === "student").length}`);
+  console.log(`- Sesiones activas:          SQLite: ${validSessions.length} | Supabase: ${supaSessions?.length || 0}`);
   console.log(`- Unidades de progreso:      SQLite: ${validProgress.length} | Supabase: ${supaProgress?.length || 0}`);
-  console.log(`- Evaluaciones:              SQLite: ${validAttempts.length} | Supabase: ${attemptsCount}`);
+  console.log(`- Intentos de evaluación:    SQLite: ${validAttempts.length} | Supabase: ${attemptsCount}`);
   console.log(`- Registros de actividad:    SQLite: ${validLogs.length} | Supabase: ${logsCount}`);
   console.log("----------------------------------------------------------------");
   console.log(`- Administrador (g.ostolazav@udd.cl):`);
   console.log(`    Existe en Supabase:      ${adminUser ? "✅ SÍ" : "❌ NO"}`);
   console.log(`    Rol asignado:            ${adminUser?.role === "admin" ? "✅ admin" : "❌ " + adminUser?.role}`);
-  console.log(`    Compatibilidad de hash:  ${isAdminOk ? "✅ 100% IDÉNTICO (Tu contraseña actual funciona)" : "❌ Discrepancia"}`);
-  console.log(`- Estudiante prueba (MED-3GZH):`);
-  console.log(`    Existe en Supabase:      ${pruebaUser ? "✅ SÍ" : "❌ NO"}`);
-  console.log(`    Código participante:     ${pruebaUser?.participant_code || "N/A"}`);
+  console.log(`    Credenciales y hash:     ${isAdminOk ? "✅ 100% IDÉNTICO (Contraseña compatible intacta)" : "❌ Discrepancia"}`);
+  console.log(`- Participante prueba (MED-3GZH):`);
+  console.log(`    Existe en Supabase:      ${isPruebaOk ? "✅ SÍ" : "❌ NO"}`);
+  console.log(`    Rol asignado:            ${pruebaUser?.role === "student" ? "✅ student" : "❌ " + pruebaUser?.role}`);
+  console.log(`    Identificador id:        ${isPruebaOk ? "✅ IDÉNTICO" : "❌ Discrepancia"}`);
   console.log("================================================================");
 
-  if (isAdminOk && pruebaUser && supaUsers.length >= legitimateUsers.length) {
-    console.log(" 🎉 ¡VERIFICACIÓN EXITOSA! Todas las cuentas legítimas y credenciales están intactas.\n");
+  if (isAdminOk && isPruebaOk && supaUsers.length === legitimateUsers.length) {
+    console.log(" 🎉 ¡VERIFICACIÓN EXITOSA! Cuentas legítimas y relaciones preservadas al 100%.\n");
   } else {
     console.log(" ⚠️ Revisa las discrepancias reportadas arriba.\n");
   }

@@ -18,6 +18,12 @@ export interface DbUser {
   created_at: string;
   updated_at: string;
   last_active_at: string;
+  recovered_from_browser?: number;
+  browser_recovered_at?: string | null;
+  browser_provisional_code?: string | null;
+  browser_claimed_xp?: number;
+  browser_claimed_progress_json?: string | null;
+  client_request_token_hash?: string | null;
 }
 
 export interface QuizAttemptRecord {
@@ -55,6 +61,10 @@ export interface AdminParticipantSummary {
   first_attempt_score: number | null;
   latest_attempt_score: number | null;
   top_mistake_topics: { topic: string; count: number }[];
+  recovered_from_browser?: boolean;
+  browser_claimed_xp?: number;
+  browser_provisional_code?: string | null;
+  browser_recovered_at?: string | null;
 }
 
 export interface AdminParticipantDetail {
@@ -69,6 +79,10 @@ export interface AdminParticipantDetail {
     streak_days: number;
     created_at: string;
     last_active_at: string;
+    recovered_from_browser?: boolean;
+    browser_claimed_xp?: number;
+    browser_provisional_code?: string | null;
+    browser_recovered_at?: string | null;
   };
   unitProgress: any[];
   quizAttempts: QuizAttemptRecord[];
