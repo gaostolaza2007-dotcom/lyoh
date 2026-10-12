@@ -1,0 +1,2551 @@
+{
+  "entries": [
+    {
+      "id": "eye-haemophilus-spp",
+      "regionId": "eye",
+      "scientificName": "Haemophilus spp.",
+      "spanishName": "Haemophilus (especies del género)",
+      "synonyms": [
+        "Haemophillus spp."
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocobacilos Gram-negativos pleomórficos",
+      "subzone": "Superficie ocular / conjuntiva bulbar y tarsal",
+      "description": "Cocobacilos Gram-negativos presentes de forma ocasional o comensal menor en la conjuntiva.",
+      "ecologicalRole": "Colonizador transitorio en la película lagrimal preocular; compite por nutrientes con otras bacterias de la superficie.",
+      "clinicalContext": "En baja densidad se detecta en ojos asintomáticos. Cepas específicas pueden actuar como oportunistas en conjuntivitis aguda catarral.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Catálogo inicial (género)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "eye-straphillus-spp",
+      "regionId": "eye",
+      "scientificName": "“straphillus spp.”",
+      "spanishName": "Término no identificado en taxonomía bacteriana",
+      "synonyms": [
+        "straphillus"
+      ],
+      "type": "por_verificar",
+      "morphologyOrFamily": "Taxón no reconocido oficialmente (posible errata de Staphylococcus)",
+      "subzone": "Superficie ocular",
+      "description": "Término original conservado textualmente del catálogo proporcionado. No corresponde a un taxón bacteriano validado.",
+      "ecologicalRole": "Información pendiente de revisión taxonómica.",
+      "clinicalContext": "No se asigna rol clínico ni biológico inventado. Requiere comprobar la fuente original del catálogo para confirmar si refería a Staphylococcus.",
+      "source": {
+        "title": "Catálogo inicial aportado",
+        "citation": "PDF Microbiota corporal, pág. 1-2"
+      },
+      "reviewStatus": "termino_por_confirmar",
+      "reviewStatusLabel": "Término por confirmar (no inventado)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "eye-staphylococcus-aureus",
+      "regionId": "eye",
+      "scientificName": "Staphylococcus aureus",
+      "spanishName": "Estafilococo dorado",
+      "synonyms": [
+        "S. aureus"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos, coagulasa positivos",
+      "subzone": "Margen palpebral y película lagrimal",
+      "description": "Coco Gram-positivo con capacidad de colonizar los párpados y la conjuntiva externa en una fracción de individuos sanos.",
+      "ecologicalRole": "Colonizador intermitente del margen palpebral en equilibrio con la microbiota residente.",
+      "clinicalContext": "La colonización palpebral es frecuente y asintomática. Puede causar blefaritis, orzuelos o queratitis cuando se rompe la barrera corneal epitelial.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "eye-streptococcus-spp",
+      "regionId": "eye",
+      "scientificName": "Streptococcus spp.",
+      "spanishName": "Estreptococos (especies del género)",
+      "synonyms": [
+        "Estreptococos",
+        "Streptococci"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en cadenas o pares",
+      "subzone": "Mucosa conjuntival",
+      "description": "Bacterias comensales de la mucosa conjuntival presentes en proporciones bajas en el ojo sano.",
+      "ecologicalRole": "Contribuyen a la diversidad comensal de la superficie ocular.",
+      "clinicalContext": "Su aislamiento en baja carga es habitual y no requiere antibióticos. Especies concretas son patógenas sólo en traumatismos o úlceras corneales.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Catálogo inicial (género)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-viridans-streptococci",
+      "regionId": "mouth",
+      "scientificName": "Streptococcus grupo viridans",
+      "spanishName": "Estreptococos del grupo viridans",
+      "synonyms": [
+        "Viridans streptococci",
+        "Streptococcus viridans",
+        "S. mitis",
+        "S. oralis",
+        "S. salivarius"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos catalasa-negativos, alfa-hemolíticos",
+      "subzone": "Dorso lingual, placa dental temprana y mucosa yugal",
+      "description": "Colonizadores pioneros y comensales dominantes de la cavidad oral sana.",
+      "ecologicalRole": "Forman biopelículas comensales estables y producen peróxido de hidrógeno que inhibe patógenos foráneos.",
+      "clinicalContext": "Protectores clave de la ecología oral. Pueden provocar endocarditis infecciosa si pasan al torrente sanguíneo tras manipulaciones dentales en pacientes con valvulopatías.",
+      "source": {
+        "title": "Spatial Ecology of the Human Tongue Dorsum Microbiome",
+        "citation": "Wilbert et al., Cell Reports, 2020 [4]",
+        "url": "https://doi.org/10.1016/j.celrep.2020.02.097"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo representativo confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-coagulase-negative-staph",
+      "regionId": "mouth",
+      "scientificName": "Staphylococcus (coagulasa negativos)",
+      "spanishName": "Estafilococos coagulasa negativos",
+      "synonyms": [
+        "Coagulase-negative staphylococci",
+        "S. epidermidis oral"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos, coagulasa negativos",
+      "subzone": "Mucosa bucal y saliva",
+      "description": "Comensales cutaneomucosos que se aíslan en baja proporción en la saliva y mucosas de la boca.",
+      "ecologicalRole": "Componente secundario del microbioma oral sin rol dominante en la biopelícula dental.",
+      "clinicalContext": "Hallazgo inocuo habitual en boca; baja virulencia en tejidos orales sanos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Grupo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-veillonella-spp",
+      "regionId": "mouth",
+      "scientificName": "Veillonella spp.",
+      "spanishName": "Veillonella (especies del género)",
+      "synonyms": [
+        "Veillonella parvula",
+        "Veillonella dispar"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios estrictos Gram-negativos en pares",
+      "subzone": "Dorso de la lengua y placa dental madura",
+      "description": "Anaerobios estrictos abundantes organizados en consorcios metabólicos en lengua y dientes.",
+      "ecologicalRole": "Consumen el lactato producido por estreptococos mediante fermentación secundaria a propionato y acetato, atenuando la acidificación cariogénica.",
+      "clinicalContext": "Miembros comensales fisiológicos esenciales de la boca sana; no son cariogénicos por sí mismos.",
+      "source": {
+        "title": "Biogeography of a human oral microbiome at the micron scale",
+        "citation": "Mark Welch et al., PNAS, 2016 [5]",
+        "url": "https://doi.org/10.1073/pnas.1522149113"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género confirmado por fuentes",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-fusobacterium-spp",
+      "regionId": "mouth",
+      "scientificName": "Fusobacterium spp.",
+      "spanishName": "Fusobacterium (especies del género)",
+      "synonyms": [
+        "Fusobacterium nucleatum"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos fusiformes",
+      "subzone": "Placa dental madura y surco gingival",
+      "description": "Bacilos anaerobios fusiformes con función de adhesión interbacteriana.",
+      "ecologicalRole": "Actúan como 'puente físico' de co-agregación entre colonizadores tempranos (estreptococos/actinomicetos) y anaerobios tardíos en la biopelícula.",
+      "clinicalContext": "Presentes en biopelículas normales; en disbiosis con inflamación gingival proliferan en bolsas periodontales.",
+      "source": {
+        "title": "Biogeography of a human oral microbiome at the micron scale",
+        "citation": "Mark Welch et al., PNAS, 2016 [5]",
+        "url": "https://doi.org/10.1073/pnas.1522149113"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-treponema-spp",
+      "regionId": "mouth",
+      "scientificName": "Treponema spp.",
+      "spanishName": "Treponema (espiroquetas orales)",
+      "synonyms": [
+        "Treponema denticola",
+        "Espiroquetas orales"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Espiroquetas anaerobias helicoidales y móviles",
+      "subzone": "Surco gingival y espacios interdentales",
+      "description": "Espiroquetas anaerobias del microambiente gingival profundo con baja tensión de oxígeno.",
+      "ecologicalRole": "Ocupantes especializados de nichos subgingivales estrictamente anaerobios.",
+      "clinicalContext": "En encías sanas su abundancia es mínima. Su incremento marcado se vincula a periodontitis y gingivitis ulceronecrotizante.",
+      "source": {
+        "title": "Biogeography of a human oral microbiome at the micron scale",
+        "citation": "Mark Welch et al., PNAS, 2016 [5]",
+        "url": "https://doi.org/10.1073/pnas.1522149113"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-porphyromonas-spp",
+      "regionId": "mouth",
+      "scientificName": "Porphyromonas spp.",
+      "spanishName": "Porphyromonas (especies del género)",
+      "synonyms": [
+        "Porphyromonas gingivalis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocobacilos anaerobios Gram-negativos pigmentados",
+      "subzone": "Surco gingival profundo",
+      "description": "Anaerobios subgingivales con capacidad proteolítica sobre proteínas del fluido crevicular.",
+      "ecologicalRole": "Integrantes anaerobios de nichos creviculares; investigados como patógenos clave (keystone) en disbiosis.",
+      "clinicalContext": "Pueden detectarse en baja carga en portadores asintomáticos sin periodontitis clínica. La enfermedad surge al romperse el equilibrio inmunológico.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-prevotella-spp",
+      "regionId": "mouth",
+      "scientificName": "Prevotella spp.",
+      "spanishName": "Prevotella (especies del género)",
+      "synonyms": [
+        "Prevotella intermedia",
+        "Prevotella melaninogenica"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos",
+      "subzone": "Dorso lingual, saliva y surco gingival",
+      "description": "Anaerobios comunes que metabolizan péptidos y carbohidratos en la lengua y encías.",
+      "ecologicalRole": "Degradación de mucinas salivales y co-agregación en comunidades mucosas orales.",
+      "clinicalContext": "Comensales normales de lengua y saliva; aumentan en infecciones odontogénicas mixtas.",
+      "source": {
+        "title": "Spatial Ecology of the Human Tongue Dorsum Microbiome",
+        "citation": "Wilbert et al., Cell Reports, 2020 [4]",
+        "url": "https://doi.org/10.1016/j.celrep.2020.02.097"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-neisseria-spp",
+      "regionId": "mouth",
+      "scientificName": "Neisseria spp.",
+      "spanishName": "Neisseria (especies orales comensales)",
+      "synonyms": [
+        "Neisseria mucosa",
+        "Neisseria sicca",
+        "Neisseria subflava"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Diplococos Gram-negativos aerobios / microaerófilos",
+      "subzone": "Dorso lingual y periferia de la placa dental coronal",
+      "description": "Diplococos aerobios que habitan la superficie expuesta al flujo salival y oxígeno.",
+      "ecologicalRole": "Consumen oxígeno en las capas externas de la biopelícula ('estructuras en erizo'), facilitando el desarrollo de los anaerobios internos.",
+      "clinicalContext": "Comensales habituales de boca sana; no deben confundirse con especies patógenas invasivas genitales o meníngeas.",
+      "source": {
+        "title": "Biogeography of a human oral microbiome at the micron scale",
+        "citation": "Mark Welch et al., PNAS, 2016 [5]",
+        "url": "https://doi.org/10.1073/pnas.1522149113"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-moraxella-catarrhalis",
+      "regionId": "mouth",
+      "scientificName": "Moraxella catarrhalis",
+      "spanishName": "Moraxella catarrhalis (antes Branhamella catarrhalis)",
+      "synonyms": [
+        "Branhamella catarrhalis",
+        "M. catarrhalis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Diplococos Gram-negativos oxidasa-positivos",
+      "subzone": "Orofaringe y mucosa oral posterior",
+      "description": "Diplococo mucosal comúnmente albergado en la vía aérea superior y faringe en niños y adultos.",
+      "ecologicalRole": "Colonizador transitorio de la mucosa faríngea y cavidad oral posterior.",
+      "clinicalContext": "Portación habitual asintomática. Puede actuar como oportunista en otitis media, sinusitis o bronquitis crónica.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-streptococcus-pneumoniae",
+      "regionId": "mouth",
+      "scientificName": "Streptococcus pneumoniae",
+      "spanishName": "Neumococo",
+      "synonyms": [
+        "Streptococcus pneumonia",
+        "Neumococo",
+        "S. pneumoniae"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Diplococos Gram-positivos lanceolados capsulados",
+      "subzone": "Orofaringe y nasofaringe contigua",
+      "description": "Bacteria que coloniza transitoriamente la mucosa orofaríngea sin provocar enfermedad.",
+      "ecologicalRole": "Miembro transitorio de la microbiota de las vías respiratorias altas en personas sanas.",
+      "clinicalContext": "La portación orofaríngea asintomática es prevalente en la población pediátrica. No equivale a infección ni neumonía.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-beta-hemolytic-streptococci",
+      "regionId": "mouth",
+      "scientificName": "Streptococcus (betahemolíticos)",
+      "spanishName": "Estreptococos betahemolíticos",
+      "synonyms": [
+        "Beta-hemolytic streptococci",
+        "S. pyogenes portador"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos con hemólisis completa en agar sangre",
+      "subzone": "Orofaringe y amígdalas",
+      "description": "Estreptococos con halo de betahemólisis que pueden aislarse transitoriamente en fauces.",
+      "ecologicalRole": "Colonizadores en tránsito o portación comensal en la orofaringe.",
+      "clinicalContext": "El estado de portador asintomático existe en 5-20% de individuos sanos; la faringitis requiere presencia de signos inflamatorios objetivos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Grupo clínico documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-candida-spp",
+      "regionId": "mouth",
+      "scientificName": "Candida spp.",
+      "spanishName": "Candida (especies del género, e.g. C. albicans)",
+      "synonyms": [
+        "Candida albicans oral",
+        "Levaduras orales"
+      ],
+      "type": "hongo",
+      "morphologyOrFamily": "Levadura dimórfica formadora de pseudohifas",
+      "subzone": "Mucosa yugal, lengua y paladar",
+      "description": "Levadura comensal detectable en la boca de 30% a 70% de personas completamente sanas.",
+      "ecologicalRole": "Componente eucariota comensal del micobioma oral en equilibrio con las comunidades bacterianas.",
+      "clinicalContext": "Detectar Candida en boca no demuestra enfermedad por sí sola. La candidiasis clínica ('muguet') surge ante inmunosupresión o disrupción antibiótica.",
+      "source": {
+        "title": "Characterization of the Oral Fungal Microbiome (Mycobiome) in Healthy Individuals",
+        "citation": "Ghannoum et al., PLOS Pathogens, 2010 [6]",
+        "url": "https://doi.org/10.1371/journal.ppat.1000713"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Hongo documentado en micobioma sano",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-haemophilus-spp",
+      "regionId": "mouth",
+      "scientificName": "Haemophilus spp.",
+      "spanishName": "Haemophilus (especies orales, e.g. H. parainfluenzae)",
+      "synonyms": [
+        "Haemophillus",
+        "H. parainfluenzae"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocobacilos Gram-negativos facultativos",
+      "subzone": "Dorso lingual, placa dental y saliva",
+      "description": "Bacterias ampliamente representadas en la lengua y biopelículas orales sanas.",
+      "ecologicalRole": "Degradación de nutrientes y co-habitación con estreptococos en biopelículas linguales.",
+      "clinicalContext": "H. parainfluenzae es un habitante ubicuo y protector de la boca. Rara vez patógeno sin daño estructural previo.",
+      "source": {
+        "title": "Spatial Ecology of the Human Tongue Dorsum Microbiome",
+        "citation": "Wilbert et al., Cell Reports, 2020 [4]",
+        "url": "https://doi.org/10.1016/j.celrep.2020.02.097"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-diphtheroids",
+      "regionId": "mouth",
+      "scientificName": "Difteroides (bacilos corineformes)",
+      "spanishName": "Difteroides orales",
+      "synonyms": [
+        "Diphtheroids",
+        "Corynebacterium oral"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos no esporulados",
+      "subzone": "Placa dental y mucosa oral",
+      "description": "Término morfológico descriptivo para bacilos corineformes comensales en biopelículas dentales.",
+      "ecologicalRole": "Corynebacterium matruchotii forma el eje filamentoso central de consorcios bacterianos dentales.",
+      "clinicalContext": "Integrantes comensales inocuos de la boca; término descriptivo, no una especie patógena única.",
+      "source": {
+        "title": "Biogeography of a human oral microbiome at the micron scale",
+        "citation": "Mark Welch et al., PNAS, 2016 [5]",
+        "url": "https://doi.org/10.1073/pnas.1522149113"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo descriptivo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-actinomyces-spp",
+      "regionId": "mouth",
+      "scientificName": "Actinomyces spp.",
+      "spanishName": "Actinomyces (especies del género)",
+      "synonyms": [
+        "Actinomyces naeslundii",
+        "Actinomyces odontolyticus"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos ramificados Gram-positivos anaerobios facultativos",
+      "subzone": "Placa dental supragingival y subgingival",
+      "description": "Bacterias filamentosas pioneras esenciales para la adhesión a la película del esmalte dental.",
+      "ecologicalRole": "Anclaje estructural primario a la superficie dentaria y soporte biomecánico de la biopelícula.",
+      "clinicalContext": "Abundantes en boca sana. Raras veces ocasionan actinomicosis invasiva tras trauma severo o extracción dental.",
+      "source": {
+        "title": "Biogeography of a human oral microbiome at the micron scale",
+        "citation": "Mark Welch et al., PNAS, 2016 [5]",
+        "url": "https://doi.org/10.1073/pnas.1522149113"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-eikenella-corrodens",
+      "regionId": "mouth",
+      "scientificName": "Eikenella corrodens",
+      "spanishName": "Eikenella corrodens",
+      "synonyms": [
+        "E. corrodens"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilo Gram-negativo facultativo, microaerófilo, grupo HACEK",
+      "subzone": "Placa dental y surco gingival",
+      "description": "Bacilo Gram-negativo comensal de baja abundancia en la cavidad bucal humana.",
+      "ecologicalRole": "Integrante secundario de la biopelícula dental en equilibrio homeostático.",
+      "clinicalContext": "Habitante comensal inocuo; puede participar en infecciones mixtas por mordeduras o infecciones de cabeza y cuello.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "mouth-staphylococcus-aureus",
+      "regionId": "mouth",
+      "scientificName": "Staphylococcus aureus",
+      "spanishName": "Estafilococo dorado (en cavidad oral)",
+      "synonyms": [
+        "S. aureus oral"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Saliva y mucosa oral en portadores",
+      "description": "Coco que puede transitar o colonizar de forma transitoria la cavidad oral a partir de fosas nasales.",
+      "ecologicalRole": "Colonizador transitorio menor en la cavidad oral humana.",
+      "clinicalContext": "Su presencia oral en portadores asintomáticos no indica estomatitis ni infección glandular salival.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "small-intestine-lactobacillus-spp",
+      "regionId": "small_intestine",
+      "scientificName": "Lactobacillus spp.",
+      "spanishName": "Lactobacilos del intestino delgado",
+      "synonyms": [
+        "Lactobacillus"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos fermentadores de ácido láctico",
+      "subzone": "Duodeno y yeyuno",
+      "description": "Bacterias tolerantes a sales biliares adaptadas al tránsito rápido del intestino delgado.",
+      "ecologicalRole": "Fermentan azúcares simples a ácido láctico, manteniendo un pH ligeramente ácido que limita la colonización patógena.",
+      "clinicalContext": "Comensales beneficiosos característicos del tracto digestivo proximal.",
+      "source": {
+        "title": "Diversity of human small intestinal Streptococcus and Veillonella populations",
+        "citation": "Van den Bogert et al., FEMS Microbiol Ecol, 2013 [8]",
+        "url": "https://doi.org/10.1111/1574-6941.12171"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "small-intestine-bacteroides-spp",
+      "regionId": "small_intestine",
+      "scientificName": "Bacteroides spp.",
+      "spanishName": "Bacteroides del intestino delgado",
+      "synonyms": [
+        "Bacteroides"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos estrictos",
+      "subzone": "Íleon terminal",
+      "description": "Anaerobios que aumentan gradualmente en concentración hacia el íleon distal.",
+      "ecologicalRole": "Degradación de nutrientes residuales en la transición ileocecal.",
+      "clinicalContext": "Fisiológicos en íleon; concentraciones anómalas altas en yeyuno superior pueden vincularse a sobrecrecimiento bacteriano (SIBO).",
+      "source": {
+        "title": "Profiling the human intestinal environment under physiological conditions",
+        "citation": "Nature, 2023 [9]",
+        "url": "https://doi.org/10.1038/s41586-023-05989-7"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "small-intestine-clostridium-spp",
+      "regionId": "small_intestine",
+      "scientificName": "Clostridium spp.",
+      "spanishName": "Clostridios del intestino delgado",
+      "synonyms": [
+        "Clostridium"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-positivos esporulados",
+      "subzone": "Yeyuno distal e íleon",
+      "description": "Anaerobios esporulados con actividad metabólica fermentativa.",
+      "ecologicalRole": "Transformación de sales biliares primarias y producción de ácidos grasos de cadena corta en íleon.",
+      "clinicalContext": "Comensales habituales inocuos en íleon; la inmensa mayoría de especies no son patógenas.",
+      "source": {
+        "title": "Profiling the human intestinal environment under physiological conditions",
+        "citation": "Nature, 2023 [9]",
+        "url": "https://doi.org/10.1038/s41586-023-05989-7"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "small-intestine-mycobacterium-spp",
+      "regionId": "small_intestine",
+      "scientificName": "Mycobacterium spp.",
+      "spanishName": "Micobacterias (mención por verificar fuente)",
+      "synonyms": [
+        "Mycobacterium entérico"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos ácido-alcohol resistentes (BAAR)",
+      "subzone": "Intestino delgado (según lista aportada)",
+      "description": "Mención conservada textualmente de la lista aportada del catálogo. Pendiente de verificación científica de fuente.",
+      "ecologicalRole": "Información pendiente de revisión de fuente original.",
+      "clinicalContext": "No validada como microbiota residente habitual sana. Podría corresponder a micobacterias ambientales ingeridas por agua o error en lista histórica.",
+      "source": {
+        "title": "Catálogo inicial aportado",
+        "citation": "PDF Microbiota corporal, pág. 2, apartado A3"
+      },
+      "reviewStatus": "por_verificar_fuente",
+      "reviewStatusLabel": "Mención por verificar fuente (no sustituida)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "small-intestine-enterococcus-spp",
+      "regionId": "small_intestine",
+      "scientificName": "Enterococcus spp.",
+      "spanishName": "Enterococos (especies del género)",
+      "synonyms": [
+        "Enterococos",
+        "E. faecalis",
+        "E. faecium"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos catalasa-negativos tolerantes a bilis",
+      "subzone": "Duodeno, yeyuno e íleon",
+      "description": "Cocos facultativos adaptados a concentraciones elevadas de bilis y sales digestivas.",
+      "ecologicalRole": "Comensales estables con actividad fermentativa en la luz intestinal alta.",
+      "clinicalContext": "Componente normal del intestino humano; sólo son patógenos como oportunistas en infecciones nosocomiales.",
+      "source": {
+        "title": "Diversity of human small intestinal Streptococcus and Veillonella populations",
+        "citation": "Van den Bogert et al., FEMS Microbiol Ecol, 2013 [8]",
+        "url": "https://doi.org/10.1111/1574-6941.12171"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "small-intestine-enterobacteriaceae",
+      "regionId": "small_intestine",
+      "scientificName": "Enterobacteriaceae",
+      "spanishName": "Enterobacteriáceas (familia)",
+      "synonyms": [
+        "Enterobacteriáceas entéricas",
+        "Coliformes"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos oxidasa-negativos facultativos",
+      "subzone": "Íleon distal",
+      "description": "Familia bacteriana facultativa presente en concentraciones bajas en el intestino delgado.",
+      "ecologicalRole": "Consumen oxígeno residual coadyuvando a mantener la anaerobiosis del íleon terminal.",
+      "clinicalContext": "Población comensal fisiológica en baja densidad en personas sanas.",
+      "source": {
+        "title": "Profiling the human intestinal environment under physiological conditions",
+        "citation": "Nature, 2023 [9]",
+        "url": "https://doi.org/10.1038/s41586-023-05989-7"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Familia documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-1-bacteroides-spp",
+      "regionId": "colon",
+      "catalogNumber": 1,
+      "scientificName": "Bacteroides spp.",
+      "spanishName": "Bacteroides (género)",
+      "synonyms": [
+        "Bacteroides intestinal",
+        "B. thetaiotaomicron",
+        "B. fragilis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos estrictos",
+      "subzone": "Luz y capa mucosa del colon",
+      "description": "N.º 1 del catálogo. Filo Bacteroidetes; uno de los géneros más abundantes de la microbiota cólica.",
+      "ecologicalRole": "Maestros en la degradación de polisacáridos complejos de la dieta y síntesis de vitaminas esenciales.",
+      "clinicalContext": "Comensales primarios protectores esenciales; pueden generar abscesos sólo tras perforación de la barrera intestinal.",
+      "source": {
+        "title": "Metaproteomic portrait of the healthy human gut microbiota",
+        "citation": "npj Biofilms and Microbiomes, 2024 [10]",
+        "url": "https://doi.org/10.1038/s41522-024-00486-w"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Entrada N.º 1 · Género principal confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-2-fusobacterium-spp",
+      "regionId": "colon",
+      "catalogNumber": 2,
+      "scientificName": "Fusobacterium spp.",
+      "spanishName": "Fusobacterium (género)",
+      "synonyms": [
+        "Fusobacterium cólico"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos fusiformes",
+      "subzone": "Mucosa cólica",
+      "description": "N.º 2 del catálogo. Anaerobio comensal secundario del intestino grueso en baja proporción.",
+      "ecologicalRole": "Integrante anaerobio de la comunidad mucosal intestinal.",
+      "clinicalContext": "Presente en baja densidad en colon sano; cepas de F. nucleatum se investigan en microambientes tumorales, pero su detección aislada no equivale a lesión.",
+      "source": {
+        "title": "Metaproteomic portrait of the healthy human gut microbiota",
+        "citation": "npj Biofilms and Microbiomes, 2024 [10]",
+        "url": "https://doi.org/10.1038/s41522-024-00486-w"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 2 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-3-clostridium-spp",
+      "regionId": "colon",
+      "catalogNumber": 3,
+      "scientificName": "Clostridium spp.",
+      "spanishName": "Clostridium (género)",
+      "synonyms": [
+        "Clostridios cólicos",
+        "Clostridium sensu lato"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-positivos esporulados",
+      "subzone": "Luz cólica",
+      "description": "N.º 3 del catálogo. Filo Firmicutes; grupo bacteriano clave en fermentación y síntesis de metabolitos.",
+      "ecologicalRole": "Fermentan almidones resistentes y producen ácidos grasos de cadena corta que nutren a los colonocitos.",
+      "clinicalContext": "Comensales fisiológicos en personas sanas; no confundir este género comensal amplio con Clostridioides difficile.",
+      "source": {
+        "title": "Interplay between the human gut microbiome and host metabolism",
+        "citation": "Nature Communications, 2019 [11]",
+        "url": "https://doi.org/10.1038/s41467-019-12476-z"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Entrada N.º 3 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-4-peptostreptococcus-spp",
+      "regionId": "colon",
+      "catalogNumber": 4,
+      "scientificName": "Peptostreptococcus spp.",
+      "spanishName": "Peptostreptococcus (género)",
+      "synonyms": [
+        "Cocos anaerobios cólicos"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Luz cólica y mucus",
+      "description": "N.º 4 del catálogo. Cocos anaerobios estrictos que metabolizan aminoácidos en la luz intestinal.",
+      "ecologicalRole": "Fermentación secundaria de sustratos nitrogenados y péptidos en el colon.",
+      "clinicalContext": "Miembros comensales habituales de la comunidad distal; oportunistas en cuadros polimicrobianos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 4 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-5-escherichia-coli",
+      "regionId": "colon",
+      "catalogNumber": 5,
+      "scientificName": "Escherichia coli",
+      "spanishName": "Escherichia coli",
+      "synonyms": [
+        "E. coli"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos facultativos fermentadores de lactosa",
+      "subzone": "Luz cólica y capa externa de moco",
+      "description": "N.º 5 del catálogo. El colonizador bacteriano facultativo más emblemático del colon humano.",
+      "ecologicalRole": "Consume oxígeno residual y sintetiza vitamina K2 y vitaminas del complejo B.",
+      "clinicalContext": "Representa habitualmente menos del 1-2% del total de bacterias cólicas pero es constante y comensal en intestino sano.",
+      "source": {
+        "title": "Metaproteomic portrait of the healthy human gut microbiota",
+        "citation": "npj Biofilms and Microbiomes, 2024 [10]",
+        "url": "https://doi.org/10.1038/s41522-024-00486-w"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Entrada N.º 5 · Especie confirmada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-6-klebsiella-spp",
+      "regionId": "colon",
+      "catalogNumber": 6,
+      "scientificName": "Klebsiella spp.",
+      "spanishName": "Klebsiella (género)",
+      "synonyms": [
+        "Klebsilla spp.",
+        "K. pneumoniae cólica"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos capsulados fermentadores",
+      "subzone": "Luz cólica",
+      "description": "N.º 6 del catálogo (corregido de Klebsilla). Bacilos capsulados presentes como comensales menores.",
+      "ecologicalRole": "Integrante facultativo comensal minoritario en el ecosistema cólico.",
+      "clinicalContext": "Portación intestinal asintomática normal en gran parte de la población; reservorio potencial en disbiosis por antibióticos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 6 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-7-proteus-spp",
+      "regionId": "colon",
+      "catalogNumber": 7,
+      "scientificName": "Proteus spp.",
+      "spanishName": "Proteus (género)",
+      "synonyms": [
+        "Protues spp.",
+        "P. mirabilis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos móviles con ureasa activa",
+      "subzone": "Luz cólica",
+      "description": "N.º 7 del catálogo (corregido de Protues). Bacilos Gram-negativos móviles en el intestino grueso.",
+      "ecologicalRole": "Actividad ureolítica y degradación de aminoácidos en la luz intestinal distal.",
+      "clinicalContext": "Comensal intestinal normal en baja abundancia; causa infecciones sólo al acceder al tracto urinario.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 7 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-8-lactobacillus-spp",
+      "regionId": "colon",
+      "catalogNumber": 8,
+      "scientificName": "Lactobacillus spp.",
+      "spanishName": "Lactobacillus (género)",
+      "synonyms": [
+        "Lactobacilos cólicos"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos no esporulados",
+      "subzone": "Luz y moco colónico",
+      "description": "N.º 8 del catálogo. Bacterias fermentadoras de carbohidratos en concentraciones variables.",
+      "ecologicalRole": "Generación de lactato y modulación inmunológica de la barrera epitelial.",
+      "clinicalContext": "Comensales tradicionales seguros; su abundancia varía ampliamente según la dieta.",
+      "source": {
+        "title": "Metaproteomic portrait of the healthy human gut microbiota",
+        "citation": "npj Biofilms and Microbiomes, 2024 [10]",
+        "url": "https://doi.org/10.1038/s41522-024-00486-w"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Entrada N.º 8 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-9-enterococcus-spp",
+      "regionId": "colon",
+      "catalogNumber": 9,
+      "scientificName": "Enterococcus spp.",
+      "spanishName": "Enterococos (género)",
+      "synonyms": [
+        "Enterococos cólicos",
+        "E. faecalis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos facultativos",
+      "subzone": "Luz cólica",
+      "description": "N.º 9 del catálogo. Cocos que habitan regularmente el colon de todos los seres humanos.",
+      "ecologicalRole": "Comensales estables con capacidad proteolítica en el intestino grueso.",
+      "clinicalContext": "Hallazgo universal en heces sin representar enteritis ni colitis en intestino indemne.",
+      "source": {
+        "title": "Metaproteomic portrait of the healthy human gut microbiota",
+        "citation": "npj Biofilms and Microbiomes, 2024 [10]",
+        "url": "https://doi.org/10.1038/s41522-024-00486-w"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Entrada N.º 9 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-10-streptococcus-spp",
+      "regionId": "colon",
+      "catalogNumber": 10,
+      "scientificName": "Streptococcus spp.",
+      "spanishName": "Estreptococos (género)",
+      "synonyms": [
+        "Estreptococos cólicos",
+        "Streptococci"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en cadenas",
+      "subzone": "Luz cólica",
+      "description": "N.º 10 del catálogo. Estreptococos facultativos detectados en tránsito y como comensales.",
+      "ecologicalRole": "Fermentación glucídica complementaria en el tracto inferior.",
+      "clinicalContext": "Presencia habitual inocua en heces; cepas específicas (S. gallolyticus) se asocian clínicamente a neoplasias colónicas como marcador.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 10 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-11-pseudomonas-spp",
+      "regionId": "colon",
+      "catalogNumber": 11,
+      "scientificName": "Pseudomonas spp.",
+      "spanishName": "Pseudomonas (género)",
+      "synonyms": [
+        "P. aeruginosa cólica"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos aerobios estrictos",
+      "subzone": "Luz cólica (tránsito)",
+      "description": "N.º 11 del catálogo. Bacterias ambientales que transitan ocasionalmente por el colon humano.",
+      "ecologicalRole": "Colonizador transitorio proveniente de ingestión alimentaria y agua.",
+      "clinicalContext": "Detectadas esporádicamente en heces sin infección intestinal; patógenos oportunistas en inmunodepresión profunda.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 11 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-12-acinetobacter-spp",
+      "regionId": "colon",
+      "catalogNumber": 12,
+      "scientificName": "Acinetobacter spp.",
+      "spanishName": "Acinetobacter (género)",
+      "synonyms": [
+        "Acinetobacter entérico"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocobacilos Gram-negativos oxidasa-negativos",
+      "subzone": "Luz cólica",
+      "description": "N.º 12 del catálogo. Cocobacilos que pueden encontrarse de manera transitoria en el intestino.",
+      "ecologicalRole": "Microorganismo de paso en la luz entérica sin nicho ecológico cólico predominante.",
+      "clinicalContext": "Detección fecal de baja significación en individuos sanos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 12 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-13-coagulase-negative-staph",
+      "regionId": "colon",
+      "catalogNumber": 13,
+      "scientificName": "Staphylococcus (coagulasa negativos)",
+      "spanishName": "Estafilococos coagulasa negativos",
+      "synonyms": [
+        "Coagulase-negative staphylococci cólicos"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Luz cólica",
+      "description": "N.º 13 del catálogo. Población comensal secundaria derivada del tracto superior o piel perianal.",
+      "ecologicalRole": "Componente transitorio o comensal menor en coprocultivos.",
+      "clinicalContext": "Hallazgo coprológico común carente de patogenicidad gastrointestinal.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 13 · Grupo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-14-staphylococcus-aureus",
+      "regionId": "colon",
+      "catalogNumber": 14,
+      "scientificName": "Staphylococcus aureus",
+      "spanishName": "Estafilococo dorado (en heces/colon)",
+      "synonyms": [
+        "S. aureus cólico"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos coagulasa-positivos",
+      "subzone": "Luz cólica",
+      "description": "N.º 14 del catálogo. Pasaje o colonización intestinal en una fracción de la población sana.",
+      "ecologicalRole": "Colonizador transitorio en portadores asintomáticos.",
+      "clinicalContext": "Portación intestinal asintomática sin gastroenteritis; la intoxicación ocurre por enterotoxinas preformadas en alimentos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 14 · Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-15-mycobacterium-spp",
+      "regionId": "colon",
+      "catalogNumber": 15,
+      "scientificName": "Mycobacterium spp.",
+      "spanishName": "Micobacterias (mención por verificar fuente)",
+      "synonyms": [
+        "Mycobacterium cólico"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos ácido-alcohol resistentes (BAAR)",
+      "subzone": "Intestino grueso / colon (según lista aportada)",
+      "description": "N.º 15 del catálogo. Mención conservada literalmente para cotejo de fuente original.",
+      "ecologicalRole": "Información pendiente de revisión de fuente original.",
+      "clinicalContext": "No representa microbiota residente estable confirmada en colon sano; mantenida para trazabilidad del catálogo sin sustituirla por Mycoplasma.",
+      "source": {
+        "title": "Catálogo inicial aportado",
+        "citation": "PDF Microbiota corporal, pág. 3, tabla A4, entrada 15"
+      },
+      "reviewStatus": "por_verificar_fuente",
+      "reviewStatusLabel": "Entrada N.º 15 · Mención por verificar fuente",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "colon-16-actinomyces-spp",
+      "regionId": "colon",
+      "catalogNumber": 16,
+      "scientificName": "Actinomyces spp.",
+      "spanishName": "Actinomyces (género)",
+      "synonyms": [
+        "Actinomicetos cólicos"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos ramificados anaerobios facultativos",
+      "subzone": "Ciego, apéndice y luz cólica",
+      "description": "N.º 16 del catálogo. Anaerobios comensales del apéndice y colon que degradan componentes mucosos.",
+      "ecologicalRole": "Degradación de sustratos mucosos en el ciego y colon proximal.",
+      "clinicalContext": "Habitantes comensales inocuos; raras actinomicosis abdominales suceden sólo tras apendicitis perforada o cirugía.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Entrada N.º 16 · Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-coagulase-negative-staph",
+      "regionId": "skin",
+      "scientificName": "Staphylococcus (coagulasa negativos)",
+      "spanishName": "Estafilococos coagulasa negativos cutáneos",
+      "synonyms": [
+        "Coagulase-negative staphylococci",
+        "S. epidermidis",
+        "S. hominis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Epidermis general: áreas sebáceas, húmedas y secas",
+      "description": "Colonizadores comensales dominantes y ubicuos del estrato córneo humano.",
+      "ecologicalRole": "Producen péptidos antimicrobianos (lugdunina, epidermina) que inhiben el asentamiento de patógenos invasores.",
+      "clinicalContext": "Protectores esenciales de la barrera cutánea sana.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo confirmado por fuentes",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-diphtheroids",
+      "regionId": "skin",
+      "scientificName": "Difteroides (Corynebacterium spp.)",
+      "spanishName": "Difteroides cutáneos",
+      "synonyms": [
+        "Diphtheroids",
+        "Bacilos corineformes cutáneos",
+        "Corynebacterium"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos",
+      "subzone": "Zonas húmedas: axilas, pliegues inguinales y espacios interdigitales",
+      "description": "Bacterias corineformes que predominan en microambientes cutáneos cálidos y húmedos.",
+      "ecologicalRole": "Metabolizan secreciones apocrinas y sebáceas en pliegues cutáneos.",
+      "clinicalContext": "Comensales axilares habituales; responsables del olor corporal fisiológico sin implicar infección.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-staphylococcus-aureus",
+      "regionId": "skin",
+      "scientificName": "Staphylococcus aureus",
+      "spanishName": "Estafilococo dorado (en piel)",
+      "synonyms": [
+        "S. aureus cutáneo"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos coagulasa positivos",
+      "subzone": "Pliegues húmedos, periné y fosas nasales contiguas",
+      "description": "Colonizador transitorio e intermitente de la piel en una fracción de personas sanas.",
+      "ecologicalRole": "Colonizador menor en competencia con estafilococos coagulasa negativos.",
+      "clinicalContext": "Portación asintomática normal; prolifera en dermatitis atópica si la barrera de filagrina está alterada.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-streptococcus-spp",
+      "regionId": "skin",
+      "scientificName": "Streptococcus spp.",
+      "spanishName": "Estreptococos cutáneos",
+      "synonyms": [
+        "Estreptococos en piel"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en cadenas",
+      "subzone": "Piel de extremidades y tronco",
+      "description": "Colonizadores menores transitorios presentes en el estrato córneo.",
+      "ecologicalRole": "Componente transitorio de la superficie epidérmica.",
+      "clinicalContext": "Detección habitual en baja carga; especies como S. pyogenes causan impétigo ante soluciones de continuidad.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-bacillus-spp",
+      "regionId": "skin",
+      "scientificName": "Bacillus spp.",
+      "spanishName": "Bacillus (género)",
+      "synonyms": [
+        "Bacilos esporulados ambientales"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos esporulados aerobios",
+      "subzone": "Zonas secas expuestas: antebrazos y manos",
+      "description": "Esporas ambientales transitorias depositadas sobre la piel por contacto con tierra y polvo.",
+      "ecologicalRole": "Transeúntes ambientales sin colonización folicular profunda permanente.",
+      "clinicalContext": "Comensales ambientales inocuos en piel intacta.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-malassezia-furfur",
+      "regionId": "skin",
+      "scientificName": "Malassezia furfur",
+      "spanishName": "Malassezia furfur (levadura lipofílica)",
+      "synonyms": [
+        "Malassezia spp.",
+        "Pityrosporum"
+      ],
+      "type": "hongo",
+      "morphologyOrFamily": "Levaduras lipofílicas dependientes de lípidos",
+      "subzone": "Zonas grasas: rostro, cuero cabelludo, pecho y espalda",
+      "description": "El género fúngico más prevalente del micobioma cutáneo humano, dominando áreas ricas en sebo.",
+      "ecologicalRole": "Hidrolizan lípidos del sebo con lipasas especializadas; coexisten con C. acnes.",
+      "clinicalContext": "Habitante universal sano; su sobrecrecimiento con reacción inmune genera pitiriasis versicolor o dermatitis seborreica.",
+      "source": {
+        "title": "Topographic diversity of fungal and bacterial communities in human skin",
+        "citation": "Findley et al., Nature, 2013 [3]",
+        "url": "https://doi.org/10.1038/nature12171"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Hongo principal documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-candida-spp",
+      "regionId": "skin",
+      "scientificName": "Candida spp.",
+      "spanishName": "Candida (en piel)",
+      "synonyms": [
+        "Candida parapsilosis",
+        "Candida albicans cutánea"
+      ],
+      "type": "hongo",
+      "morphologyOrFamily": "Levaduras comensales",
+      "subzone": "Pliegues húmedos: axilas, ingles y espacios interdigitales",
+      "description": "Levaduras comensales presentes en áreas corporales con mayor humedad o maceración fisiológica.",
+      "ecologicalRole": "Colonizador comensal menor del micobioma de pliegues.",
+      "clinicalContext": "Presente asintomáticamente; el intertrigo candidiásico se manifiesta con calor, humedad excesiva o diabetes.",
+      "source": {
+        "title": "Topographic diversity of fungal and bacterial communities in human skin",
+        "citation": "Findley et al., Nature, 2013 [3]",
+        "url": "https://doi.org/10.1038/nature12171"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Hongo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-mycobacterium-spp",
+      "regionId": "skin",
+      "scientificName": "Mycobacterium spp.",
+      "spanishName": "Micobacterias cutáneas (ocasionales, verificar fuente)",
+      "synonyms": [
+        "Mycobacterium en piel"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos ácido-alcohol resistentes",
+      "subzone": "Epidermis (ocasionales según catálogo)",
+      "description": "Mención conservada textualmente de la lista aportada. Pendiente de verificación científica.",
+      "ecologicalRole": "Información pendiente de revisión de fuente original.",
+      "clinicalContext": "Podrían corresponder a contaminantes ambientales transitorios del agua o polvo (e.g. micobacterias no tuberculosas).",
+      "source": {
+        "title": "Catálogo inicial aportado",
+        "citation": "PDF Microbiota corporal, pág. 4, apartado A5"
+      },
+      "reviewStatus": "por_verificar_fuente",
+      "reviewStatusLabel": "Mención por verificar fuente (no sustituida)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "skin-cutibacterium-acnes",
+      "regionId": "skin",
+      "scientificName": "Cutibacterium acnes",
+      "spanishName": "Cutibacterium acnes (antes Propionibacterium acnes)",
+      "synonyms": [
+        "Propionibacterium acnes",
+        "C. acnes",
+        "P. acnes"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios aerotolerantes Gram-positivos",
+      "subzone": "Folículos pilosebáceos de zonas grasas (rostro, pecho, espalda)",
+      "description": "Colonizador primario y dominante de los folículos sebáceos humanos. Se incluye una sola vez, unificando sinónimos.",
+      "ecologicalRole": "Hidroliza triglicéridos sebáceos liberando ácidos grasos libres que acidifican el pH cutáneo e inhiben patógenos.",
+      "clinicalContext": "Comensal ubicuo de piel sana en adultos; filotipos específicos y disbiosis folicular intervienen en el acné vulgar.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Especie confirmada (sinónimo unificado)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-coagulase-negative-staph",
+      "regionId": "urethra",
+      "scientificName": "Staphylococcus (coagulasa negativos)",
+      "spanishName": "Estafilococos coagulasa negativos uretrales",
+      "synonyms": [
+        "Coagulase-negative staphylococci uretrales"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Meato urinario y uretra distal anterior",
+      "description": "Colonizadores comensales habituales de la mucosa del meato uretral externo.",
+      "ecologicalRole": "Barrera comensal competitiva en el orificio uretral distal.",
+      "clinicalContext": "Aislamiento común en primeros chorros miccionales; no debe interpretarse como ITU en muestras no estériles.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-diphtheroids",
+      "regionId": "urethra",
+      "scientificName": "Difteroides (Corynebacterium spp.)",
+      "spanishName": "Difteroides uretrales",
+      "synonyms": [
+        "Diphtheroids en uretra"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos",
+      "subzone": "Uretra distal anterior",
+      "description": "Bacilos corineformes comensales en el epitelio de la uretra anterior.",
+      "ecologicalRole": "Comensales protectores por exclusión competitiva en el meato.",
+      "clinicalContext": "Flora comensal inocua normal en hombres y mujeres asintomáticos.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-streptococcus-spp",
+      "regionId": "urethra",
+      "scientificName": "Streptococcus spp.",
+      "spanishName": "Estreptococos uretrales",
+      "synonyms": [
+        "Estreptococos en uretra"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en cadenas",
+      "subzone": "Uretra distal",
+      "description": "Estreptococos presentes como colonizadores menores en el orificio uretral.",
+      "ecologicalRole": "Componente secundario del microbioma del meato.",
+      "clinicalContext": "Hallazgo normal; no indica uretritis en ausencia de leucocituria o descarga.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-mycobacterium-spp",
+      "regionId": "urethra",
+      "scientificName": "Mycobacterium spp.",
+      "spanishName": "Micobacterias uretrales (verificar fuente)",
+      "synonyms": [
+        "Mycobacterium smegmatis histórico"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos ácido-alcohol resistentes",
+      "subzone": "Uretra distal / región periuretral (según lista aportada)",
+      "description": "Mención conservada textualmente de la lista aportada. Históricamente se asociaba a Mycobacterium smegmatis periuretral.",
+      "ecologicalRole": "Información pendiente de revisión de fuente original.",
+      "clinicalContext": "No debe asumirse como patógeno ni como residente verificado sin confirmar la fuente original.",
+      "source": {
+        "title": "Catálogo inicial aportado",
+        "citation": "PDF Microbiota corporal, pág. 4, apartado A6"
+      },
+      "reviewStatus": "por_verificar_fuente",
+      "reviewStatusLabel": "Mención por verificar fuente (no sustituida)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-bacteroides-spp",
+      "regionId": "urethra",
+      "scientificName": "Bacteroides spp.",
+      "spanishName": "Bacteroides uretrales",
+      "synonyms": [
+        "Bacteroides en uretra"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos",
+      "subzone": "Uretra distal",
+      "description": "Anaerobios estrictos en baja carga detectados por secuenciación en orina de primer chorro.",
+      "ecologicalRole": "Habitantes anaerobios comensales del epitelio distal.",
+      "clinicalContext": "Detección fisiológica asintomática sin significación infecciosa.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-fusobacterium-spp",
+      "regionId": "urethra",
+      "scientificName": "Fusobacterium spp.",
+      "spanishName": "Fusobacterium uretral",
+      "synonyms": [
+        "Fusobacterium en uretra"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos",
+      "subzone": "Uretra distal",
+      "description": "Bacterias anaerobias que forman parte de la diversidad comunitaria del meato uretral.",
+      "ecologicalRole": "Componente anaerobio secundario.",
+      "clinicalContext": "Presencia habitual no patológica en individuos asintomáticos.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "urethra-peptostreptococcus-spp",
+      "regionId": "urethra",
+      "scientificName": "Peptostreptococcus spp.",
+      "spanishName": "Peptostreptococcus uretral",
+      "synonyms": [
+        "Cocos anaerobios en uretra"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Uretra distal",
+      "description": "Cocos anaerobios habituales en la flora comensal del epitelio uretral terminal.",
+      "ecologicalRole": "Fermentadores comensales de la mucosa anterior.",
+      "clinicalContext": "Presencia fisiológica inocua en hombres y mujeres sanos.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-lactobacillus-spp",
+      "regionId": "vagina",
+      "scientificName": "Lactobacillus spp.",
+      "spanishName": "Lactobacilos vaginales",
+      "synonyms": [
+        "Lactobacillus crispatus",
+        "L. gasseri",
+        "L. iners",
+        "L. jensenii"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos fermentadores de ácido láctico",
+      "subzone": "Epitelio vaginal estratificado",
+      "description": "El pilar central de la microbiota vaginal sana en la mayoría de mujeres en edad fértil.",
+      "ecologicalRole": "Fermentan glucógeno a ácido láctico (D- y L-lactato), manteniendo pH ácido protector (≤ 4.5) y bacteriocinas.",
+      "clinicalContext": "Marcador primordial de salud vaginal y protección frente a infecciones de transmisión sexual.",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género dominante confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-peptostreptococcus-spp",
+      "regionId": "vagina",
+      "scientificName": "Peptostreptococcus spp.",
+      "spanishName": "Peptostreptococcus vaginal",
+      "synonyms": [
+        "Cocos anaerobios vaginales"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Mucosa vaginal",
+      "description": "Anaerobios presentes en comunidades vaginales diversas (CST-IV) en mujeres asintomáticas.",
+      "ecologicalRole": "Metabolismo fermentativo anaerobio en el ecosistema vaginal.",
+      "clinicalContext": "Detectables en mujeres sanas sin molestias; su multiplicación desproporcionada acompaña a la vaginosis bacteriana.",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-diphtheroids",
+      "regionId": "vagina",
+      "scientificName": "Difteroides (Corynebacterium spp.)",
+      "spanishName": "Difteroides vaginales",
+      "synonyms": [
+        "Diphtheroids en vagina"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos corineformes",
+      "subzone": "Introito y mucosa vaginal inferior",
+      "description": "Comensales corineformes menores presentes en frotis vaginales normales.",
+      "ecologicalRole": "Colonizadores secundarios del epitelio escamoso.",
+      "clinicalContext": "Hallazgo comensal inocuo habitual en citologías y cultivos.",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Grupo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-streptococcus-spp",
+      "regionId": "vagina",
+      "scientificName": "Streptococcus spp.",
+      "spanishName": "Estreptococos vaginales (e.g. S. agalactiae)",
+      "synonyms": [
+        "Streptococcus agalactiae",
+        "Estreptococo grupo B"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en cadenas",
+      "subzone": "Mucosa vaginal",
+      "description": "Colonizadores comensales presentes en 15% a 30% de mujeres sanas sin sintomatología.",
+      "ecologicalRole": "Comensales transitorios o persistentes en la mucosa vaginal.",
+      "clinicalContext": "La portación materna es asintomática e indolora; se realiza cribado gestacional prenatal por riesgo de sepsis neonatal intraparto.",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-bacteroides-spp",
+      "regionId": "vagina",
+      "scientificName": "Bacteroides spp.",
+      "spanishName": "Bacteroides vaginales",
+      "synonyms": [
+        "Bacteroides en vagina"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos",
+      "subzone": "Mucosa vaginal",
+      "description": "Anaerobios detectables en baja concentración en comunidades vaginales polimicrobianas.",
+      "ecologicalRole": "Fermentadores comensales en el canal vaginal.",
+      "clinicalContext": "Presentes en mujeres asintomáticas; su presencia aislada no define infección.",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-candida-spp",
+      "regionId": "vagina",
+      "scientificName": "Candida spp.",
+      "spanishName": "Candida vaginal (e.g. Candida albicans)",
+      "synonyms": [
+        "Candida albicans vaginal",
+        "Levaduras vaginales"
+      ],
+      "type": "hongo",
+      "morphologyOrFamily": "Levaduras comensales dimórficas",
+      "subzone": "Epitelio vaginal",
+      "description": "Hongo comensal presente en 20% a 30% de mujeres en edad reproductiva sanas sin inflamación.",
+      "ecologicalRole": "Miembro del micobioma vaginal en equilibrio con lactobacilos.",
+      "clinicalContext": "La detección aislada no equivale a vulvovaginitis candidiásica; no se trata a personas asintomáticas (criterios CDC).",
+      "source": {
+        "title": "Vulvovaginal Candidiasis. STI Treatment Guidelines",
+        "citation": "CDC Treatment Guidelines [14]",
+        "url": "https://www.cdc.gov/std/treatment-guidelines/candidiasis.htm"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Hongo comensal documentado (guías CDC)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-gardnerella-vaginalis",
+      "regionId": "vagina",
+      "scientificName": "Gardnerella vaginalis",
+      "spanishName": "Gardnerella vaginalis",
+      "synonyms": [
+        "G. vaginalis"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos pleomórficos Gram-variables facultativos",
+      "subzone": "Mucosa vaginal",
+      "description": "Bacteria que forma parte habitual de comunidades vaginales asintomáticas (CST-IV).",
+      "ecologicalRole": "Integrante comensal facultativo en ecosistemas vaginales diversos sin predominio láctico.",
+      "clinicalContext": "Su hallazgo en cultivo o PCR no es diagnóstico de vaginosis bacteriana por sí solo; requiere criterio clínico sindrómico (Amsel/Nugent).",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Especie documentada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vagina-clostridium-spp",
+      "regionId": "vagina",
+      "scientificName": "Clostridium spp.",
+      "spanishName": "Clostridios vaginales",
+      "synonyms": [
+        "Clostridium en vagina"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-positivos",
+      "subzone": "Mucosa vaginal",
+      "description": "Anaerobios esporulados detectados en proporciones bajas en la mucosa vaginal.",
+      "ecologicalRole": "Población anaerobia comensal accesoria.",
+      "clinicalContext": "Hallazgo comensal sin significación infecciosa en ausencia de patología.",
+      "source": {
+        "title": "Vaginal microbiome of reproductive-age women",
+        "citation": "Ravel et al., PNAS, 2011 [13]",
+        "url": "https://doi.org/10.1073/pnas.1002611107"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "stomach-streptococcus-spp",
+      "regionId": "stomach",
+      "scientificName": "Streptococcus spp.",
+      "spanishName": "Estreptococos gástricos",
+      "synonyms": [
+        "Streptococcus en estómago"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos facultativos",
+      "subzone": "Mucosa gástrica y jugo gástrico",
+      "description": "Uno de los géneros más detectados en biopsias gástricas en personas sin Helicobacter pylori.",
+      "ecologicalRole": "Bacterias aerotolerantes que sobreviven a pH ácido transitorio y deglución salival.",
+      "clinicalContext": "Comensales gástricos inocuos habituales; no causan gastritis por sí solos.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "stomach-staphylococcus-spp",
+      "regionId": "stomach",
+      "scientificName": "Staphylococcus spp.",
+      "spanishName": "Estafilococos gástricos",
+      "synonyms": [
+        "Staphylococcus en estómago"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Cavidad gástrica",
+      "description": "Población bacteriana comensal o transitoria detectada en la mucosa gástrica.",
+      "ecologicalRole": "Población secundaria de la mucosa gástrica.",
+      "clinicalContext": "Detección comensal sin daño tisular en estómago sano.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "stomach-lactobacillus-spp",
+      "regionId": "stomach",
+      "scientificName": "Lactobacillus spp.",
+      "spanishName": "Lactobacilos gástricos",
+      "synonyms": [
+        "Lactobacillus en estómago"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos microaerófilos tolerantes a ácido",
+      "subzone": "Mucosa fúndica y antral",
+      "description": "Bacterias con marcada resistencia al ácido gástrico presentes en la capa mucosa superficial.",
+      "ecologicalRole": "Producción de ácido láctico y bacteriocinas en la barrera gástrica.",
+      "clinicalContext": "Habitantes comensales benignos habituales del estómago sano.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "stomach-peptostreptococcus-spp",
+      "regionId": "stomach",
+      "scientificName": "Peptostreptococcus spp.",
+      "spanishName": "Peptostreptococcus gástrico",
+      "synonyms": [
+        "Cocos anaerobios gástricos"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Capa mucosa gástrica",
+      "description": "Cocos anaerobios que colonizan los microambientes menos oxigenados de la mucosa del estómago.",
+      "ecologicalRole": "Fermentadores comensales de la capa mucosa profunda.",
+      "clinicalContext": "Presencia no patológica en aspirados y biopsias gástricas normales.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "ear-coagulase-negative-staph",
+      "regionId": "ear",
+      "scientificName": "Staphylococcus (coagulasa negativos)",
+      "spanishName": "Estafilococos del conducto auditivo (e.g. S. auricularis)",
+      "synonyms": [
+        "Staphylococcus auricularis",
+        "S. epidermidis en oído"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos lipofílicos",
+      "subzone": "Conducto auditivo externo y cerumen",
+      "description": "Colonizadores predominantes del canal auditivo; S. auricularis presenta tropismo selectivo por este nicho.",
+      "ecologicalRole": "Comensales estables adaptados al cerumen que previenen la colonización por patógenos mediante exclusión.",
+      "clinicalContext": "Protectores del canal auditivo externo en piel intacta; no deben erradicarse.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "ear-diphtheroids",
+      "regionId": "ear",
+      "scientificName": "Difteroides (Corynebacterium spp.)",
+      "spanishName": "Difteroides del conducto auditivo",
+      "synonyms": [
+        "Corynebacterium auris",
+        "Bacilos corineformes en oído"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos",
+      "subzone": "Piel del conducto auditivo externo",
+      "description": "Bacilos corineformes lipofílicos habituales en la piel ceruminosa del canal.",
+      "ecologicalRole": "Metabolismo de lípidos del cerumen y equilibrio de la barrera cutánea auricular.",
+      "clinicalContext": "Comensales inocuos habituales en personas sanas.",
+      "source": {
+        "title": "Topographical and Temporal Diversity of the Human Skin Microbiome",
+        "citation": "Grice et al., Science, 2009 [2]",
+        "url": "https://doi.org/10.1126/science.1171700"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "ear-pseudomonas-spp",
+      "regionId": "ear",
+      "scientificName": "Pseudomonas spp.",
+      "spanishName": "Pseudomonas en oído",
+      "synonyms": [
+        "P. aeruginosa en conducto auditivo"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos aerobios",
+      "subzone": "Conducto auditivo externo",
+      "description": "Bacterias que pueden encontrarse de manera infrecuente o transitoria en el oído externo.",
+      "ecologicalRole": "Colonizador transitorio favorecido por la exposición al agua.",
+      "clinicalContext": "La presencia aislada no es otitis; patógeno principal en otitis externa aguda ('oído de nadador') sólo si hay maceración y daño del cerumen.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "ear-enterobacteriaceae",
+      "regionId": "ear",
+      "scientificName": "Enterobacteriaceae (ocasionales)",
+      "spanishName": "Enterobacteriáceas auriculares",
+      "synonyms": [
+        "Enterobacteriáceas en oído"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-negativos oxidasa-negativos",
+      "subzone": "Meato acústico externo",
+      "description": "Colonizadores ocasionales o transitorios derivados de contacto ambiental o digital.",
+      "ecologicalRole": "Transeúntes sin carácter residente universal.",
+      "clinicalContext": "Hallazgo infrecuente en oídos sanos; oportunistas en otitis crónicas con tímpano perforado.",
+      "source": {
+        "title": "Structure, function and diversity of the healthy human microbiome",
+        "citation": "Human Microbiome Project Consortium, Nature, 2012 [1]",
+        "url": "https://doi.org/10.1038/nature11234"
+      },
+      "reviewStatus": "catalogo_inicial",
+      "reviewStatusLabel": "Familia documentada (ocasionales)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "nose-coagulase-negative-staph",
+      "regionId": "nose",
+      "scientificName": "Staphylococcus (coagulasa negativos)",
+      "spanishName": "Estafilococos nasales coagulasa negativos",
+      "synonyms": [
+        "S. epidermidis nasal"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Vestíbulo nasal anterior y vibrisas",
+      "description": "Comensales primarios de la piel del vestíbulo nasal y epitelio ciliado anterior.",
+      "ecologicalRole": "Producen la serina proteasa Esp que destruye las biopelículas de S. aureus, regulando la colonización.",
+      "clinicalContext": "Protectores comensales indispensables en fosas nasales sanas.",
+      "source": {
+        "title": "Dolosigranulum pigrum Cooperation and Competition in Human Nasal Microbiota",
+        "citation": "mSphere, 2020 [7]",
+        "url": "https://doi.org/10.1128/mSphere.01052-19"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo confirmado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "nose-viridans-streptococci",
+      "regionId": "nose",
+      "scientificName": "Streptococcus grupo viridans",
+      "spanishName": "Estreptococos viridans nasales",
+      "synonyms": [
+        "Viridans streptococci nasales"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en cadenas cortas",
+      "subzone": "Cavidad nasal anterior y transición a rinofaringe",
+      "description": "Comensales aerotolerantes que colonizan la mucosa respiratoria nasal anterior.",
+      "ecologicalRole": "Compiten por espacio y nutrientes en la superficie mucosal.",
+      "clinicalContext": "Hallazgo comensal normal sin significación patológica.",
+      "source": {
+        "title": "Dolosigranulum pigrum Cooperation and Competition in Human Nasal Microbiota",
+        "citation": "mSphere, 2020 [7]",
+        "url": "https://doi.org/10.1128/mSphere.01052-19"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Grupo documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "nose-staphylococcus-aureus",
+      "regionId": "nose",
+      "scientificName": "Staphylococcus aureus",
+      "spanishName": "Estafilococo dorado (en fosas nasales)",
+      "synonyms": [
+        "S. aureus nasal",
+        "Portador de S. aureus"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos coagulasa-positivos",
+      "subzone": "Vestíbulo nasal anterior",
+      "description": "El nicho primario de portación en seres humanos; presente asintomáticamente en 20% a 30% de personas de forma persistente y 30-50% intermitente.",
+      "ecologicalRole": "Colonizador en equilibrio dinámico con S. epidermidis y Corynebacterium.",
+      "clinicalContext": "La colonización nasal asintomática es la norma en portadores sanos y NO constituye infección activa ni sinusitis.",
+      "source": {
+        "title": "Dolosigranulum pigrum Cooperation and Competition in Human Nasal Microbiota",
+        "citation": "mSphere, 2020 [7]",
+        "url": "https://doi.org/10.1128/mSphere.01052-19"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Especie confirmada (portación habitual)",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "nose-haemophilus-spp",
+      "regionId": "nose",
+      "scientificName": "Haemophilus spp.",
+      "spanishName": "Haemophilus nasal (e.g. H. influenzae no tipificable)",
+      "synonyms": [
+        "Haemophillus nasal"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocobacilos Gram-negativos facultativos",
+      "subzone": "Mucosa nasal y nasofaríngea",
+      "description": "Colonizador comensal habitual del epitelio respiratorio superior en personas sanas.",
+      "ecologicalRole": "Componente de la microbiota nasofaríngea que convive con otras bacterias comensales.",
+      "clinicalContext": "Detección frecuente en la infancia; no equivale a sinusitis ni rinitis en personas asintomáticas.",
+      "source": {
+        "title": "Dolosigranulum pigrum Cooperation and Competition in Human Nasal Microbiota",
+        "citation": "mSphere, 2020 [7]",
+        "url": "https://doi.org/10.1128/mSphere.01052-19"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "nose-streptococcus-pneumoniae",
+      "regionId": "nose",
+      "scientificName": "Streptococcus pneumoniae",
+      "spanishName": "Neumococo en fosas nasales",
+      "synonyms": [
+        "Streptococcus pneumonia",
+        "S. pneumoniae nasal"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Diplococos Gram-positivos capsulados",
+      "subzone": "Mucosa nasal anterior y nasofaringe",
+      "description": "Colonizador transitorio frecuente de las vías aéreas altas en personas sanas.",
+      "ecologicalRole": "Ocupante transitorio de nichos nasales en constante interacción con el sistema inmune mucoso.",
+      "clinicalContext": "La colonización no es neumonía; la inmensa mayoría de las colonizaciones nasofaríngeas son asintomáticas y transitorias.",
+      "source": {
+        "title": "Dolosigranulum pigrum Cooperation and Competition in Human Nasal Microbiota",
+        "citation": "mSphere, 2020 [7]",
+        "url": "https://doi.org/10.1128/mSphere.01052-19"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Especie confirmada",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "nose-neisseria-spp",
+      "regionId": "nose",
+      "scientificName": "Neisseria spp.",
+      "spanishName": "Neisseria comensal nasal (e.g. N. lactamica)",
+      "synonyms": [
+        "Neisseria lactamica",
+        "Neisseria en nariz"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Diplococos Gram-negativos",
+      "subzone": "Mucosa nasal anterior",
+      "description": "Especies comensales que colonizan la mucosa respiratoria anterior.",
+      "ecologicalRole": "N. lactamica estimula inmunidad protectora cruzada frente a patógenos invasores meníngeos.",
+      "clinicalContext": "Comensales protectores no patógenos de fosas nasales y faringe.",
+      "source": {
+        "title": "Dolosigranulum pigrum Cooperation and Competition in Human Nasal Microbiota",
+        "citation": "mSphere, 2020 [7]",
+        "url": "https://doi.org/10.1128/mSphere.01052-19"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Género documentado",
+      "isInitialCatalog": true
+    },
+    {
+      "id": "vulva-corynebacterium-spp",
+      "regionId": "vulva",
+      "scientificName": "Corynebacterium spp.",
+      "spanishName": "Corynebacterium vulvar",
+      "synonyms": [
+        "Corinebacterias vulvares"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos",
+      "subzone": "Labios mayores (zona externa queratinizada)",
+      "description": "Mayor representación en labios mayores que en labios menores, asemejándose a la piel abdominal.",
+      "ecologicalRole": "Colonizadores lipofílicos de la piel queratinizada vulvar externa.",
+      "clinicalContext": "Flora residente cutánea sana en genitales externos femeninos.",
+      "source": {
+        "title": "Estudio comparativo de microbiota vulvar y piel abdominal en mujeres sanas",
+        "citation": "Scientific Reports, 2019 [12]",
+        "url": "https://doi.org/10.1038/s41598-019-53556-0"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [12]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "vulva-staphylococcus-spp",
+      "regionId": "vulva",
+      "scientificName": "Staphylococcus spp.",
+      "spanishName": "Estafilococos vulvares",
+      "synonyms": [
+        "S. epidermidis en vulva"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Labios mayores",
+      "description": "Bacterias comensales de la superficie cutánea externa de la vulva.",
+      "ecologicalRole": "Exclusión competitiva en la piel perivulvar.",
+      "clinicalContext": "Comensales habituales inocuos en mujeres asintomáticas.",
+      "source": {
+        "title": "Estudio comparativo de microbiota vulvar y piel abdominal en mujeres sanas",
+        "citation": "Scientific Reports, 2019 [12]",
+        "url": "https://doi.org/10.1038/s41598-019-53556-0"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [12]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "vulva-lactobacillus-spp",
+      "regionId": "vulva",
+      "scientificName": "Lactobacillus spp.",
+      "spanishName": "Lactobacilos vulvares",
+      "synonyms": [
+        "Lactobacillus en vestíbulo vulvar"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos productores de ácido láctico",
+      "subzone": "Labios menores y vestíbulo vulvar (zonas internas húmedas)",
+      "description": "Mayor abundancia en zonas internas de labios menores y vestíbulo vulvar por continuidad mucosal.",
+      "ecologicalRole": "Acidificación protectora del introito y vestíbulo.",
+      "clinicalContext": "Patrón normal observado en mujeres sanas en edad reproductiva.",
+      "source": {
+        "title": "Estudio comparativo de microbiota vulvar y piel abdominal en mujeres sanas",
+        "citation": "Scientific Reports, 2019 [12]",
+        "url": "https://doi.org/10.1038/s41598-019-53556-0"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [12]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "vulva-finegoldia-spp",
+      "regionId": "vulva",
+      "scientificName": "Finegoldia spp.",
+      "spanishName": "Finegoldia (e.g. Finegoldia magna)",
+      "synonyms": [
+        "Finegoldia magna en vulva"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Labios menores y pliegues internos",
+      "description": "Anaerobio comensal característico de las zonas mucocutáneas internas vulvares.",
+      "ecologicalRole": "Componente anaerobio comensal del epitelio mucocutáneo de transición.",
+      "clinicalContext": "Hallazgo fisiológico normal en mujeres asintomáticas.",
+      "source": {
+        "title": "Estudio comparativo de microbiota vulvar y piel abdominal en mujeres sanas",
+        "citation": "Scientific Reports, 2019 [12]",
+        "url": "https://doi.org/10.1038/s41598-019-53556-0"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [12]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "glans-corynebacterium-spp",
+      "regionId": "glans",
+      "scientificName": "Corynebacterium spp.",
+      "spanishName": "Corynebacterium del glande",
+      "synonyms": [
+        "Corinebacterias en glande"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos",
+      "subzone": "Epitelio del glande y surco coronal",
+      "description": "Colonizador aerobio/facultativo predominante en el glande, especialmente en varones circuncidados.",
+      "ecologicalRole": "Comensal protector de la superficie expuesta del glande.",
+      "clinicalContext": "Flora habitual comensal en penes sanos sin balanitis.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [15]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "glans-staphylococcus-spp",
+      "regionId": "glans",
+      "scientificName": "Staphylococcus spp.",
+      "spanishName": "Estafilococos del glande",
+      "synonyms": [
+        "S. epidermidis en glande"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Epitelio mucocutáneo del glande",
+      "description": "Comensales cutáneos frecuentes que colonizan la superficie del glande.",
+      "ecologicalRole": "Exclusión competitiva en el epitelio genital externo masculino.",
+      "clinicalContext": "Hallazgo comensal normal sin significación patológica.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [15]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "glans-anaerococcus-spp",
+      "regionId": "glans",
+      "scientificName": "Anaerococcus spp.",
+      "spanishName": "Anaerococcus (género)",
+      "synonyms": [
+        "Anaerococcus en glande"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Surco coronal y espacio subprepucial",
+      "description": "Anaerobios que prosperan en el microambiente protegido y húmedo del surco coronal.",
+      "ecologicalRole": "Integrantes anaerobios comensales del surco coronal en varones no circuncidados.",
+      "clinicalContext": "Presencia fisiológica normal en varones asintomáticos; disminuyen marcadamente tras circuncisión.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [15]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "glans-finegoldia-spp",
+      "regionId": "glans",
+      "scientificName": "Finegoldia spp.",
+      "spanishName": "Finegoldia (en glande)",
+      "synonyms": [
+        "Finegoldia magna en glande"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Surco coronal",
+      "description": "Cocos anaerobios presentes en el nicho del surco coronal y mucosa prepucial.",
+      "ecologicalRole": "Fermentadores comensales de la mucosa genital masculina.",
+      "clinicalContext": "Colonización comensal asintomática habitual.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [15]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "glans-peptoniphilus-spp",
+      "regionId": "glans",
+      "scientificName": "Peptoniphilus spp.",
+      "spanishName": "Peptoniphilus (género)",
+      "synonyms": [
+        "Peptoniphilus en glande"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Surco coronal",
+      "description": "Bacterias anaerobias que utilizan peptonas y aminoácidos como fuente de energía.",
+      "ecologicalRole": "Comensales anaerobios en el microambiente coronal.",
+      "clinicalContext": "Parte de la diversidad bacteriana genital fisiológica masculina.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [15]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "glans-prevotella-spp",
+      "regionId": "glans",
+      "scientificName": "Prevotella spp.",
+      "spanishName": "Prevotella (en glande)",
+      "synonyms": [
+        "Prevotella en surco coronal"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos",
+      "subzone": "Surco coronal",
+      "description": "Anaerobios abundantes en el espacio subprepucial de hombres no circuncidados.",
+      "ecologicalRole": "Metabolismo fermentativo en condiciones de baja tensión de oxígeno en el surco coronal.",
+      "clinicalContext": "Comensales comunes sin implicación infecciosa en ausencia de síntomas.",
+      "source": {
+        "title": "The Effects of Circumcision on the Penis Microbiome",
+        "citation": "Price et al., PLOS ONE, 2010 [15]",
+        "url": "https://doi.org/10.1371/journal.pone.0008422"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [15]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "penis-corynebacterium-spp",
+      "regionId": "penis",
+      "scientificName": "Corynebacterium spp.",
+      "spanishName": "Corynebacterium de la piel del pene",
+      "synonyms": [
+        "Corinebacterias del eje peneano"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos Gram-positivos pleomórficos",
+      "subzone": "Piel del cuerpo del pene",
+      "description": "Colonizadores predominantes en la piel queratinizada del cuerpo peneano.",
+      "ecologicalRole": "Bacterias comensales de la piel genital externa.",
+      "clinicalContext": "Flora cutánea fisiológica en varones sanos.",
+      "source": {
+        "title": "Estudio longitudinal de cambios en la composición del microbioma peneano",
+        "citation": "Estudio longitudinal del microbioma peneano, 2022 [16]"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [16]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "penis-staphylococcus-spp",
+      "regionId": "penis",
+      "scientificName": "Staphylococcus spp.",
+      "spanishName": "Estafilococos del cuerpo peneano",
+      "synonyms": [
+        "S. epidermidis en piel del pene"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos Gram-positivos en racimos",
+      "subzone": "Piel del cuerpo del pene",
+      "description": "Comensales cutáneos comunes sobre el eje del pene.",
+      "ecologicalRole": "Mantenimiento de la barrera cutánea frente a patógenos.",
+      "clinicalContext": "Hallazgo normal y no patogénico.",
+      "source": {
+        "title": "Estudio longitudinal de cambios en la composición del microbioma peneano",
+        "citation": "Estudio longitudinal del microbioma peneano, 2022 [16]"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [16]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "penis-anaerococcus-spp",
+      "regionId": "penis",
+      "scientificName": "Anaerococcus spp.",
+      "spanishName": "Anaerococcus (en piel del pene)",
+      "synonyms": [
+        "Anaerococcus peneano"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Piel del cuerpo peneano y prepucio",
+      "description": "Cocos anaerobios presentes en la piel genital externa.",
+      "ecologicalRole": "Componente de la microbiota bacteriana del pene.",
+      "clinicalContext": "Detección normal sin repercusión patológica.",
+      "source": {
+        "title": "Estudio longitudinal de cambios en la composición del microbioma peneano",
+        "citation": "Estudio longitudinal del microbioma peneano, 2022 [16]"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [16]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "penis-finegoldia-spp",
+      "regionId": "penis",
+      "scientificName": "Finegoldia spp.",
+      "spanishName": "Finegoldia (en piel del pene)",
+      "synonyms": [
+        "Finegoldia peneana"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Piel del cuerpo peneano",
+      "description": "Anaerobios que habitan la piel cutánea y mucocutánea genital.",
+      "ecologicalRole": "Integrante comensal de la piel genital.",
+      "clinicalContext": "Presencia habitual inocua en hombres asintomáticos.",
+      "source": {
+        "title": "Estudio longitudinal de cambios en la composición del microbioma peneano",
+        "citation": "Estudio longitudinal del microbioma peneano, 2022 [16]"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [16]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "penis-peptoniphilus-spp",
+      "regionId": "penis",
+      "scientificName": "Peptoniphilus spp.",
+      "spanishName": "Peptoniphilus (en piel del pene)",
+      "synonyms": [
+        "Peptoniphilus peneano"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Cocos anaerobios Gram-positivos",
+      "subzone": "Piel del cuerpo del pene",
+      "description": "Anaerobios que degradan peptonas en la piel genital masculina.",
+      "ecologicalRole": "Fermentadores comensales de la superficie cutánea.",
+      "clinicalContext": "Hallazgo comensal normal en penes sanos.",
+      "source": {
+        "title": "Estudio longitudinal de cambios en la composición del microbioma peneano",
+        "citation": "Estudio longitudinal del microbioma peneano, 2022 [16]"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [16]",
+      "isInitialCatalog": false
+    },
+    {
+      "id": "penis-prevotella-spp",
+      "regionId": "penis",
+      "scientificName": "Prevotella spp.",
+      "spanishName": "Prevotella (en piel del pene)",
+      "synonyms": [
+        "Prevotella peneana"
+      ],
+      "type": "bacteria",
+      "morphologyOrFamily": "Bacilos anaerobios Gram-negativos",
+      "subzone": "Piel del cuerpo del pene y prepucio",
+      "description": "Bacterias anaerobias comensales de la piel genital.",
+      "ecologicalRole": "Degradación de nutrientes en microambientes genitales.",
+      "clinicalContext": "Presencia comensal en varones asintomáticos.",
+      "source": {
+        "title": "Estudio longitudinal de cambios en la composición del microbioma peneano",
+        "citation": "Estudio longitudinal del microbioma peneano, 2022 [16]"
+      },
+      "reviewStatus": "confirmado_fuente",
+      "reviewStatusLabel": "Selección investigada [16]",
+      "isInitialCatalog": false
+    }
+  ],
+  "regions": {
+    "eye": {
+      "id": "eye",
+      "name": "Ojo",
+      "anatomicalTitle": "Superficie ocular y conjuntiva",
+      "group": "SUPERFICIE",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Conjuntiva bulbar",
+        "Conjuntiva tarsal",
+        "Película lagrimal preocular",
+        "Margen palpebral"
+      ],
+      "anatomicalClarification": "El rótulo se refiere a la superficie ocular externa, no al interior del globo ocular. Representación 3D pendiente.",
+      "pdfSection": "A1. Ojo: superficie ocular / conjuntiva",
+      "pdfEntryCount": 4
+    },
+    "mouth": {
+      "id": "mouth",
+      "name": "Boca",
+      "anatomicalTitle": "Cavidad oral y mucosas bucales",
+      "group": "SUPERFICIE",
+      "has3D": true,
+      "status3D": "available",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Dorso lingual",
+        "Superficie dental y placa supragingival",
+        "Surco gingival",
+        "Mucosa yugal",
+        "Saliva"
+      ],
+      "anatomicalClarification": "Superficie labial y bucal disponible en 3D. Distinguir subzonas orales de orofaringe; no todos los grupos son residentes universales.",
+      "pdfSection": "A2. Cavidad oral",
+      "pdfEntryCount": 17
+    },
+    "small_intestine": {
+      "id": "small_intestine",
+      "name": "Intestino delgado",
+      "anatomicalTitle": "Tracto entérico superior (duodeno, yeyuno, íleon)",
+      "group": "ESTRUCTURAS INTERNAS",
+      "has3D": true,
+      "status3D": "available",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Duodeno",
+        "Yeyuno",
+        "Íleon proximal",
+        "Íleon terminal"
+      ],
+      "anatomicalClarification": "Mallas 3D disponibles con encaje corporal orientativo. Las muestras fecales no representan fielmente todas sus comunidades.",
+      "pdfSection": "A3. Intestino delgado",
+      "pdfEntryCount": 6
+    },
+    "colon": {
+      "id": "colon",
+      "name": "Intestino grueso / Colon",
+      "anatomicalTitle": "Colon y ciego (16 entradas del catálogo oficial)",
+      "group": "ESTRUCTURAS INTERNAS",
+      "has3D": true,
+      "status3D": "available",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Ciego",
+        "Colon ascendente",
+        "Colon transverso",
+        "Colon descendente",
+        "Colon sigmoide",
+        "Luz cólica"
+      ],
+      "anatomicalClarification": "Malla 3D disponible en 4 porciones. Conserva exactamente las 16 entradas numeradas del catálogo del PDF.",
+      "pdfSection": "A4. Intestino grueso / colon (16 entradas)",
+      "pdfEntryCount": 16
+    },
+    "skin": {
+      "id": "skin",
+      "name": "Piel",
+      "anatomicalTitle": "Tegumento cutáneo general",
+      "group": "SUPERFICIE",
+      "has3D": true,
+      "status3D": "available",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Zonas grasas/sebáceas (rostro, pecho, espalda)",
+        "Zonas húmedas (axilas, pliegues)",
+        "Zonas secas (antebrazos, manos)",
+        "Pies"
+      ],
+      "anatomicalClarification": "Superficie externa completa en 3D. Distingue ambientes sebáceos, húmedos y secos. C. acnes unificado sin duplicar.",
+      "pdfSection": "A5. Piel",
+      "pdfEntryCount": 9
+    },
+    "urethra": {
+      "id": "urethra",
+      "name": "Uretra",
+      "anatomicalTitle": "Uretra distal anterior",
+      "group": "REGIÓN GENITOURINARIA",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Meato uretral externo",
+        "Fosa navicular",
+        "Uretra distal anterior"
+      ],
+      "anatomicalClarification": "Se refiere estrictamente a la uretra distal; no extrapolar al conjunto de las vías urinarias altas. Representación 3D pendiente.",
+      "pdfSection": "A6. Uretra",
+      "pdfEntryCount": 7
+    },
+    "vagina": {
+      "id": "vagina",
+      "name": "Vagina",
+      "anatomicalTitle": "Canal y mucosa vaginal",
+      "group": "REGIÓN GENITOURINARIA",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "female"
+      ],
+      "subzones": [
+        "Mucosa vaginal",
+        "Epitelio escamoso estratificado",
+        "Fondo de saco"
+      ],
+      "anatomicalClarification": "Diferenciada formalmente de la vulva. Requiere matices por edad y estado hormonal; presencia no equivale a infección. Representación 3D pendiente.",
+      "pdfSection": "A7. Vagina",
+      "pdfEntryCount": 8
+    },
+    "stomach": {
+      "id": "stomach",
+      "name": "Estómago",
+      "anatomicalTitle": "Mucosa y cavidad gástrica",
+      "group": "ESTRUCTURAS INTERNAS",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Cuerpo gástrico",
+        "Antro pilórico",
+        "Capa mucosa superficial"
+      ],
+      "anatomicalClarification": "Listado de referencia aportado; no se presenta como catálogo exhaustivo gástrico. Representación 3D pendiente.",
+      "pdfSection": "A8. Estómago",
+      "pdfEntryCount": 4
+    },
+    "ear": {
+      "id": "ear",
+      "name": "Oído",
+      "anatomicalTitle": "Conducto auditivo externo",
+      "group": "SUPERFICIE",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Meato acústico externo",
+        "Piel del canal auditivo",
+        "Capa ceruminosa"
+      ],
+      "anatomicalClarification": "Distingue el conducto auditivo externo del oído medio e interno. Representación 3D pendiente.",
+      "pdfSection": "A9. Oído",
+      "pdfEntryCount": 4
+    },
+    "nose": {
+      "id": "nose",
+      "name": "Nariz",
+      "anatomicalTitle": "Fosas nasales anteriores y vestíbulo",
+      "group": "SUPERFICIE",
+      "has3D": true,
+      "status3D": "available",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "subzones": [
+        "Vestíbulo nasal anterior",
+        "Vibrisas nasales",
+        "Mucosa nasal anterior"
+      ],
+      "anatomicalClarification": "Superficie nasal externa disponible en 3D. Distingue fosas anteriores de nasofaringe; colonización no equivale a infección.",
+      "pdfSection": "A10. Nariz",
+      "pdfEntryCount": 6
+    },
+    "vulva": {
+      "id": "vulva",
+      "name": "Vulva",
+      "anatomicalTitle": "Genitales externos femeninos",
+      "group": "REGIÓN GENITOURINARIA",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "female"
+      ],
+      "subzones": [
+        "Labios mayores",
+        "Labios menores",
+        "Vestíbulo vulvar"
+      ],
+      "anatomicalClarification": "Estructura diferenciada de la vagina. Mayor proporción de Corynebacterium y Staphylococcus en labios mayores. Representación 3D pendiente.",
+      "pdfSection": "Investigación complementaria (pág. 9, apartado 6)",
+      "pdfEntryCount": 4
+    },
+    "glans": {
+      "id": "glans",
+      "name": "Glande",
+      "anatomicalTitle": "Detalle anatómico aislado del glande",
+      "group": "REGIÓN GENITOURINARIA",
+      "has3D": true,
+      "status3D": "available",
+      "variants": [
+        "male"
+      ],
+      "subzones": [
+        "Epitelio mucocutáneo del glande",
+        "Surco coronal"
+      ],
+      "anatomicalClarification": "Pieza 3D detallada y aislada en el visor. Separado de la piel del cuerpo del pene y de la uretra.",
+      "pdfSection": "Investigación complementaria (pág. 9, apartado 8)",
+      "pdfEntryCount": 6
+    },
+    "penis": {
+      "id": "penis",
+      "name": "Pene",
+      "anatomicalTitle": "Piel externa del cuerpo del pene",
+      "group": "REGIÓN GENITOURINARIA",
+      "has3D": false,
+      "status3D": "pending",
+      "variants": [
+        "male"
+      ],
+      "subzones": [
+        "Cuerpo del pene (piel externa)",
+        "Prepucio (en no circuncidados)"
+      ],
+      "anatomicalClarification": "Diferenciado del glande y surco coronal. No extrapolable a la uretra. Representación 3D pendiente.",
+      "pdfSection": "Investigación complementaria (pág. 9, apartado 8)",
+      "pdfEntryCount": 6
+    }
+  }
+}

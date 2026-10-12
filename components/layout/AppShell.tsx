@@ -15,21 +15,22 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   const isOnboarding = pathname === "/onboarding";
   const isAdmin = pathname.startsWith("/admin");
+  const isPrueba = pathname.startsWith("/pruebas");
 
-  // Redirigir al onboarding SOLO si el perfil ya cargó, no está en /onboarding o /admin y el perfil está incompleto
+  // Redirigir al onboarding SOLO si el perfil ya cargó, no está en /onboarding, /admin o /pruebas y el perfil está incompleto
   useEffect(() => {
-    if (!isLoading && !isOnboarding && !isAdmin && !user.onboardingCompleted) {
+    if (!isLoading && !isOnboarding && !isAdmin && !isPrueba && !user.onboardingCompleted) {
       router.push("/onboarding");
     }
-  }, [isLoading, isOnboarding, isAdmin, user.onboardingCompleted, router]);
+  }, [isLoading, isOnboarding, isAdmin, isPrueba, user.onboardingCompleted, router]);
 
   // Si es una ruta administrativa, renderizar directamente su propio diseño sin shell de estudiante
   if (isAdmin) {
     return <>{children}</>;
   }
 
-  // Si el perfil ya cargó y el onboarding no está completado, mostrar estado de transición mientras redirige
-  if (!isLoading && !isOnboarding && !user.onboardingCompleted) {
+  // Si el perfil ya cargó y el onboarding no está completado, mostrar estado de transición mientras redirige (salvo en pruebas)
+  if (!isLoading && !isOnboarding && !isPrueba && !user.onboardingCompleted) {
     return (
       <div className="relative min-h-screen flex flex-col items-center justify-center overflow-x-hidden text-slate-100">
         <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">

@@ -1,0 +1,451 @@
+{
+  "schemaVersion": 1,
+  "units": "metres",
+  "axes": {
+    "up": "+Y",
+    "anterior": "+Z",
+    "subjectLeft": "+X"
+  },
+  "contentPlaceholder": "Microbiota documentada disponible",
+  "variants": {
+    "female": {
+      "label": "Femenina",
+      "file": "models/body-female.glb",
+      "height": 1.639374,
+      "status": "partial",
+      "pending": [
+        "vulva",
+        "vagina"
+      ]
+    },
+    "male": {
+      "label": "Masculina",
+      "file": "models/body-male.glb",
+      "height": 1.690031,
+      "status": "partial",
+      "pending": [
+        "penis"
+      ]
+    }
+  },
+  "assets": {
+    "small_intestine": {
+      "file": "models/small-intestine.glb",
+      "license": "CC-BY-4.0",
+      "source": "BodyParts3D 4.0",
+      "registration": "mm to metres, Blender translation (0, 0.100, 0.066); visual approximation"
+    },
+    "colon": {
+      "file": "models/colon.glb",
+      "license": "CC-BY-SA-4.0",
+      "source": "Z-Anatomy / BodyParts3D"
+    },
+    "glans": {
+      "file": "models/glans-detail.glb",
+      "license": "CC-BY-SA-4.0",
+      "source": "Z-Anatomy / BodyParts3D",
+      "registration": "isolated detail; not registered to body"
+    }
+  },
+  "camera": {
+    "fov": 36,
+    "whole": {
+      "target": [
+        0,
+        0.85,
+        0
+      ],
+      "distance": 3.08
+    },
+    "internal": {
+      "target": [
+        0,
+        1.0,
+        0.02
+      ],
+      "distance": 1.2
+    }
+  },
+  "regions": [
+    {
+      "id": "skin",
+      "label": "Piel",
+      "number": "01",
+      "group": "SUPERFICIE",
+      "layer": "surface",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "available",
+      "badge": "Superficie disponible",
+      "description": "Superficie corporal externa. Selección global de la piel del modelo.",
+      "objects": [
+        "body_surface"
+      ],
+      "marker": [
+        -0.24,
+        1.13,
+        0.045
+      ],
+      "labelOffset": [
+        -112,
+        12
+      ],
+      "camera": {
+        "target": [
+          0,
+          0.85,
+          0
+        ],
+        "distance": 3.08
+      },
+      "highlight": {
+        "type": "whole"
+      }
+    },
+    {
+      "id": "mouth",
+      "label": "Boca",
+      "number": "02",
+      "group": "SUPERFICIE",
+      "layer": "surface",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "available",
+      "badge": "Región externa disponible",
+      "description": "Detalle de labios y abertura oral en la superficie. No incluye una cavidad oral interna ni mucosa separada.",
+      "objects": [
+        "body_surface"
+      ],
+      "marker": {
+        "female": [
+          0,
+          1.464,
+          0.131
+        ],
+        "male": [
+          0,
+          1.513,
+          0.137
+        ]
+      },
+      "labelOffset": [
+        -106,
+        24
+      ],
+      "camera": {
+        "target": {
+          "female": [
+            0,
+            1.49,
+            0.04
+          ],
+          "male": [
+            0,
+            1.54,
+            0.04
+          ]
+        },
+        "distance": 0.62
+      },
+      "highlight": {
+        "type": "surfacePatch",
+        "radius": [
+          0.034,
+          0.018,
+          0.046
+        ]
+      }
+    },
+    {
+      "id": "nose",
+      "label": "Nariz",
+      "number": "03",
+      "group": "SUPERFICIE",
+      "layer": "surface",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "available",
+      "badge": "Región externa disponible",
+      "description": "Detalle de nariz externa y región de las narinas. No incluye las cavidades nasales internas.",
+      "objects": [
+        "body_surface"
+      ],
+      "marker": {
+        "female": [
+          0,
+          1.501,
+          0.158
+        ],
+        "male": [
+          0,
+          1.551,
+          0.168
+        ]
+      },
+      "labelOffset": [
+        108,
+        -22
+      ],
+      "camera": {
+        "target": {
+          "female": [
+            0,
+            1.51,
+            0.04
+          ],
+          "male": [
+            0,
+            1.56,
+            0.04
+          ]
+        },
+        "distance": 0.62
+      },
+      "highlight": {
+        "type": "surfacePatch",
+        "radius": [
+          0.026,
+          0.035,
+          0.055
+        ]
+      }
+    },
+    {
+      "id": "small_intestine",
+      "label": "Intestino delgado",
+      "number": "04",
+      "group": "ESTRUCTURAS INTERNAS",
+      "layer": "internal",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "available",
+      "badge": "Duodeno · yeyuno · íleon",
+      "description": "Mallas de BodyParts3D. Posición orientativa dentro de ambos cuerpos; no es un registro anatómico individual. Colores de identificación.",
+      "objects": [
+        "small_intestine_duodenum",
+        "small_intestine_jejunum",
+        "small_intestine_ileum"
+      ],
+      "marker": [
+        0.035,
+        0.99,
+        0.1
+      ],
+      "labelOffset": [
+        118,
+        24
+      ],
+      "camera": {
+        "target": [
+          0,
+          1.01,
+          0.015
+        ],
+        "distance": 0.84
+      },
+      "highlight": {
+        "type": "objects"
+      }
+    },
+    {
+      "id": "colon",
+      "label": "Colon",
+      "number": "05",
+      "group": "ESTRUCTURAS INTERNAS",
+      "layer": "internal",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "available",
+      "badge": "Cuatro porciones disponibles",
+      "description": "Colon ascendente, transverso, descendente y sigmoide de Z-Anatomy. Encaje corporal orientativo; colores de identificación.",
+      "objects": [
+        "colon_ascending",
+        "colon_transverse",
+        "colon_descending",
+        "colon_sigmoid"
+      ],
+      "marker": [
+        -0.09,
+        1.07,
+        0.065
+      ],
+      "labelOffset": [
+        -100,
+        -30
+      ],
+      "camera": {
+        "target": [
+          0,
+          0.98,
+          0.015
+        ],
+        "distance": 0.86
+      },
+      "highlight": {
+        "type": "objects"
+      }
+    },
+    {
+      "id": "vulva",
+      "label": "Vulva",
+      "number": "06",
+      "group": "REGIÓN GENITAL",
+      "layer": "surface",
+      "variants": [
+        "female"
+      ],
+      "status": "pending",
+      "badge": "Modelo pendiente",
+      "description": "No se encontró una malla verificable de vulva en los recursos descargados. La base corporal no representa esta estructura con detalle suficiente.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    },
+    {
+      "id": "vagina",
+      "label": "Vagina",
+      "number": "07",
+      "group": "REGIÓN GENITAL",
+      "layer": "internal",
+      "variants": [
+        "female"
+      ],
+      "status": "pending",
+      "badge": "Modelo pendiente",
+      "description": "Falta una malla del canal vaginal. Se conserva como región distinta de la vulva y no se representa con geometría sustitutiva.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    },
+    {
+      "id": "penis",
+      "label": "Pene",
+      "number": "06",
+      "group": "REGIÓN GENITAL",
+      "layer": "surface",
+      "variants": [
+        "male"
+      ],
+      "status": "pending",
+      "badge": "Superficie externa pendiente",
+      "description": "La base masculina carece de pene externo. Se conserva únicamente un detalle aislado del glande; no completa la superficie peneana.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    },
+    {
+      "id": "glans",
+      "label": "Región del glande",
+      "number": "07",
+      "group": "REGIÓN GENITAL",
+      "layer": "detail",
+      "variants": [
+        "male"
+      ],
+      "status": "available",
+      "badge": "Detalle aislado disponible",
+      "description": "Glande de Z-Anatomy presentado como estructura aislada. No está unido a la base masculina y no representa un pene externo completo.",
+      "objects": [
+        "glans_penis"
+      ],
+      "marker": [
+        0,
+        0.76,
+        0.098
+      ],
+      "labelOffset": [
+        93,
+        0
+      ],
+      "camera": {
+        "target": [
+          0,
+          0.76,
+          0.0936
+        ],
+        "distance": 0.15
+      },
+      "highlight": {
+        "type": "objects"
+      }
+    },
+    {
+      "id": "eye",
+      "label": "Ojo (superficie ocular)",
+      "number": "08",
+      "group": "SUPERFICIE",
+      "layer": "surface",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "pending",
+      "badge": "Representación 3D pendiente",
+      "description": "Superficie ocular y conjuntiva. No se refiere al interior del globo ocular. Representación 3D pendiente.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    },
+    {
+      "id": "ear",
+      "label": "Oído (conducto externo)",
+      "number": "09",
+      "group": "SUPERFICIE",
+      "layer": "surface",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "pending",
+      "badge": "Representación 3D pendiente",
+      "description": "Conducto auditivo externo. Se distingue del oído medio e interno. Representación 3D pendiente.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    },
+    {
+      "id": "stomach",
+      "label": "Estómago",
+      "number": "10",
+      "group": "ESTRUCTURAS INTERNAS",
+      "layer": "internal",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "pending",
+      "badge": "Representación 3D pendiente",
+      "description": "Mucosa y cavidad gástrica. Muestreo de referencia. Representación 3D pendiente.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    },
+    {
+      "id": "urethra",
+      "label": "Uretra (distal)",
+      "number": "11",
+      "group": "REGIÓN GENITOURINARIA",
+      "layer": "surface",
+      "variants": [
+        "female",
+        "male"
+      ],
+      "status": "pending",
+      "badge": "Representación 3D pendiente",
+      "description": "Meato y uretra distal. No extrapolar al conjunto de vías urinarias. Representación 3D pendiente.",
+      "objects": [],
+      "marker": null,
+      "camera": null
+    }
+  ]
+}

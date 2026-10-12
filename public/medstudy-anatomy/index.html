@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark"><meta name="theme-color" content="#101019">
+  <title>MedStudy · Microbiota del cuerpo humano</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Crect width='50' height='50' rx='14' fill='%238d72ec'/%3E%3Cpath d='M12 34V16l13 13 13-13v18' fill='none' stroke='white' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+</head>
+<body>
+  <a class="skip" href="#regions">Ir a las regiones</a>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="MedStudy, inicio del explorador"><span class="brand-mark" aria-hidden="true">M</span>MedStudy<span class="brand-dot">.</span></a>
+    <div class="breadcrumb">MICROBIOLOGÍA <span>/</span> ATLAS INTERACTIVO</div>
+    <button id="about" class="quiet">Fuentes y alcance <span aria-hidden="true">↗</span></button>
+  </header>
+  <main>
+    <section class="heading">
+      <div><div class="eyebrow"><span></span> EXPLORA POR REGIÓN</div><h1>Microbiota del cuerpo humano<span>.</span></h1><p>Un mapa para explorar el cuerpo, región por región.</p></div>
+      <div class="version"><span class="status-dot"></span> DEMOSTRACIÓN LOCAL <small>Modelos parciales · Contenido en preparación</small></div>
+    </section>
+    <div class="workspace">
+      <aside class="region-sidebar" aria-label="Selección de regiones">
+        <div class="sidebar-head"><h2>Regiones</h2><span id="region-count" class="count"></span></div>
+        <p class="muted sidebar-caption">Elige una zona para acercarte.</p>
+        <nav id="regions" aria-label="Regiones del cuerpo" tabindex="-1"></nav>
+        <div class="region-key"><span class="key-dot"></span> Disponible <span class="key-ring"></span> Pendiente</div>
+        <div class="sidebar-note"><span aria-hidden="true">ⓘ</span><p>Los marcadores indican regiones de exploración, no la ubicación de microorganismos.</p></div>
+      </aside>
+      <section class="viewer" aria-label="Visor anatómico interactivo">
+        <div class="viewer-top">
+          <div class="segmented modes" role="group" aria-label="Capa anatómica"><button id="surface" aria-pressed="true">Superficie</button><button id="internal" aria-pressed="false">Estructuras internas</button></div>
+          <div class="segmented variants" role="group" aria-label="Variante corporal"><button id="female" aria-pressed="true">Femenina</button><button id="male" aria-pressed="false">Masculina</button></div>
+        </div>
+        <div id="stage" tabindex="0" role="region" aria-label="Modelo 3D. Flechas para girar, más y menos para acercar, tecla R para restablecer." aria-describedby="keyboard-help">
+          <div class="stage-grid" aria-hidden="true"></div>
+          <div class="stage-caption"><span id="scene-label">VISTA ANTERIOR</span><small id="scene-sublabel">Superficie corporal</small></div>
+          <div class="axis" aria-hidden="true"><i></i><span>Y</span><b>X</b></div>
+          <canvas id="canvas" aria-hidden="true"></canvas>
+          <svg id="leader-lines" aria-hidden="true"></svg><div id="markers"></div>
+          <div id="load-state" role="status" aria-live="polite">Preparando el modelo 3D…</div>
+          <div class="zoom-controls" role="group" aria-label="Acercamiento"><button id="zoom-in" aria-label="Acercar">+</button><span></span><button id="zoom-out" aria-label="Alejar">−</button></div>
+          <div class="stage-bottom"><span class="drag-hint"><span aria-hidden="true">↔</span> Arrastra para girar · Pellizca para acercar</span><button id="full-body" class="quiet">↙ Cuerpo completo</button></div>
+        </div>
+        <div class="viewer-toolbar"><div class="views" role="group" aria-label="Orientación"><button id="front" aria-pressed="true">Frontal</button><button id="back" aria-pressed="false">Posterior</button><button id="reset" aria-label="Restablecer cámara">↺ <span>Restablecer</span></button></div><span class="model-status" id="model-status">BASE ANATÓMICA PARCIAL</span></div>
+      </section>
+      <aside id="detail-panel" class="detail-panel" aria-labelledby="detail-title">
+        <div class="panel-top"><span class="eyebrow" id="detail-kicker">TU EXPLORACIÓN</span><button id="close-panel" class="icon-button" aria-label="Cerrar detalle" hidden>×</button></div>
+        <div id="empty-panel"><div class="orbit-icon" aria-hidden="true"><span>+</span></div><h2 id="detail-title">Cada región,<br>un punto de partida.</h2><p>Selecciona un marcador sobre el cuerpo o una región de la lista.</p><div class="instruction"><b>01</b><span>Elige una región</span></div><div class="instruction"><b>02</b><span>Explora su vista ampliada</span></div><div class="instruction"><b>03</b><span>Vuelve al cuerpo completo</span></div></div>
+        <div id="selected-panel" hidden><span id="detail-number" class="detail-number"></span><h2 id="selected-title" tabindex="-1"></h2><span id="detail-badge" class="badge"></span><p id="detail-description"></p><div id="content-placeholder" class="content-placeholder" hidden><span class="tiny-symbol" aria-hidden="true">✧</span><p>Exploración anatómica activa</p></div><button id="focus-region" class="primary">Centrar región <span aria-hidden="true">↗</span></button><button id="return-body" class="text-button">Volver al cuerpo completo</button></div>
+        <div class="panel-bottom"><span class="small-label">ALCANCE DE ESTA DEMO</span><p id="scope-note">Superficies femenina y masculina disponibles. Las estructuras pendientes se indican en la lista.</p><p class="medical-note">Sin validación médica.</p></div>
+      </aside>
+    </div>
+    <footer><span><span class="footer-dot"></span>Explorador anatómico · MedStudy</span><p id="keyboard-help">Teclado en el visor: flechas para girar · + / − para zoom · R para restablecer</p><button id="credits-footer" class="quiet">Créditos y licencias</button></footer>
+    <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+  </main>
+  <dialog id="credits"><div class="dialog-heading"><h2>Fuentes y alcance</h2><button id="close-credits" class="icon-button" aria-label="Cerrar fuentes">×</button></div><div id="credits-content"></div></dialog>
+  <noscript><p class="noscript">Esta demostración necesita JavaScript para interactuar. Las regiones previstas son piel, boca, nariz, intestino delgado, colon, vulva, vagina, pene y glande. Consulta docs/ESTADO-Y-PRUEBAS.md para conocer su disponibilidad.</p></noscript>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
