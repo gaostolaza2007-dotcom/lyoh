@@ -95,7 +95,7 @@ export default function DashboardPage() {
     {
       id: "microbiologia",
       title: "Agentes Infecciosos",
-      desc: "Microbiología clínica de 140 fichas, morfología estructural y microbiota de los nichos corporales.",
+      desc: "Microbiología clínica de 140 fichas, parasitología médica estructurada y atlas 3D de microbiota corporal.",
       href: "/agentes-infecciosos",
       icon: Bug,
       color: CLINICAL_MODULES.microbiologia.color,
@@ -104,8 +104,8 @@ export default function DashboardPage() {
       progress: user.unitProgress["microbiologia_patogenos"] || 0,
       subsections: [
         { label: "Microbiología", href: "/agentes-infecciosos/microbiologia", icon: Bug },
-        { label: "Morfología (En prep.)", href: "/agentes-infecciosos/morfologia", icon: Target },
-        { label: "Microbiota (En prep.)", href: "/agentes-infecciosos/microbiota", icon: BookOpen },
+        { label: "Parasitología", href: "/agentes-infecciosos/parasitologia", icon: Target },
+        { label: "Microbiota", href: "/agentes-infecciosos/microbiota", icon: BookOpen },
       ],
     },
   ];

@@ -43,3 +43,7 @@ next-env.d.ts
 
 # Scripts temporales de prueba y verificación local
 /scripts/
+
+# Capturas de pantalla temporales en raíz
+/hub*.png
+

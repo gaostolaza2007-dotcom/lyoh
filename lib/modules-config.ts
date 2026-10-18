@@ -74,12 +74,13 @@ export const CLINICAL_MODULES: Record<string, ModuleDefinition> = {
     name: "Agentes Infecciosos",
     shortName: "Agentes Infecciosos",
     href: "/agentes-infecciosos",
-    description: "Estudio integral de microorganismos: microbiología clínica con 140 fichas, morfología estructural y microbiota corporal.",
+    description: "Estudio integral de microorganismos: microbiología clínica con 140 fichas, parasitología médica estructurada en 6 apartados y atlas 3D de microbiota corporal.",
     color: "from-cyan-600 to-teal-600",
     glow: "cyan",
     enabled: true,
     units: [
       { id: "microbiologia_patogenos", name: "Microbiología: Catálogo de Patógenos", shortLabel: "Catálogo de 140 Fichas", type: "catalog" },
+      { id: "parasitologia_general", name: "Parasitología Médica: 6 Apartados", shortLabel: "Parasitología", type: "interactive" },
     ],
   },
 };
