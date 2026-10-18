@@ -26,6 +26,31 @@ export interface ModuleDefinition {
 }
 
 export const CLINICAL_MODULES: Record<string, ModuleDefinition> = {
+  microbiologia: {
+    id: "microbiologia",
+    name: "Agentes Infecciosos",
+    shortName: "Agentes Infecciosos",
+    href: "/agentes-infecciosos",
+    description: "Estudio integral de microorganismos: microbiología clínica con 140 fichas, parasitología médica estructurada en 6 apartados y atlas 3D de microbiota corporal.",
+    color: "from-cyan-600 to-teal-600",
+    glow: "cyan",
+    enabled: true,
+    units: [
+      { id: "microbiologia_patogenos", name: "Microbiología: Catálogo de Patógenos", shortLabel: "Catálogo de 140 Fichas", type: "catalog" },
+      { id: "parasitologia_general", name: "Parasitología Médica: 6 Apartados", shortLabel: "Parasitología", type: "interactive" },
+    ],
+  },
+  oftalmologia: {
+    id: "oftalmologia",
+    name: "Oftalmología",
+    shortName: "Oftalmología",
+    href: "/oftalmologia",
+    description: "Explora el sistema visual y conoce los instrumentos, imágenes y exámenes de la especialidad.",
+    color: "from-sky-600 to-blue-600",
+    glow: "blue",
+    enabled: true,
+    units: [], // Prototipo educativo en preparación
+  },
   anatomia: {
     id: "anatomia",
     name: "Anatomía Humana",
@@ -67,20 +92,6 @@ export const CLINICAL_MODULES: Record<string, ModuleDefinition> = {
     comingSoonMessage: "Este módulo estará disponible próximamente",
     units: [
       { id: "histologia_tejidos", name: "Histología: Microscopía Glomerular", shortLabel: "Microscopía Glomerular", type: "interactive" },
-    ],
-  },
-  microbiologia: {
-    id: "microbiologia",
-    name: "Agentes Infecciosos",
-    shortName: "Agentes Infecciosos",
-    href: "/agentes-infecciosos",
-    description: "Estudio integral de microorganismos: microbiología clínica con 140 fichas, parasitología médica estructurada en 6 apartados y atlas 3D de microbiota corporal.",
-    color: "from-cyan-600 to-teal-600",
-    glow: "cyan",
-    enabled: true,
-    units: [
-      { id: "microbiologia_patogenos", name: "Microbiología: Catálogo de Patógenos", shortLabel: "Catálogo de 140 Fichas", type: "catalog" },
-      { id: "parasitologia_general", name: "Parasitología Médica: 6 Apartados", shortLabel: "Parasitología", type: "interactive" },
     ],
   },
 };

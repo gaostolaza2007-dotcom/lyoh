@@ -188,16 +188,16 @@ export default function MicrobiotaDelCuerpoPublicPage() {
           <span>Volver a Agentes Infecciosos</span>
         </Link>
 
-        <div className="flex items-center space-x-2 text-xs text-slate-400">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs text-slate-400">
           <Link href="/" className="hover:text-slate-300">Dashboard</Link>
           <span>/</span>
           <Link href="/agentes-infecciosos" className="hover:text-slate-300">Agentes Infecciosos</Link>
           <span>/</span>
-          <span className="text-emerald-400 font-medium">Microbiota del cuerpo</span>
+          <span className="text-emerald-400 font-medium">Microbioma del cuerpo humano</span>
         </div>
       </div>
 
-      {/* Encabezado Principal del Módulo de Microbiota */}
+      {/* Encabezado Principal del Módulo de Microbioma */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         <div className="space-y-2.5">
           <div className="flex flex-wrap items-center gap-2">
@@ -217,8 +217,8 @@ export default function MicrobiotaDelCuerpoPublicPage() {
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Microbiota del Cuerpo Humano
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight break-words">
+            Microbioma del cuerpo humano
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-4xl leading-relaxed">

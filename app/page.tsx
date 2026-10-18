@@ -28,7 +28,13 @@ import {
   GraduationCap,
   Building2,
   Edit3,
-  Lock
+  Lock,
+  Eye,
+  Activity,
+  Wrench,
+  Scan,
+  Compass,
+  AlertTriangle
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -47,6 +53,42 @@ export default function DashboardPage() {
   ).length;
 
   const modules = [
+    {
+      id: "microbiologia",
+      title: "Agentes Infecciosos",
+      desc: "Microbiología clínica de 140 fichas, parasitología médica estructurada y atlas 3D del microbioma corporal.",
+      href: "/agentes-infecciosos",
+      icon: Bug,
+      color: CLINICAL_MODULES.microbiologia.color,
+      glow: CLINICAL_MODULES.microbiologia.glow,
+      enabled: CLINICAL_MODULES.microbiologia.enabled,
+      progress: user.unitProgress["microbiologia_patogenos"] || 0,
+      subsections: [
+        { label: "Microbiología", href: "/agentes-infecciosos/microbiologia", icon: Bug },
+        { label: "Parasitología", href: "/agentes-infecciosos/parasitologia", icon: Target },
+        { label: "Microbioma del cuerpo humano", href: "/agentes-infecciosos/microbiota", icon: BookOpen },
+      ],
+    },
+    {
+      id: "oftalmologia",
+      title: CLINICAL_MODULES.oftalmologia.name,
+      desc: CLINICAL_MODULES.oftalmologia.description,
+      href: CLINICAL_MODULES.oftalmologia.href,
+      icon: Eye,
+      color: CLINICAL_MODULES.oftalmologia.color,
+      glow: CLINICAL_MODULES.oftalmologia.glow,
+      enabled: CLINICAL_MODULES.oftalmologia.enabled,
+      badge: "Prototipo educativo",
+      progress: null, // Prototipo sin avances numéricos falsos
+      subsections: [
+        { label: "Sistema visual", href: "/oftalmologia/sistema-visual", icon: Eye },
+        { label: "Exploración", href: "/oftalmologia/exploracion", icon: Activity },
+        { label: "Instrumentos", href: "/oftalmologia/instrumentos", icon: Wrench },
+        { label: "Imagenología", href: "/oftalmologia/imagenologia", icon: Scan },
+        { label: "Campo visual", href: "/oftalmologia/campo-visual", icon: Compass },
+        { label: "Alteraciones", href: "/oftalmologia/alteraciones", icon: AlertTriangle },
+      ],
+    },
     {
       id: "anatomia",
       title: CLINICAL_MODULES.anatomia.name,
@@ -90,22 +132,6 @@ export default function DashboardPage() {
       progress: user.unitProgress["histologia_tejidos"] || 0,
       subsections: [
         { label: "Glomérulo Renal (H&E)", href: "/histologia", icon: Target },
-      ],
-    },
-    {
-      id: "microbiologia",
-      title: "Agentes Infecciosos",
-      desc: "Microbiología clínica de 140 fichas, parasitología médica estructurada y atlas 3D de microbiota corporal.",
-      href: "/agentes-infecciosos",
-      icon: Bug,
-      color: CLINICAL_MODULES.microbiologia.color,
-      glow: CLINICAL_MODULES.microbiologia.glow,
-      enabled: CLINICAL_MODULES.microbiologia.enabled,
-      progress: user.unitProgress["microbiologia_patogenos"] || 0,
-      subsections: [
-        { label: "Microbiología", href: "/agentes-infecciosos/microbiologia", icon: Bug },
-        { label: "Parasitología", href: "/agentes-infecciosos/parasitologia", icon: Target },
-        { label: "Microbiota", href: "/agentes-infecciosos/microbiota", icon: BookOpen },
       ],
     },
   ];
@@ -312,10 +338,10 @@ export default function DashboardPage() {
                       return (
                         <span
                           key={sub.label}
-                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900/40 border border-white/5 text-xs font-medium text-slate-500 cursor-not-allowed"
+                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900/40 border border-white/5 text-xs font-medium text-slate-500 cursor-not-allowed max-w-full"
                         >
-                          <SubIcon className="w-3.5 h-3.5 text-slate-500" />
-                          <span>{sub.label}</span>
+                          <SubIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                          <span className="break-words leading-tight">{sub.label}</span>
                         </span>
                       );
                     })}
@@ -341,9 +367,16 @@ export default function DashboardPage() {
                         <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors">
                           {mod.title}
                         </h3>
-                        <span className="text-xs text-purple-300 font-medium">
-                          Nivel de Maestría: {mod.progress}%
-                        </span>
+                        {mod.progress !== null ? (
+                          <span className="text-xs text-purple-300 font-medium">
+                            Nivel de Maestría: {mod.progress}%
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1.5 text-xs text-sky-300 font-medium">
+                            <Sparkles className="w-3 h-3 text-sky-400" />
+                            <span>{mod.badge || "Prototipo educativo"}</span>
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -359,7 +392,14 @@ export default function DashboardPage() {
                     {mod.desc}
                   </p>
 
-                  <ProgressBar value={mod.progress} color="purple" className="mb-4" />
+                  {mod.progress !== null ? (
+                    <ProgressBar value={mod.progress} color="purple" className="mb-4" />
+                  ) : (
+                    <div className="mb-4 p-2.5 rounded-xl bg-sky-950/40 border border-sky-500/20 text-sky-300 text-xs flex items-center space-x-2">
+                      <Sparkles className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                      <span>Estructura inicial modular · 6 Apartados en preparación</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Subsecciones con accesos directos */}
@@ -370,10 +410,10 @@ export default function DashboardPage() {
                       <Link
                         key={sub.label}
                         href={sub.href}
-                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-950/60 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white transition-all"
+                        className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-950/60 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white transition-all max-w-full"
                       >
-                        <SubIcon className="w-3.5 h-3.5 text-purple-400" />
-                        <span>{sub.label}</span>
+                        <SubIcon className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                        <span className="break-words leading-tight">{sub.label}</span>
                       </Link>
                     );
                   })}

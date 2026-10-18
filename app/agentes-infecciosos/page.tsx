@@ -71,7 +71,7 @@ export default function AgentesInfecciososHubPage() {
     },
     {
       id: "microbiota",
-      title: "Microbiota del cuerpo",
+      title: "Microbioma del cuerpo humano",
       subtitle: "Explora los microorganismos asociados a distintas zonas del cuerpo",
       desc: "Cartografía interactiva en 3D y catálogo completo de 97 microorganismos comensales y mutualistas por región corporal (piel, boca, colon, intestino delgado y más), con funciones biológicas de barrera y referencias científicas.",
       href: "/agentes-infecciosos/microbiota",
@@ -81,7 +81,7 @@ export default function AgentesInfecciososHubPage() {
       color: "from-emerald-500/20 to-teal-500/10",
       borderColor: "border-emerald-500/30",
       iconColor: "text-emerald-400",
-      buttonText: "Explorar microbiota",
+      buttonText: "Explorar microbioma",
       features: [
         "Atlas 3D con variantes anatómicas",
         "97 fichas educativas documentadas",
@@ -134,8 +134,8 @@ export default function AgentesInfecciososHubPage() {
                 <span>140 Fichas en Microbiología</span>
               </span>
               <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Morfología y Microbiota en preparación</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Microbioma · Atlas 3D y 97 Fichas</span>
               </span>
             </div>
           </div>
@@ -187,7 +187,7 @@ export default function AgentesInfecciososHubPage() {
 
                 {/* Título y subtítulo */}
                 <div className="space-y-1">
-                  <h2 className="text-xl font-bold text-white tracking-tight">
+                  <h2 className="text-xl font-bold text-white tracking-tight break-words">
                     {sec.title}
                   </h2>
                   <p className="text-xs font-medium text-slate-300">

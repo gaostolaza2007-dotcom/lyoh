@@ -13,7 +13,8 @@ import {
   Bug, 
   UserCircle2, 
   Sparkles,
-  Lock
+  Lock,
+  Eye
 } from "lucide-react";
 
 interface SidebarProps {
@@ -35,6 +36,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       bgGlow: "group-hover:bg-blue-500/10",
       progress: null,
       isEnabled: true,
+    },
+    {
+      moduleId: "microbiologia",
+      name: "Agentes infecciosos",
+      href: "/agentes-infecciosos",
+      icon: Bug,
+      color: "text-cyan-400",
+      bgGlow: "group-hover:bg-cyan-500/10",
+      progress: user.unitProgress["microbiologia_patogenos"] || 0,
+      isEnabled: isModuleEnabled("microbiologia"),
+    },
+    {
+      moduleId: "oftalmologia",
+      name: "Oftalmología",
+      href: "/oftalmologia",
+      icon: Eye,
+      color: "text-sky-400",
+      bgGlow: "group-hover:bg-sky-500/10",
+      progress: null,
+      badge: "Prototipo",
+      isEnabled: isModuleEnabled("oftalmologia"),
     },
     {
       moduleId: "anatomia",
@@ -65,16 +87,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       bgGlow: "group-hover:bg-pink-500/10",
       progress: user.unitProgress["histologia_tejidos"] || 0,
       isEnabled: isModuleEnabled("histologia"),
-    },
-    {
-      moduleId: "microbiologia",
-      name: "Agentes infecciosos",
-      href: "/agentes-infecciosos",
-      icon: Bug,
-      color: "text-cyan-400",
-      bgGlow: "group-hover:bg-cyan-500/10",
-      progress: user.unitProgress["microbiologia_patogenos"] || 0,
-      isEnabled: isModuleEnabled("microbiologia"),
     },
     {
       moduleId: null,
@@ -165,11 +177,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                   </span>
                 </div>
 
-                {item.progress !== null && (
+                {item.badge ? (
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30 lg:hidden xl:inline">
+                    {item.badge}
+                  </span>
+                ) : item.progress !== null ? (
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900/80 text-slate-400 border border-white/5 lg:hidden xl:inline">
                     {item.progress}%
                   </span>
-                )}
+                ) : null}
               </Link>
             );
           })}

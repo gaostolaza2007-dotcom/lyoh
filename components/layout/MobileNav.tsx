@@ -10,6 +10,7 @@ import {
   FlaskConical, 
   Microscope, 
   Bug,
+  Eye,
   Lock
 } from "lucide-react";
 
@@ -18,10 +19,11 @@ export const MobileNav: React.FC = () => {
 
   const items = [
     { moduleId: null, name: "Inicio", href: "/", icon: Home, isEnabled: true },
+    { moduleId: "microbiologia", name: "Agentes", href: "/agentes-infecciosos", icon: Bug, isEnabled: isModuleEnabled("microbiologia") },
+    { moduleId: "oftalmologia", name: "Oftalmo", href: "/oftalmologia", icon: Eye, isEnabled: isModuleEnabled("oftalmologia") },
     { moduleId: "anatomia", name: "Anatomía", href: "/anatomia", icon: Layers, isEnabled: isModuleEnabled("anatomia") },
     { moduleId: "bioquimica", name: "Bioquímica", href: "/bioquimica", icon: FlaskConical, isEnabled: isModuleEnabled("bioquimica") },
     { moduleId: "histologia", name: "Histología", href: "/histologia", icon: Microscope, isEnabled: isModuleEnabled("histologia") },
-    { moduleId: "microbiologia", name: "Agentes", href: "/agentes-infecciosos", icon: Bug, isEnabled: isModuleEnabled("microbiologia") },
   ];
 
   return (
@@ -39,7 +41,7 @@ export const MobileNav: React.FC = () => {
               <div
                 key={item.name}
                 aria-disabled="true"
-                className="flex flex-col items-center justify-center py-2 px-2 rounded-xl min-w-[54px] opacity-40 cursor-not-allowed select-none"
+                className="flex flex-col items-center justify-center py-1.5 sm:py-2 px-1 sm:px-2 rounded-xl min-w-[46px] sm:min-w-[54px] opacity-40 cursor-not-allowed select-none"
               >
                 <div className="relative p-1 rounded-lg text-slate-500">
                   <Icon className="w-5 h-5" />
@@ -47,7 +49,7 @@ export const MobileNav: React.FC = () => {
                     <Lock className="w-2 h-2" />
                   </div>
                 </div>
-                <span className="text-[9px] mt-0.5 tracking-tight font-medium text-slate-500 truncate max-w-[50px]">
+                <span className="text-[9px] mt-0.5 tracking-tight font-medium text-slate-500 truncate max-w-[46px]">
                   Próx.
                 </span>
               </div>
@@ -59,7 +61,7 @@ export const MobileNav: React.FC = () => {
               key={item.name}
               href={item.href}
               className={`
-                flex flex-col items-center justify-center py-2 px-3 rounded-xl min-w-[58px] touch-target
+                flex flex-col items-center justify-center py-1.5 sm:py-2 px-1 sm:px-2.5 rounded-xl min-w-[48px] sm:min-w-[58px] touch-target
                 transition-all duration-150 active:scale-95
                 ${isActive ? "text-purple-400" : "text-slate-400 hover:text-slate-200"}
               `}
