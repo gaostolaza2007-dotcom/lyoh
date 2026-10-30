@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { 
@@ -226,17 +227,28 @@ export default function AdminDashboardPage() {
         
         {/* Encabezado Superior */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
-          <div>
-            <div className="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Panel de Control de la Evaluación Docente</span>
+          <div className="flex items-start sm:items-center space-x-4">
+            <div className="p-2 rounded-2xl bg-slate-900 border border-white/10 shrink-0">
+              <Image
+                src="/images/brand/lyoh-emblem.png"
+                alt="LYOH"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain"
+              />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Seguimiento de Participantes en Prueba
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Supervisión de avance individual, intentos de cuestionarios y análisis de tópicos con mayor tasa de error.
-            </p>
+            <div>
+              <div className="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <ShieldCheck className="w-4 h-4" />
+                <span>LYOH · Panel de Control Docente</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Seguimiento de Participantes en Prueba
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                Supervisión de avance individual, intentos de cuestionarios y análisis pedagógico.
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center space-x-3">

@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -78,10 +80,10 @@ export interface GiardiaFormMeta {
  * - Trofozoíto de Giardia duodenalis:
  *   Longitud = 14.0 µm (y ∈ [-7.0, +7.0]), ancho anterior = 8.4 µm (x ∈ [-4.2, +4.2]),
  *   espesor dorsoventral = ~3.1 µm, con dorso convexo y cara anteroventral cóncava ocupada
- *   por el disco ventral suctorio bilobulado (~5.8 µm de ancho).
+ *   por el disco ventral adhesivo (~5.8 µm de ancho en esta reconstrucción).
  * - Quiste maduro de Giardia duodenalis:
  *   Longitud = 12.0 µm (y ∈ [-6.0, +6.0]), ancho = 8.4 µm (x ∈ [-4.2, +4.2]),
- *   pared quística lisa hialina, espacio peritrófico de retracción citoplasmática,
+ *   pared quística lisa hialina, espacio de retracción citoplasmática,
  *   4 núcleos en el polo anterior y fibrillas intranquísticas diagonales.
  */
 export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
@@ -95,18 +97,18 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
       "Trofozoíto: 10–20 µm de largo (promedio 12–15 µm) × 5–15 µm de ancho · Simetría bilateral",
     pellicleControlLabel: "Transparencia del cuerpo citoplasmático",
     pellicleControlHint:
-      "Ajusta la traslucidez de la película y el citoplasma para inspeccionar los 2 núcleos, el axostilo, los cuerpos medianos y el disco ventral.",
+      "Ajusta la traslucidez de la película y el citoplasma para inspeccionar los 2 núcleos, los axonemas, los cuerpos medianos y el disco ventral.",
     defaultPellicleTransparency: 46,
     defaultCamera: {
-      position: [1.8, 1.2, 16.2],
-      target: [0.0, -0.3, 0.0],
+      position: [3.9, 1.45, 35.15],
+      target: [0.0, -1.8, 0.0],
     },
     focusOrganellesCamera: {
       position: [0.8, 1.3, 9.2],
       target: [0.0, 1.1, 0.1],
     },
     overviewSummary:
-      "El trofozoíto de Giardia duodenalis habita en el lumen del duodeno y yeyuno proximal. Presenta forma piriforme («media pera» o «gota»), convexa dorsalmente y aplanada ventralmente, donde destaca el gran disco suctorio bilobulado con el que se adhiere al borde en cepillo de los enterocitos.",
+      "El trofozoíto de Giardia duodenalis habita en el lumen del intestino delgado proximal. Presenta forma piriforme («media pera» o «gota»), convexa dorsalmente y aplanada ventralmente, donde destaca el disco adhesivo con el que se fija a la mucosa intestinal.",
     structures: [
       {
         id: "disco_ventral",
@@ -124,11 +126,11 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
           target: [0.0, 2.0, 0.25],
         },
         summary:
-          "Depresión cóncava rígida pero contráctil que ocupa la mitad anteroventral del trofozoíto. Está sostenida por una espiral de microtúbulos y microrribocintas (microribbons) con una muesca posteromedial («bare area»).",
+          "Orgánulo de adhesión de la región anteroventral, formado por microtúbulos y microrribocintas organizados en espiral. Presenta curvatura de cúpula, un borde lateral y un área central sin microtúbulos del disco («bare area»).",
         microscopyNote:
           "En cortes histológicos y perfil lateral se distingue como una concavidad ventral en cuchara; en vista frontal enmarca la región de los dos núcleos.",
         reconstruction3DNote:
-          "Modelado como una cúpula cóncava bilobulada en la cara anteroventral con su cresta marginal y hendidura posteromedial característica.",
+          "Representación simplificada con concavidad ventral, borde periférico y abertura central. Las líneas del modelo indican la organización espiral; no reproducen el número ni el espesor nanométrico de los microtúbulos.",
       },
       {
         id: "nucleos_binucleados",
@@ -155,7 +157,7 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
       {
         id: "cuerpos_medianos",
         number: 3,
-        name: "Cuerpos medianos (parabasales) en forma de coma",
+        name: "Cuerpos medianos en forma de coma",
         shortLabel: "Cuerpos medianos",
         category: "citoesqueleto",
         categoryLabel: "Citoesqueleto microtubular",
@@ -168,7 +170,7 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
           target: [0.2, -0.15, -0.1],
         },
         summary:
-          "Par de haces curvos de microtúbulos situados transversalmente u oblicuamente detrás de los dos núcleos y dorsales al axostilo. En Giardia duodenalis adoptan una morfología curvada en «coma» o «garra de martillo».",
+          "Par de haces curvos de microtúbulos situados transversalmente u oblicuamente detrás de los dos núcleos y dorsales a los axonemas. En Giardia duodenalis adoptan una morfología curvada en «coma» o «garra de martillo».",
         microscopyNote:
           "En tricrómico se tiñen de rojo-púrpura oscuro detrás de los núcleos, completando la «sonrisa» de la apariencia facial del trofozoíto.",
         reconstruction3DNote:
@@ -177,8 +179,8 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
       {
         id: "axostilo_flagelos",
         number: 4,
-        name: "Axostilo central, blefaroplastos y 4 pares de flagelos",
-        shortLabel: "Axostilo y 8 flagelos",
+        name: "Axonemas, cuerpos basales y 4 pares de flagelos",
+        shortLabel: "Axonemas y 8 flagelos",
         category: "citoesqueleto",
         categoryLabel: "Aparato locomotor",
         colorSchematic: "#10b981",
@@ -190,11 +192,11 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
           target: [0.0, -1.2, 0.0],
         },
         summary:
-          "Ocho flagelos (4 pares: anterior, posterolateral, ventral y caudal) que nacen de los cuerpos basales (blefaroplastos) situados entre los polos anteriores de ambos núcleos. Los axonemas caudales recorren longitudinalmente la línea media formando el axostilo.",
+          "Ocho flagelos (4 pares: anterior, posterolateral, ventral y caudal) que nacen de los ocho cuerpos basales situados entre los polos anteriores de ambos núcleos. Los axonemas caudales recorren longitudinalmente la línea media como haces intracelulares.",
         microscopyNote:
           "En preparaciones en fresco confieren el movimiento característico en «hoja que cae»; en tricrómico se observan el par de axonemas centrales y las raíces flagelares.",
         reconstruction3DNote:
-          "Reconstruidos siguiendo sus trayectorias anatómicas reales: quiasma anterior para el par anterolateral, surcos laterales para el par posterolateral, emergencia ventral y prolongación caudal.",
+          "Trayectorias simplificadas para distinguir los cuatro pares de flagelos y sus segmentos intracelulares; no representan una reconstrucción volumétrica de una muestra.",
       },
       {
         id: "cuerpo_piriforme",
@@ -227,13 +229,13 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
     subtitle:
       "Forma de resistencia ambiental e infectante por vía fecal-oral, con pared hialina lisa, espacio de retracción, 4 núcleos y fibrillas",
     dimensionsNote:
-      "Quiste: 8–19 µm de largo (promedio 11–14 µm) × 7–10 µm de ancho · Pared lisa y 4 núcleos en madurez",
+      "Quiste: 8–19 µm de largo (promedio 10–14 µm) · Pared lisa y 4 núcleos en madurez",
     pellicleControlLabel: "Transparencia de la pared quística",
     pellicleControlHint:
       "Regula la opacidad de la pared quística y del citoplasma para observar los 4 núcleos anteriores y las fibrillas intranquísticas.",
     defaultPellicleTransparency: 48,
     defaultCamera: {
-      position: [1.6, 1.0, 14.2],
+      position: [2.48, 1.55, 22.01],
       target: [0.0, 0.0, 0.0],
     },
     focusOrganellesCamera: {
@@ -259,7 +261,7 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
           target: [0.0, 0.0, 0.0],
         },
         summary:
-          "Cubierta externa ovoide lisa, refringente y bien definida (~0.3–0.5 µm). El citoplasma interno suele retraerse ligeramente de la pared quística dejando un espacio claro peritrófico muy característico.",
+          "Cubierta externa ovoide, lisa y bien definida. En algunas preparaciones el citoplasma se retrae respecto de la pared y deja un espacio claro; el modelo amplía la pared para facilitar su observación.",
         microscopyNote:
           "En fresco y tricrómico el halo claro entre la pared externa lisa y el citoplasma retraído facilita la identificación inmediata del quiste.",
         reconstruction3DNote:
@@ -325,7 +327,7 @@ export const GIARDIA_FORMS: Record<GiardiaFormId, GiardiaFormMeta> = {
           target: [0.2, -0.4, 0.1],
         },
         summary:
-          " Cuerpos parabasales gruesos en medialuna y fragmentos fibrosos del disco ventral desensamblado que persisten en la región central y posterior del quiste antes de la división posdesenquistamiento.",
+          " Cuerpos medianos en medialuna y fragmentos fibrosos del disco ventral desensamblado que persisten en la región central y posterior del quiste antes de la división posdesenquistamiento.",
         microscopyNote:
           "En tinción tricrómica destacan como trazos curvos gruesos y muy cromofílicos (rojo-púrpura oscuro) oblicuos a los axonemas.",
         reconstruction3DNote:
@@ -440,14 +442,13 @@ function buildPiriformTrophozoiteGeometry(lengthSegs = 96, radialSegs = 72): THR
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
  * Construye el disco ventral adhesivo (disco suctorio) de Giardia duodenalis:
- * - Cúpula cóncava bilobulada/reniforme en la cara anteroventral (centrada en y = +2.05 µm).
- * - Posee una cresta periférica arqueada y una escotadura/hendidura posteromedial («bare area»)
- *   por donde emergen los flagelos ventrales.
+ * - Disco cóncavo anteroventral con borde periférico y área central libre.
+ * - Simplificación de la arquitectura descrita por Brown et al., 2016 (PMC4764415).
  */
 function buildVentralAdhesiveDiskGeometry(radialSegs = 40, angularSegs = 88): THREE.BufferGeometry {
   const positions: number[] = [];
@@ -456,17 +457,17 @@ function buildVentralAdhesiveDiskGeometry(radialSegs = 40, angularSegs = 88): TH
   const indices: number[] = [];
 
   const evalDiskPoint = (rNorm: number, psi: number): THREE.Vector3 => {
-    const rho = Math.max(0.0, Math.min(1.0, rNorm));
+    const rho = 0.17 + 0.83 * Math.max(0.0, Math.min(1.0, rNorm));
     // phi recorre el ángulo en el plano XY del disco; phi = -π/2 es el borde posterior con la muesca
     const phi = (psi / (Math.PI * 2.0)) * Math.PI * 2.0;
     const sinPhi = Math.sin(phi);
     const cosPhi = Math.cos(phi);
 
-    // Muesca posteromedial («bare area» en phi ≈ -π/2, es decir sinPhi ≈ -1, cosPhi ≈ 0)
+    // Suave variación posterior del contorno; el área libre es central, no esta escotadura.
     const posteriorNotch =
-      sinPhi < -0.25 ? 0.34 * Math.exp(-Math.pow(cosPhi / 0.34, 2.0)) * Math.pow((-sinPhi - 0.25) / 0.75, 1.4) : 0.0;
+      sinPhi < -0.25 ? 0.10 * Math.exp(-Math.pow(cosPhi / 0.34, 2.0)) * Math.pow((-sinPhi - 0.25) / 0.75, 1.4) : 0.0;
 
-    // Forma ligeramente bilobulada / reniforme de ~5.5 µm de ancho × ~5.0 µm de alto
+    // Contorno aproximadamente circular de ~5.5 µm de ancho × ~5.0 µm de alto
     const outerRx = 2.75 * (1.0 + 0.05 * cosPhi * cosPhi - 0.35 * posteriorNotch);
     const outerRy = 2.52 * (1.0 - 0.52 * posteriorNotch);
 
@@ -493,7 +494,7 @@ function buildVentralAdhesiveDiskGeometry(radialSegs = 40, angularSegs = 88): TH
     const isBack = tProfile > 0.5;
     const rho = isBack ? (1.0 - tProfile) * 2.0 : tProfile * 2.0;
     const base = evalDiskPoint(rho, phi);
-    const halfThick = 0.085 * Math.sin(Math.PI * Math.min(1.0, rho * 0.92 + 0.08));
+    const halfThick = 0.085 * Math.sin(Math.PI * rho);
     base.z += isBack ? -halfThick : halfThick;
     return base;
   };
@@ -537,11 +538,11 @@ function buildVentralAdhesiveDiskGeometry(radialSegs = 40, angularSegs = 88): TH
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
- * Construye un cuerpo mediano (parabasal) curvado en forma de «coma» o «garra de martillo»
+ * Construye un cuerpo mediano curvado en forma de «coma» o «garra de martillo»
  * característico de Giardia duodenalis.
  */
 function buildMedianBodyGeometry(
@@ -621,7 +622,7 @@ function buildMedianBodyGeometry(
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -687,7 +688,7 @@ function buildTaperedFilamentGeometry(
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -766,7 +767,7 @@ function buildOvoideCystShellGeometry(
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -834,9 +835,9 @@ const GIARDIA_SHELL_FRAGMENT_SHADER = `
       // MODO 1: ESQUEMÁTICO 3D (Turquesa-cian orgánico con profundidad subsuperficial)
       if (u_shellType == 0) {
         // Cuerpo piriforme del trofozoíto
-        vec3 coreCol = vec3(0.14, 0.56, 0.72);
-        vec3 deepCol = vec3(0.06, 0.30, 0.46);
-        vec3 rimCol  = vec3(0.38, 0.82, 0.95);
+        vec3 coreCol = vec3(0.76, 0.80, 0.77);
+        vec3 deepCol = vec3(0.36, 0.44, 0.42);
+        vec3 rimCol  = vec3(0.88, 0.91, 0.86);
 
         vec3 base = mix(coreCol, deepCol, 0.35 + 0.45 * fresnel);
         color = base * (0.34 + 0.52 * wrap1 + 0.20 * diff2)
@@ -845,15 +846,15 @@ const GIARDIA_SHELL_FRAGMENT_SHADER = `
         alpha = clamp(u_baseOpacity * (0.48 + 0.58 * fresnel), 0.06, 0.92);
       } else if (u_shellType == 1) {
         // Pared quística externa hialina y refringente
-        vec3 wallCore = vec3(0.32, 0.74, 0.92);
-        vec3 wallRim  = vec3(0.68, 0.92, 1.00);
+        vec3 wallCore = vec3(0.75, 0.80, 0.76);
+        vec3 wallRim  = vec3(0.94, 0.94, 0.87);
         vec3 base = mix(wallCore, wallRim, fresnel * 0.72);
         color = base * (0.42 + 0.48 * wrap1 + 0.18 * diff2) + vec3(0.95, 0.99, 1.0) * softSheen * 1.4;
         alpha = clamp(u_baseOpacity * (0.32 + 0.78 * pow(fresnel, 0.85)), 0.06, 0.94);
       } else {
         // Citoplasma interno retraído del quiste
-        vec3 cytoCore = vec3(0.12, 0.48, 0.64);
-        vec3 cytoRim  = vec3(0.28, 0.68, 0.82);
+        vec3 cytoCore = vec3(0.53, 0.61, 0.56);
+        vec3 cytoRim  = vec3(0.74, 0.79, 0.72);
         vec3 base = mix(cytoCore, cytoRim, fresnel * 0.55);
         color = base * (0.36 + 0.50 * wrap1 + 0.18 * diff2);
         alpha = clamp(u_baseOpacity * (0.42 + 0.45 * fresnel), 0.05, 0.86);
@@ -900,7 +901,7 @@ const GIARDIA_SHELL_FRAGMENT_SHADER = `
  *   2 = Cariosoma central denso (núcleos)
  *   3 = Envoltura nuclear perinuclear translúcida
  *   4 = Cuerpos medianos (parabasales en coma)
- *   5 = Axostilo, blefaroplastos, flagelos y fibrillas intranquísticas
+ *   5 = Axonemas, blefaroplastos, flagelos y fibrillas intranquísticas
  */
 const GIARDIA_ORGANELLE_FRAGMENT_SHADER = `
   precision highp float;
@@ -937,27 +938,27 @@ const GIARDIA_ORGANELLE_FRAGMENT_SHADER = `
     float alpha = u_opacity;
 
     if (u_organelleType == 1) {
-      // --- 1. DISCO VENTRAL ADHESIVO (Con estriación concéntrica suave de microrribocintas) ---
-      float ribbonPattern = 0.5 + 0.5 * sin(v_uv.x * 38.0);
+      // Estriación espiral indicativa, ampliada para exploración educativa.
+      float ribbonPattern = 0.5 + 0.5 * sin(v_uv.x * 38.0 - v_uv.y * 6.2831853);
       float rimMask = smoothstep(0.62, 0.98, v_uv.x);
       if (u_visualMode == 0) {
-        vec3 diskCenter = vec3(0.08, 0.48, 0.76);
-        vec3 diskRim    = vec3(0.22, 0.72, 0.96);
+        vec3 diskCenter = vec3(0.62, 0.70, 0.66);
+        vec3 diskRim    = vec3(0.84, 0.88, 0.82);
         vec3 base = mix(diskCenter, diskRim, 0.35 * rimMask + 0.14 * ribbonPattern);
         color = base * (0.34 + 0.54 * wrap1 + 0.20 * diff2) + vec3(0.75, 0.94, 1.0) * fresnel * 0.24;
-        alpha = clamp(0.68 + 0.24 * rimMask, 0.55, 0.92);
+        alpha = clamp(u_opacity * (0.28 + 0.36 * rimMask), 0.10, 0.65);
       } else {
         vec3 triDiskIn  = vec3(0.32, 0.62, 0.60);
         vec3 triDiskRim = vec3(0.16, 0.42, 0.41);
         vec3 base = mix(triDiskIn, triDiskRim, 0.48 * rimMask + 0.12 * ribbonPattern + 0.30 * fresnel);
         color = base * (0.48 + 0.42 * wrap1 + 0.15 * diff2);
-        alpha = clamp(0.66 + 0.24 * rimMask, 0.55, 0.92);
+        alpha = clamp(u_opacity * (0.30 + 0.36 * rimMask), 0.10, 0.65);
       }
     } else if (u_organelleType == 2) {
       // --- 2. CARIOSOMA CENTRAL DENSO (Núcleos) ---
       if (u_visualMode == 0) {
-        vec3 karCore = vec3(0.86, 0.14, 0.36);
-        vec3 karDeep = vec3(0.48, 0.05, 0.18);
+        vec3 karCore = vec3(0.44, 0.39, 0.32);
+        vec3 karDeep = vec3(0.22, 0.23, 0.20);
         vec3 base = mix(karCore, karDeep, fresnel * 0.55);
         color = base * (0.30 + 0.58 * wrap1 + 0.20 * diff2)
               + vec3(0.98, 0.42, 0.58) * fresnel * 0.25
@@ -987,8 +988,8 @@ const GIARDIA_ORGANELLE_FRAGMENT_SHADER = `
     } else if (u_organelleType == 4) {
       // --- 4. CUERPOS MEDIANOS / PARABASALES EN COMA ---
       if (u_visualMode == 0) {
-        vec3 medCore = vec3(0.94, 0.58, 0.10);
-        vec3 medDeep = vec3(0.62, 0.30, 0.04);
+        vec3 medCore = vec3(0.75, 0.66, 0.47);
+        vec3 medDeep = vec3(0.44, 0.40, 0.29);
         vec3 base = mix(medCore, medDeep, fresnel * 0.52);
         color = base * (0.30 + 0.58 * wrap1 + 0.20 * diff2)
               + vec3(1.0, 0.78, 0.38) * fresnel * 0.24
@@ -1003,8 +1004,8 @@ const GIARDIA_ORGANELLE_FRAGMENT_SHADER = `
     } else {
       // --- 5. AXOSTILO, BLEFAROPLASTOS, 8 FLAGELOS Y FIBRILLAS INTRANQUÍSTICAS ---
       if (u_visualMode == 0) {
-        vec3 axCore = vec3(0.12, 0.78, 0.56);
-        vec3 axDeep = vec3(0.05, 0.44, 0.32);
+        vec3 axCore = vec3(0.75, 0.79, 0.68);
+        vec3 axDeep = vec3(0.38, 0.47, 0.40);
         vec3 base = mix(axCore, axDeep, fresnel * 0.48);
         color = base * (0.32 + 0.56 * wrap1 + 0.20 * diff2)
               + vec3(0.48, 0.96, 0.78) * fresnel * 0.24
@@ -1112,7 +1113,7 @@ const SECTION_CAP_FRAGMENT_SHADER = `
         return;
       }
 
-      // 3. Axostilo central en sección
+      // 3. Axonemas central en sección
       if (p.y >= -6.4 && p.y <= 3.1) {
         float dAxL = length(vec2((p.x + 0.13) / 0.09, (p.z + 0.08) / 0.09));
         float dAxR = length(vec2((p.x - 0.13) / 0.09, (p.z + 0.08) / 0.09));
@@ -1352,7 +1353,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
           root.add(envMesh);
         });
 
-        // 2. Cuerpos medianos (parabasales) en forma de «coma» o «garra de martillo»
+        // 2. Cuerpos medianos en forma de «coma» o «garra de martillo»
         const medMatBase = new THREE.ShaderMaterial({
           vertexShader: ORGANIC_VERTEX_SHADER,
           fragmentShader: GIARDIA_ORGANELLE_FRAGMENT_SHADER,
@@ -1380,7 +1381,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
         med2Mesh.renderOrder = 1;
         root.add(med2Mesh);
 
-        // 3. Axostilo central, blefaroplastos y los 4 pares de flagelos (8 flagelos en total)
+        // 3. Axonemas central, blefaroplastos y los 4 pares de flagelos (8 flagelos en total)
         const flagMatBase = new THREE.ShaderMaterial({
           vertexShader: ORGANIC_VERTEX_SHADER,
           fragmentShader: GIARDIA_ORGANELLE_FRAGMENT_SHADER,
@@ -1402,9 +1403,13 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
           [0.24, 2.95, -0.05],
           [-0.18, 2.65, -0.06],
           [0.18, 2.65, -0.06],
+          [-0.24, 2.95, -0.32],
+          [0.24, 2.95, -0.32],
+          [-0.18, 2.65, -0.33],
+          [0.18, 2.65, -0.33],
         ];
         kinetosomes.forEach(([kx, ky, kz]) => {
-          const kGeo = new THREE.SphereGeometry(0.13, 18, 14);
+          const kGeo = new THREE.SphereGeometry(0.105, 24, 18);
           const kMesh = new THREE.Mesh(kGeo, flagMatBase.clone());
           kMesh.position.set(kx, ky, kz);
           kMesh.userData = { structureId: "axostilo_flagelos", shaderType: "organelle" };
@@ -1869,7 +1874,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -1878,6 +1883,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 120);
+    configureParasiteViewport(camera, width, height, 0.72);
     const initCam = GIARDIA_FORMS.trophozoite.defaultCamera;
     camera.position.set(...initCam.position);
     cameraRef.current = camera;
@@ -1886,7 +1892,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
     controls.enableDamping = true;
     controls.dampingFactor = 0.075;
     controls.minDistance = 4.2;
-    controls.maxDistance = 28.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initCam.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.25;
@@ -2019,9 +2025,9 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
           // Escala geométrica vinculada al tamaño del modelo (1 unidad = 1 µm) y distancia de cámara
           const dist = camera.position.distanceTo(controls.target);
           const fovRad = THREE.MathUtils.degToRad(camera.fov);
-          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5);
+          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5) / camera.zoom;
           const pxPerMicron = h / Math.max(0.1, worldHeightAtTarget);
-          setScaleBarPx(Math.max(28, Math.min(180, Math.round(pxPerMicron * 2.0))));
+          setScaleBarPx(visibleScaleLength(pxPerMicron * 2.0));
         }
       }
     };
@@ -2032,15 +2038,18 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
       const newW = holder.clientWidth;
       const newH = holder.clientHeight;
       if (newW > 0 && newH > 0) {
-        cameraRef.current.aspect = newW / newH;
-        cameraRef.current.updateProjectionMatrix();
+        configureParasiteViewport(cameraRef.current, newW, newH, 0.72);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
         rendererRef.current.setSize(newW, newH);
       }
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       renderer.domElement.removeEventListener("pointerdown", onPointerDown);
@@ -2159,7 +2168,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
     const cam = cameraRef.current;
     const target = controlsRef.current.target;
     const dir = new THREE.Vector3().subVectors(cam.position, target);
-    const nextLen = Math.max(4.5, Math.min(26.0, dir.length() * factor));
+    const nextLen = Math.max(4.5, Math.min(60.0, dir.length() * factor));
     dir.setLength(nextLen);
     cam.position.copy(target).add(dir);
     controlsRef.current.update();
@@ -2203,100 +2212,12 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
   return (
     <div
       ref={viewportRef}
-      className="w-full space-y-3 select-none"
+      className="w-full min-w-0 space-y-3 select-none"
       onClick={(e) => e.stopPropagation()}
     >
       {/* 1. VISOR 3D PROTAGONISTA: Los paneles principales están fuera del lienzo para no ocultar nunca la anatomía */}
-      <div className="relative w-full h-[460px] sm:h-[540px] lg:h-[580px] rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-[#070b14]">
-        {/* Lienzo WebGL Three.js */}
-        <div
-          ref={canvasHolderRef}
-          className={`w-full h-full cursor-grab active:cursor-grabbing ${
-            !mobileTouchInteractive ? "touch-pan-y md:touch-none" : "touch-none"
-          }`}
-        />
-
-        {/* Líneas guía SVG y Marcadores 3D sin superposiciones (desaparecen por completo al ocultarlos) */}
-        {showMarkers && (
-          <>
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
-              {formMeta.structures.map((st) => {
-                const pin = projectedPins[st.id];
-                if (!pin || !pin.visible) return null;
-                const isSelected = selectedStructureId === st.id;
-                const strokeCol = isSelected
-                  ? "#fb7185"
-                  : isTrichrome
-                  ? "rgba(71, 85, 105, 0.75)"
-                  : "rgba(148, 163, 184, 0.65)";
-
-                return (
-                  <g key={`line-${st.id}`}>
-                    <line
-                      x1={pin.anchorX}
-                      y1={pin.anchorY}
-                      x2={pin.labelX}
-                      y2={pin.labelY}
-                      stroke={strokeCol}
-                      strokeWidth={isSelected ? "2" : "1.25"}
-                      strokeDasharray={isSelected ? undefined : "3 2"}
-                    />
-                    <circle
-                      cx={pin.anchorX}
-                      cy={pin.anchorY}
-                      r={isSelected ? 4.5 : 3.5}
-                      fill={isTrichrome ? st.colorTrichrome : st.colorSchematic}
-                      stroke={isTrichrome ? "#334155" : "#ffffff"}
-                      strokeWidth="1.5"
-                    />
-                  </g>
-                );
-              })}
-            </svg>
-
-            <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-              {formMeta.structures.map((st, idx) => {
-                const pin = projectedPins[st.id];
-                if (!pin || !pin.visible) return null;
-                const isSelected = selectedStructureId === st.id;
-                const dotColor = isTrichrome ? st.colorTrichrome : st.colorSchematic;
-
-                return (
-                  <button
-                    key={st.id}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectStructure(st.id);
-                    }}
-                    style={{
-                      left: `${pin.labelX}px`,
-                      top: `${pin.labelY}px`,
-                    }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 shadow-lg border backdrop-blur-md ${
-                      isSelected
-                        ? "bg-rose-600 text-white border-rose-300 scale-105 ring-4 ring-rose-500/30 z-30"
-                        : isTrichrome
-                        ? "bg-slate-900/90 text-slate-100 border-slate-700 hover:bg-slate-900"
-                        : "bg-slate-950/85 text-slate-100 border-slate-700/80 hover:border-cyan-400/70"
-                    }`}
-                  >
-                    <span
-                      style={{ backgroundColor: isSelected ? "#ffffff" : dotColor }}
-                      className="w-2 h-2 rounded-full shrink-0"
-                    />
-                    <span className="whitespace-nowrap">
-                      {idx + 1}. {st.shortLabel}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
-
-        {/* BARRA SUPERIOR COMPACTA: Selector «Elegir forma», «Enfocar orgánulos» / «Ver parásito completo», Modos y Marcadores */}
-        <header className="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+      <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-[#070b14]">
+        <header className="relative p-3 border-b border-slate-800 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none [&_button]:min-h-11 sm:[&_button]:min-h-8">
           {/* Izquierda: Selector desplegable «Elegir forma» + Botones de encuadre contextual */}
           <div className="flex flex-wrap items-center gap-1.5 pointer-events-auto">
             <div ref={dropdownRef} className="relative">
@@ -2321,7 +2242,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
                 <div
                   role="listbox"
                   aria-label="Elegir forma de Giardia duodenalis"
-                  className="absolute left-0 mt-1.5 w-80 sm:w-96 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-700 shadow-2xl p-2 z-50 space-y-1.5"
+                  className="absolute left-0 mt-1.5 w-[min(24rem,calc(100vw-8rem))] rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-700 shadow-2xl p-2 z-50 space-y-1.5"
                 >
                   <div className="flex items-center justify-between px-2.5 py-1 border-b border-slate-800">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
@@ -2371,7 +2292,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
             </div>
 
             {/* Botones de encuadre rápido: «Enfocar orgánulos» y «Ver parásito completo» */}
-            <div className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 p-0.5 flex items-center gap-0.5 shadow-lg">
+            <div className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 p-0.5 hidden md:flex items-center gap-0.5 shadow-lg">
               <button
                 type="button"
                 onClick={handleFocusOrganelles}
@@ -2455,9 +2376,101 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
             )}
           </div>
         </header>
+        <div className="relative h-[380px] sm:h-[460px] lg:h-[520px]">
+        {/* Lienzo WebGL Three.js */}
+        <div
+          ref={canvasHolderRef}
+          className={`w-full h-full cursor-grab active:cursor-grabbing ${
+            !mobileTouchInteractive ? "touch-pan-y md:touch-none" : "touch-none"
+          }`}
+        />
+
+        {/* Líneas guía SVG y Marcadores 3D sin superposiciones (desaparecen por completo al ocultarlos) */}
+        {showMarkers && (
+          <>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
+              {formMeta.structures.map((st) => {
+                const pin = projectedPins[st.id];
+                if (!pin || !pin.visible) return null;
+                const isSelected = selectedStructureId === st.id;
+                const strokeCol = isSelected
+                  ? "#fb7185"
+                  : isTrichrome
+                  ? "rgba(71, 85, 105, 0.75)"
+                  : "rgba(148, 163, 184, 0.65)";
+
+                return (
+                  <g key={`line-${st.id}`}>
+                    <line
+                      x1={pin.anchorX}
+                      y1={pin.anchorY}
+                      x2={pin.labelX}
+                      y2={pin.labelY}
+                      stroke={strokeCol}
+                      strokeWidth={isSelected ? "2" : "1.25"}
+                      strokeDasharray={isSelected ? undefined : "3 2"}
+                    />
+                    <circle
+                      cx={pin.anchorX}
+                      cy={pin.anchorY}
+                      r={isSelected ? 4.5 : 3.5}
+                      fill={isTrichrome ? st.colorTrichrome : st.colorSchematic}
+                      stroke={isTrichrome ? "#334155" : "#ffffff"}
+                      strokeWidth="1.5"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+
+            <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+              {formMeta.structures.map((st, idx) => {
+                const pin = projectedPins[st.id];
+                if (!pin || !pin.visible) return null;
+                const isSelected = selectedStructureId === st.id;
+                const dotColor = isTrichrome ? st.colorTrichrome : st.colorSchematic;
+
+                return (
+                  <button
+                    key={st.id}
+                    aria-label={`${idx + 1}. ${st.shortLabel}`}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectStructure(st.id);
+                    }}
+                    style={{
+                      left: `${pin.labelX}px`,
+                      top: `${pin.labelY}px`,
+                    }}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 shadow-lg border backdrop-blur-md ${
+                      isSelected
+                        ? "bg-rose-600 text-white border-rose-300 scale-105 ring-4 ring-rose-500/30 z-30"
+                        : isTrichrome
+                        ? "bg-slate-900/90 text-slate-100 border-slate-700 hover:bg-slate-900"
+                        : "bg-slate-950/85 text-slate-100 border-slate-700/80 hover:border-cyan-400/70"
+                    }`}
+                  >
+                    <span
+                      style={{ backgroundColor: isSelected ? "#ffffff" : dotColor }}
+                      className="w-2 h-2 rounded-full shrink-0"
+                    />
+                    <span className="whitespace-nowrap">
+                      {idx + 1}<span className="hidden sm:inline">. {st.shortLabel}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {/* BARRA SUPERIOR COMPACTA: Selector «Elegir forma», «Enfocar orgánulos» / «Ver parásito completo», Modos y Marcadores */}
+
 
         {/* BARRA INFERIOR COMPACTA DEL VISOR: Aviso educativo, Cámara rápida y Escala geométrica */}
-        <footer className="absolute bottom-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        </div>
+        <footer className="relative p-3 border-t border-slate-800 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
           <div className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-3 py-1.5 text-[11px] text-slate-200 flex items-center gap-2 pointer-events-auto shadow-lg">
             <span className="font-semibold text-amber-300">
               Reconstrucción 3D educativa; no sustituye la observación microscópica.
@@ -2470,7 +2483,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 pointer-events-auto">
+          <div className="flex flex-wrap items-center gap-1.5 pointer-events-auto">
             {/* Activar interacción táctil en celular sin bloquear el scroll de la página */}
             <button
               type="button"
@@ -2495,11 +2508,11 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
             </button>
 
             {/* Controles rápidos de cámara */}
-            <div className="hidden sm:flex items-center gap-1 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 p-1 shadow-lg">
+            <div className="flex items-center gap-1 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 p-1 shadow-lg">
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -2507,7 +2520,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -2515,7 +2528,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
               <button
                 type="button"
                 onClick={handleViewFullParasite}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -2535,6 +2548,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
 
             {/* Escala dinámica de 2 µm */}
             <div
+              style={{ display: scaleBarPx > 0 ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al tamaño del modelo (1 unidad = 1 µm) y a la cámara"
             >
@@ -2551,7 +2565,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
       {/* 2. PANEL DE CONTROLES Y ESTRUCTURAS FUERA DEL ÁREA PRINCIPAL DEL MODELO (Plegable en pantallas estrechas) */}
       <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-3.5 sm:p-4 space-y-3.5">
         {/* Cabecera plegable para pantallas estrechas (celular) */}
-        <div className="flex md:hidden items-center justify-between gap-2">
+        <div className="flex flex-wrap md:hidden items-center gap-2 [&_button]:min-h-11">
           <div className="flex items-center gap-1.5">
             <button
               type="button"
@@ -2647,7 +2661,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
               className="w-full accent-cyan-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
             />
             <p className="text-[11px] text-slate-400 leading-snug">
-              Herramienta geométrica de exploración interna (en 50% secciona los núcleos, cariosomas y axostilo).
+              Herramienta geométrica de exploración interna (en 50% secciona los núcleos, cariosomas y axonemas).
             </p>
           </div>
         </div>
@@ -2739,7 +2753,7 @@ export const Giardia3DViewer: React.FC<Giardia3DViewerProps> = ({ onClose }) => 
                 <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                 <span>{formMeta.overviewSummary}</span>
               </div>
-              <span className="text-slate-400 font-mono shrink-0">{formMeta.dimensionsNote}</span>
+              <span className="text-slate-400 font-mono sm:max-w-[45%]">{formMeta.dimensionsNote}</span>
             </div>
           )}
         </div>

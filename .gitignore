@@ -6,6 +6,8 @@
 # Compilación y entornos de desarrollo Next.js
 /.next/
 /.next_test/
+/.next-parasite-review/
+/.next-parasite-build/
 /out/
 /build
 dist
@@ -43,7 +45,11 @@ next-env.d.ts
 
 # Scripts temporales de prueba y verificación local
 /scripts/
+/scratch/
+/public/test_seed.html
+/.agents/
 
 # Capturas de pantalla temporales en raíz
 /hub*.png
+
 

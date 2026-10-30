@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { ModelEvidence } from "@/components/modules/parasitologia/ModelEvidence";
+import dynamic from "next/dynamic";
+import React, { useState, useMemo, useEffect } from "react";
 import { ALL_PARASITES } from "@/lib/data/parasitology/parasites-data";
 import { TAENIA_SOLIUM_CARD } from "@/lib/data/parasitology/taenia-solium";
 import { 
@@ -13,13 +15,13 @@ import {
   hasParasite3DModel, 
   getParasite3DConfig 
 } from "@/lib/data/parasitology/models-registry";
-import { Parasite3DViewer } from "@/components/modules/parasitologia/Parasite3DViewer";
-import { Plasmodium3DViewer } from "@/components/modules/parasitologia/Plasmodium3DViewer";
-import { PlasmodiumDifferential3DViewer } from "@/components/modules/parasitologia/PlasmodiumDifferential3DViewer";
-import { Giardia3DViewer } from "@/components/modules/parasitologia/Giardia3DViewer";
-import { Echinococcus3DViewer } from "@/components/modules/parasitologia/Echinococcus3DViewer";
-import { Sarcoptes3DViewer } from "@/components/modules/parasitologia/Sarcoptes3DViewer";
-import { Pediculus3DViewer } from "@/components/modules/parasitologia/Pediculus3DViewer";
+const Parasite3DViewer = dynamic(() => import("@/components/modules/parasitologia/Parasite3DViewer").then(m => m.Parasite3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
+const Plasmodium3DViewer = dynamic(() => import("@/components/modules/parasitologia/Plasmodium3DViewer").then(m => m.Plasmodium3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
+const PlasmodiumDifferential3DViewer = dynamic(() => import("@/components/modules/parasitologia/PlasmodiumDifferential3DViewer").then(m => m.PlasmodiumDifferential3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
+const Giardia3DViewer = dynamic(() => import("@/components/modules/parasitologia/Giardia3DViewer").then(m => m.Giardia3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
+const Echinococcus3DViewer = dynamic(() => import("@/components/modules/parasitologia/Echinococcus3DViewer").then(m => m.Echinococcus3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
+const Sarcoptes3DViewer = dynamic(() => import("@/components/modules/parasitologia/Sarcoptes3DViewer").then(m => m.Sarcoptes3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
+const Pediculus3DViewer = dynamic(() => import("@/components/modules/parasitologia/Pediculus3DViewer").then(m => m.Pediculus3DViewer), { ssr: false, loading: () => <p className="p-8 text-sm text-slate-400" role="status">Cargando modelo 3D…</p> });
 import { 
   Search, 
   Filter, 
@@ -41,6 +43,29 @@ export default function AtlasParasitosPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [expandedCardId, setExpandedCardId] = useState<string | null>("p25-taenia-solium");
   const [open3DViewerId, setOpen3DViewerId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const act = sessionStorage.getItem("medstudy_test_action");
+      if (act) {
+        sessionStorage.removeItem("medstudy_test_action");
+        if (act.startsWith("expand:")) {
+          const id = act.split(":")[1];
+          setExpandedCardId(id);
+        } else if (act === "filter_apicomplejos") {
+          setSelectedGroup("Protozoos apicomplejos");
+          setExpandedCardId("p16");
+        } else if (act === "filter_ojo") {
+          setSelectedLocalization("Ojo");
+          setExpandedCardId("p06");
+        } else if (act === "expand_donovani") {
+          setExpandedCardId("p14");
+        } else if (act === "expand_nana") {
+          setExpandedCardId("p28");
+        }
+      }
+    } catch (e) {}
+  }, []);
 
   const handleToggleExpand = (id: string) => {
     if (expandedCardId === id) {
@@ -76,6 +101,7 @@ export default function AtlasParasitosPage() {
     "Sangre y sistema reticuloendotelial",
     "Vías respiratorias y pulmón",
     "Tracto urogenital",
+    "Ojo",
     "Piel y anexos",
   ];
 
@@ -321,11 +347,11 @@ export default function AtlasParasitosPage() {
 
               {/* Cuerpo desplegado de la ficha */}
               {isExpanded && (
-                <div className="px-5 pb-6 sm:px-6 space-y-5 border-t border-slate-800 pt-5 text-xs sm:text-sm">
+                <div className="px-2 pb-6 sm:px-6 space-y-5 border-t border-slate-800 pt-5 text-xs sm:text-sm">
                   
                   {/* Tarjeta de Modelo 3D: Carga condicional y desmontaje al cerrar */}
                   {has3D ? (
-                    <div className="rounded-2xl border border-purple-500/40 bg-gradient-to-br from-purple-950/25 via-slate-900 to-slate-950 p-4 sm:p-5 shadow-lg space-y-4">
+                    <div className="rounded-2xl border border-purple-500/40 bg-gradient-to-br from-purple-950/25 via-slate-900 to-slate-950 p-2 sm:p-5 shadow-lg space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 shrink-0">
@@ -407,6 +433,7 @@ export default function AtlasParasitosPage() {
                               onClose={() => setOpen3DViewerId(null)}
                             />
                           )}
+                          <ModelEvidence species={parasite.scientificName} />
                         </div>
                       )}
                     </div>
@@ -589,17 +616,32 @@ export default function AtlasParasitosPage() {
 
                   {/* Enlaces y fuentes primarias */}
                   {parasite.sources.length > 0 && (
-                    <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
-                      <div>
-                        Fuentes primarias:{" "}
+                    <div className="pt-2.5 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-400">
+                      <div className="space-y-1 sm:space-y-0">
+                        <span className="font-semibold text-slate-300 mr-1.5">Fuentes primarias:</span>
                         {parasite.sources.map((s, i) => (
-                          <span key={i} className="text-cyan-400 font-medium mr-2">
-                            {s.title} ({s.organization})
+                          <span key={i} className="inline-block mr-3 text-slate-300">
+                            {s.url ? (
+                              <a
+                                href={s.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-cyan-400 hover:text-cyan-300 hover:underline font-medium"
+                              >
+                                {s.title}
+                              </a>
+                            ) : (
+                              <span className="text-cyan-400 font-medium">{s.title}</span>
+                            )}{" "}
+                            <span className="text-slate-400">({s.organization})</span>
+                            {s.accessedDate && (
+                              <span className="text-[10px] text-slate-400 ml-1">· Consulta: {s.accessedDate}</span>
+                            )}
                           </span>
                         ))}
                       </div>
-                      <span className="text-slate-500">
-                        Revisión: {parasite.reviewDate} por {parasite.reviewer}
+                      <span className="text-slate-400 shrink-0 self-start sm:self-auto">
+                        Revisión: <strong className="text-slate-300 font-medium">{parasite.reviewDate}</strong> · {parasite.reviewer}
                       </span>
                     </div>
                   )}

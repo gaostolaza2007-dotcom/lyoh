@@ -1,15 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { 
   CLINICAL_MODULES, 
-  getTotalsConfig, 
-  getEnabledUnitIds, 
-  isModuleEnabled 
+  getTotalsConfig 
 } from "@/lib/modules-config";
 import { 
   Layers, 
@@ -34,29 +32,22 @@ import {
   Wrench,
   Scan,
   Compass,
-  AlertTriangle
+  AlertTriangle,
+  ChevronDown
 } from "lucide-react";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const [showProgressDetails, setShowProgressDetails] = useState(false);
 
   const displayName = user.nickname || user.name.split(" ")[0] || "Gabriel";
   const displayUni = user.universityShort || "UDD";
-
-  // Totales y unidades calculadas DINÁMICAMENTE desde la configuración
-  const { enabledModulesCount, enabledUnitsCount } = getTotalsConfig();
-  const enabledUnitIds = getEnabledUnitIds();
-
-  // Contar unidades activas solo entre los módulos actualmente disponibles
-  const activeAvailableUnits = enabledUnitIds.filter(
-    (unitId) => (user.unitProgress[unitId] || 0) > 0
-  ).length;
 
   const modules = [
     {
       id: "microbiologia",
       title: "Agentes Infecciosos",
-      desc: "Microbiología clínica de 140 fichas, parasitología médica estructurada y atlas 3D del microbioma corporal.",
+      desc: "Microbiología clínica de 140 fichas, parasitología médica estructurada y explorador 3D del cuerpo humano e infecciones.",
       href: "/agentes-infecciosos",
       icon: Bug,
       color: CLINICAL_MODULES.microbiologia.color,
@@ -64,9 +55,9 @@ export default function DashboardPage() {
       enabled: CLINICAL_MODULES.microbiologia.enabled,
       progress: user.unitProgress["microbiologia_patogenos"] || 0,
       subsections: [
-        { label: "Microbiología", href: "/agentes-infecciosos/microbiologia", icon: Bug },
-        { label: "Parasitología", href: "/agentes-infecciosos/parasitologia", icon: Target },
-        { label: "Microbioma del cuerpo humano", href: "/agentes-infecciosos/microbiota", icon: BookOpen },
+        { label: "Microbiología (140 fichas)", href: "/agentes-infecciosos/microbiologia", icon: Bug },
+        { label: "Parasitología (6 apartados)", href: "/agentes-infecciosos/parasitologia", icon: Target },
+        { label: "Cuerpo humano e infecciones", href: "/agentes-infecciosos/cuerpo-humano", icon: BookOpen },
       ],
     },
     {
@@ -136,153 +127,211 @@ export default function DashboardPage() {
     },
   ];
 
+  // 1. Módulos clínicos disponibles: filtra exclusivamente los módulos habilitados para estudio
+  const availableModules = modules.filter((m) => m.enabled);
+  const availableModulesCount = availableModules.length;
+  const totalModulesCount = modules.length;
+
+  // 2. Módulos iniciados: módulos disponibles donde el estudiante registra actividad o progreso > 0
+  const isModuleStarted = (mod: typeof modules[0]): boolean => {
+    // Si mod.progress existe y es numérico > 0
+    if (typeof mod.progress === "number" && mod.progress > 0) return true;
+    // Si registra progreso directo en user.unitProgress
+    if ((user.unitProgress[mod.id] || 0) > 0) return true;
+    // Si alguna de las unidades asignadas al módulo tiene progreso > 0
+    const modConfig = CLINICAL_MODULES[mod.id];
+    if (modConfig && modConfig.units.length > 0) {
+      return modConfig.units.some((u) => (user.unitProgress[u.id] || 0) > 0);
+    }
+    return false;
+  };
+
+  const startedModulesCount = availableModules.filter(isModuleStarted).length;
+
+  // 3. Progreso hacia el siguiente rango de salud
+  const levelProgressPercent = user.xpToNextLevel > 0 
+    ? Math.min(100, Math.round((user.xp / user.xpToNextLevel) * 100))
+    : 100;
+  const xpNeeded = Math.max(0, user.xpToNextLevel - user.xp);
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
+    <div className="space-y-6 animate-in fade-in duration-300">
       
-      {/* Banner de Bienvenida Personalizado con Onboarding */}
-      <section className="relative overflow-hidden rounded-3xl glass-panel p-6 sm:p-8 border border-white/15 shadow-2xl bg-gradient-to-r from-slate-900/80 via-indigo-950/50 to-purple-950/70">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            
-            {/* Badges de Nivel, Universidad y Carrera */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold flex items-center space-x-1.5 shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>{user.level} (Nivel {user.rankLevel || 1})</span>
+      {/* 1. Banner de Bienvenida Compacto y Optimizado */}
+      <section className="relative overflow-hidden rounded-2xl glass-panel p-4 sm:p-5 border border-white/10 shadow-lg bg-gradient-to-r from-slate-900/90 via-indigo-950/40 to-slate-900/90">
+        
+        {/* Fila principal: Saludo, datos de perfil y progreso compacto */}
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+          
+          <div className="space-y-1.5 min-w-0">
+            {/* Badges de Nivel y Universidad / Carrera */}
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold flex items-center space-x-1 shadow-sm">
+                <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+                <span>{user.level} · Rango {user.rankLevel || 1}</span>
               </span>
 
-              {user.university && (
-                <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-semibold flex items-center space-x-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-blue-400" />
+              {user.universityShort && (
+                <span className="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/20 text-[11px] font-medium flex items-center space-x-1">
+                  <Building2 className="w-3 h-3 text-blue-400 shrink-0" />
                   <span>{displayUni}</span>
                 </span>
               )}
 
               {user.career && (
-                <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center space-x-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{user.career}</span>
+                <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/20 text-[11px] font-medium items-center space-x-1">
+                  <GraduationCap className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <span className="truncate max-w-[150px]">{user.career}</span>
                 </span>
               )}
 
               <Link
                 href="/onboarding"
-                className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white border border-white/10 text-xs font-medium flex items-center space-x-1 transition-colors"
+                className="px-2 py-0.5 rounded-full bg-white/5 hover:bg-white/15 text-slate-400 hover:text-slate-200 border border-white/10 text-[11px] transition-colors"
                 title="Editar datos de participante"
               >
-                <Edit3 className="w-3 h-3" />
-                <span>Modificar</span>
+                <span>Editar</span>
               </Link>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Bienvenido de vuelta, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-300">{displayName}</span>
+            <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+              Bienvenido de vuelta, <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-300">{displayName}</span>
             </h1>
-
-            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
-              Plataforma de entrenamiento clínico y retención médica activa. Explora los módulos de anatomía y microbiología disponibles.
-            </p>
           </div>
 
-          {/* Tarjeta de Racha y XP */}
-          <div className="flex sm:flex-col gap-3 shrink-0">
-            <div className="flex items-center space-x-3 p-3.5 rounded-2xl bg-slate-950/60 border border-white/10 shadow-inner">
-              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                <Flame className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Racha Activa</p>
-                <p className="text-lg font-extrabold text-white">{user.streakDays} días</p>
-              </div>
+          {/* Bloque de Nivel y Progreso Compacto (evita duplicar porcentajes e indicadores) */}
+          <div className="flex flex-col sm:items-end justify-center gap-1.5 shrink-0 w-full md:w-80">
+            <div className="flex items-center justify-between sm:justify-end gap-2 w-full text-xs">
+              <span className="text-slate-400 text-[11px]">Siguiente rango:</span>
+              <span className="font-semibold text-purple-300 text-xs font-mono">
+                {user.xp} / {user.xpToNextLevel} XP
+              </span>
+              <span className="text-[11px] font-bold text-slate-400">
+                ({levelProgressPercent}%)
+              </span>
             </div>
 
-            <div className="flex items-center space-x-3 p-3.5 rounded-2xl bg-slate-950/60 border border-white/10 shadow-inner">
-              <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                <Award className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Puntos de XP</p>
-                <p className="text-lg font-extrabold text-white">{user.xp} XP</p>
-              </div>
+            <ProgressBar 
+              value={levelProgressPercent} 
+              color="purple" 
+              className="h-1.5 w-full"
+            />
+
+            <div className="flex items-center justify-between sm:justify-end gap-3 w-full mt-0.5">
+              <button
+                type="button"
+                onClick={() => setShowProgressDetails((prev) => !prev)}
+                className="text-[11px] text-purple-400 hover:text-purple-300 font-medium flex items-center gap-1 transition-colors py-0.5 focus:outline-none"
+                aria-expanded={showProgressDetails}
+                aria-controls="progress-details"
+              >
+                <span>{showProgressDetails ? "Ocultar progreso" : "Ver mi progreso"}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showProgressDetails ? "rotate-180" : ""}`} />
+              </button>
+
+              <Link
+                href="/perfil"
+                className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors flex items-center gap-0.5"
+              >
+                <span>Mi perfil</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
             </div>
           </div>
 
         </div>
 
-        {/* Barra de progreso hacia el siguiente nivel */}
-        <div className="relative z-10 mt-6 pt-6 border-t border-white/10">
-          <div className="flex items-center justify-between text-xs mb-2">
-            <span className="font-semibold text-slate-300 flex items-center space-x-1.5">
-              <span>Progreso de Nivel</span>
-              <span className="text-purple-400 font-bold">({user.xp} / {user.xpToNextLevel} XP)</span>
-            </span>
-            <span className="font-bold text-purple-300">
-              {Math.min(100, Math.round((user.xp / user.xpToNextLevel) * 100))}%
-            </span>
-          </div>
-          <ProgressBar 
-            value={Math.min(100, Math.round((user.xp / user.xpToNextLevel) * 100))} 
-            color="purple" 
-          />
-        </div>
-
-        {/* Métricas Rápidas Dinámicas */}
-        <div className="relative z-10 mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-white/10">
-          <div className="p-3 rounded-2xl bg-slate-950/40 border border-white/5">
-            <div className="flex items-center space-x-2 text-slate-400 text-xs">
-              <Flame className="w-4 h-4 text-amber-400" />
-              <span>Mayor Racha</span>
+        {/* Desplegable «Ver mi progreso» (Estadísticas secundarias organizadas sin saturar el inicio) */}
+        {showProgressDetails && (
+          <div 
+            id="progress-details"
+            className="relative z-10 mt-4 pt-3 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-2.5 animate-in fade-in slide-in-from-top-1 duration-200"
+          >
+            <div className="p-2.5 rounded-xl bg-slate-950/50 border border-white/5">
+              <div className="flex items-center space-x-1.5 text-slate-400 text-[11px]">
+                <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Racha activa</span>
+              </div>
+              <p className="text-sm sm:text-base font-bold text-white mt-1">
+                {user.streakDays} {user.streakDays === 1 ? "día" : "días"}
+              </p>
+              <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                Récord: {user.longestStreak || user.streakDays} días
+              </p>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-white mt-1">
-              {user.longestStreak || user.streakDays} d
-            </p>
-          </div>
 
-          <div className="p-3 rounded-2xl bg-slate-950/40 border border-white/5">
-            <div className="flex items-center space-x-2 text-slate-400 text-xs">
-              <Award className="w-4 h-4 text-purple-400" />
-              <span>Rango Actual</span>
+            <div className="p-2.5 rounded-xl bg-slate-950/50 border border-white/5">
+              <div className="flex items-center space-x-1.5 text-slate-400 text-[11px]">
+                <Award className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                <span>XP para avanzar</span>
+              </div>
+              <p className="text-sm sm:text-base font-bold text-purple-300 mt-1 font-mono">
+                {xpNeeded} XP
+              </p>
+              <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                Total: {user.xp} XP
+              </p>
             </div>
-            <p className="text-xs font-semibold text-purple-200 mt-1 truncate">
-              {user.level}
-            </p>
-          </div>
 
-          {/* Módulos/Unidades activas calculadas dinámicamente de módulos habilitados */}
-          <div className="p-3 rounded-2xl bg-slate-950/40 border border-white/5">
-            <div className="flex items-center space-x-2 text-slate-400 text-xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Unidades Activas</span>
+            <div className="p-2.5 rounded-xl bg-slate-950/50 border border-white/5">
+              <div className="flex items-center space-x-1.5 text-slate-400 text-[11px]">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Módulos iniciados</span>
+              </div>
+              <p className="text-sm sm:text-base font-bold text-emerald-300 mt-1 font-mono">
+                {startedModulesCount} / {availableModulesCount}
+              </p>
+              <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                Con avance registrado
+              </p>
             </div>
-            <p className="text-xl sm:text-2xl font-bold text-emerald-300 mt-1">
-              {activeAvailableUnits} / {enabledUnitsCount}
-            </p>
-          </div>
 
-          <div className="p-3 rounded-2xl bg-slate-950/40 border border-white/5">
-            <div className="flex items-center space-x-2 text-slate-400 text-xs">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Próximo Rango</span>
+            <div className="p-2.5 rounded-xl bg-slate-950/50 border border-white/5">
+              <div className="flex items-center space-x-1.5 text-slate-400 text-[11px]">
+                <BookOpen className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span>Módulos disponibles</span>
+              </div>
+              <p className="text-sm sm:text-base font-bold text-cyan-300 mt-1 font-mono">
+                {availableModulesCount} activos
+              </p>
+              <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                {totalModulesCount - availableModulesCount} en preparación
+              </p>
             </div>
-            <p className="text-xs font-semibold text-cyan-200 mt-1 truncate">
-              {Math.max(0, user.xpToNextLevel - user.xp)} XP restantes
-            </p>
           </div>
-        </div>
+        )}
+
       </section>
 
-      {/* Cuadrícula de Módulos Clínicos */}
+      {/* 2. Cuadrícula de Módulos Clínicos (Inmediata y Prioritaria) */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-100 flex items-center space-x-2">
-            <span>Módulos de Estudio</span>
-          </h2>
-          <span className="text-xs text-slate-400 font-medium">
-            {enabledModulesCount} {enabledModulesCount === 1 ? "Módulo disponible" : "Módulos disponibles"}
-          </span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center space-x-2">
+              <span>Módulos de Estudio</span>
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              {availableModulesCount} {availableModulesCount === 1 ? "módulo clínico disponible" : "módulos clínicos disponibles"} · {startedModulesCount} con estudio iniciado
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 self-start sm:self-center">
+            <span 
+              title="Módulos accesibles donde registras actividad o progreso de estudio"
+              className="text-[11px] px-2.5 py-1 rounded-full bg-slate-900/80 border border-white/10 text-slate-300 font-medium"
+            >
+              Módulos iniciados: <strong className="text-emerald-400 font-bold">{startedModulesCount} / {availableModulesCount}</strong>
+            </span>
+            <span 
+              title="Módulos actualmente habilitados para estudio clínico"
+              className="text-[11px] px-2.5 py-1 rounded-full bg-slate-900/80 border border-white/10 text-slate-300 font-medium"
+            >
+              Disponibles: <strong className="text-cyan-400 font-bold">{availableModulesCount}</strong>
+            </span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
           {modules.map((mod) => {
             const Icon = mod.icon;
 
@@ -291,20 +340,18 @@ export default function DashboardPage() {
               return (
                 <GlassCard
                   key={mod.id}
-                  className="p-6 flex flex-col justify-between opacity-55 grayscale-[20%] select-none border border-white/10 bg-slate-950/30 cursor-not-allowed relative overflow-hidden"
+                  className="p-5 sm:p-6 flex flex-col justify-between opacity-55 grayscale-[20%] select-none border border-white/10 bg-slate-950/30 cursor-not-allowed relative overflow-hidden"
                 >
                   <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/10 text-slate-500 shadow-md">
-                          <Icon className="w-6 h-6" />
+                    <div className="flex items-center justify-between mb-3.5">
+                      <div className="flex items-center space-x-3 min-w-0">
+                        <div className="p-2.5 rounded-xl bg-slate-900/60 border border-white/10 text-slate-500 shadow-md shrink-0">
+                          <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <h3 className="text-lg font-bold text-slate-400">
-                              {mod.title}
-                            </h3>
-                          </div>
+                        <div className="min-w-0">
+                          <h3 className="text-base sm:text-lg font-bold text-slate-400 truncate">
+                            {mod.title}
+                          </h3>
                           <span className="inline-flex items-center space-x-1 text-[11px] text-amber-400 font-semibold mt-0.5">
                             <Lock className="w-3 h-3" />
                             <span>Próximamente disponible</span>
@@ -312,16 +359,15 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Icono de candado en lugar de flecha */}
                       <div 
                         title="Este módulo estará disponible próximamente"
-                        className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400"
+                        className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0"
                       >
                         <Lock className="w-4 h-4" />
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-400 mb-5 leading-relaxed">
                       {mod.desc}
                     </p>
 
@@ -331,14 +377,14 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Subsecciones no interactivas / deshabilitadas */}
-                  <div className="pt-4 border-t border-white/10 flex flex-wrap gap-2 relative z-10">
+                  {/* Subsecciones no interactivas */}
+                  <div className="pt-3.5 border-t border-white/10 flex flex-wrap gap-2 relative z-10">
                     {mod.subsections.map((sub) => {
                       const SubIcon = sub.icon;
                       return (
                         <span
                           key={sub.label}
-                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-900/40 border border-white/5 text-xs font-medium text-slate-500 cursor-not-allowed max-w-full"
+                          className="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-900/40 border border-white/5 text-xs font-medium text-slate-500 cursor-not-allowed max-w-full"
                         >
                           <SubIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                           <span className="break-words leading-tight">{sub.label}</span>
@@ -355,21 +401,21 @@ export default function DashboardPage() {
               <GlassCard
                 key={mod.id}
                 glow={mod.glow}
-                className="p-6 flex flex-col justify-between group hover:border-purple-500/40"
+                className="p-5 sm:p-6 flex flex-col justify-between group hover:border-purple-500/40 transition-all"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-3 rounded-2xl bg-gradient-to-tr ${mod.color} text-white shadow-lg`}>
-                        <Icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between mb-3.5">
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <div className={`p-2.5 rounded-xl bg-gradient-to-tr ${mod.color} text-white shadow-lg shrink-0`}>
+                        <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-100 group-hover:text-white transition-colors">
+                      <div className="min-w-0">
+                        <h3 className="text-base sm:text-lg font-bold text-slate-100 group-hover:text-white transition-colors truncate">
                           {mod.title}
                         </h3>
                         {mod.progress !== null ? (
                           <span className="text-xs text-purple-300 font-medium">
-                            Nivel de Maestría: {mod.progress}%
+                            Nivel de Avance: {mod.progress}%
                           </span>
                         ) : (
                           <span className="inline-flex items-center space-x-1.5 text-xs text-sky-300 font-medium">
@@ -382,13 +428,14 @@ export default function DashboardPage() {
 
                     <Link
                       href={mod.href}
-                      className="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white transition-all group-hover:translate-x-1"
+                      className="p-2 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white transition-all group-hover:translate-x-1 shrink-0"
+                      aria-label={`Acceder al módulo ${mod.title}`}
                     >
                       <ArrowRight className="w-5 h-5" />
                     </Link>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-300 mb-5 leading-relaxed">
                     {mod.desc}
                   </p>
 
@@ -397,13 +444,13 @@ export default function DashboardPage() {
                   ) : (
                     <div className="mb-4 p-2.5 rounded-xl bg-sky-950/40 border border-sky-500/20 text-sky-300 text-xs flex items-center space-x-2">
                       <Sparkles className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                      <span>Estructura inicial modular · 6 Apartados en preparación</span>
+                      <span>Estructura modular activa · 6 Apartados de estudio</span>
                     </div>
                   )}
                 </div>
 
-                {/* Subsecciones con accesos directos */}
-                <div className="pt-4 border-t border-white/10 flex flex-wrap gap-2">
+                {/* Subsecciones con accesos directos ergonómicos */}
+                <div className="pt-3.5 border-t border-white/10 flex flex-wrap gap-2">
                   {mod.subsections.map((sub) => {
                     const SubIcon = sub.icon;
                     return (

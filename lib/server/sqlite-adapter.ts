@@ -823,7 +823,7 @@ export function sqliteCreateOrUpdateAdminDb(data: {
         career, role, onboarding_completed, xp, streak_days, longest_streak,
         created_at, updated_at, last_active_at
       ) VALUES (?, ?, ?, ?, ?, 'Administración Central', 'ADMIN', 'Responsable del Proyecto', 'admin', 1, 0, 0, 0, ?, ?, ?)
-    `).run(id, normalizedEmail, data.passwordHash, data.salt, data.name || "Administrador MedStudy", now, now, now);
+    `).run(id, normalizedEmail, data.passwordHash, data.salt, data.name || "Administrador LYOH", now, now, now);
     return sqliteGetUserById(id)!;
   }
 }

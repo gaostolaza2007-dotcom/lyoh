@@ -1,9 +1,9 @@
 import React from "react";
 
 export const metadata = {
-  title: "Oftalmología | MedStudy",
+  title: "Oftalmología | LYOH",
   description:
-    "Explora el sistema visual y conoce los instrumentos, imágenes y exámenes de la especialidad. Prototipo educativo de MedStudy.",
+    "Explora el sistema visual y conoce los instrumentos, imágenes y exámenes de la especialidad. Prototipo educativo de LYOH.",
 };
 
 export default function OftalmologiaLayout({

@@ -2,7 +2,7 @@
  * REGISTRO CENTRALIZADO DE MODELOS 3D DE PARASITOLOGÍA - MEDSTUDY
  * 
  * Asocia de forma unívoca cada identificador estable de parásito con la disponibilidad
- * de su modelo 3D validado, tipo de renderizado y metadatos morfológicos.
+ * de su modelo 3D educativo, tipo de renderizado y metadatos morfológicos.
  * 
  * Permite incorporar modelos especie por especie en sucesivas tandas sin modificar
  * la arquitectura de navegación ni la estructura de fichas del Atlas.
@@ -85,7 +85,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Gametocito redondo compacto (ocupa casi todo el reticulocito agrandado)",
       "Hipnozoíto hepático durmiente (4–5 µm con membrana vacuolar UIS4+ dentro del hepatocito)"
     ],
-    statusNote: "Reconstrucción 3D hiperrealista de las 4 formas de Plasmodium vivax con corte histológico intraeritrocitario e intrahepático."
+    statusNote: "Reconstrucción 3D educativa de las 4 formas de Plasmodium vivax con corte geométrico intraeritrocitario e intrahepático."
   },
   "p04": {
     parasiteId: "p04",
@@ -100,7 +100,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Gametocito ovalado con punteado de James prominente",
       "Hipnozoíto hepático durmiente (estadio latente intrahepático responsable de recaídas)"
     ],
-    statusNote: "Reconstrucción 3D hiperrealista de las 4 formas de Plasmodium ovale (curtisi / wallikeri) con eritrocitos fimbriados y corte histológico 3D."
+    statusNote: "Reconstrucción 3D educativa de las 4 formas de Plasmodium ovale (curtisi / wallikeri) con eritrocitos fimbriados y corte geométrico 3D."
   },
   "p05": {
     parasiteId: "p05",
@@ -115,7 +115,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Gametocito compacto redondo con pigmento hemozoína negro grueso abundante",
       "Anillo en «ojo de pájaro» (cromatina central dentro de la vacuola) y trofozoíto en cesta"
     ],
-    statusNote: "Reconstrucción 3D hiperrealista de las 4 formas sanguíneas diagnósticas de Plasmodium malariae con corte histológico 3D."
+    statusNote: "Reconstrucción 3D educativa de las 4 formas sanguíneas diagnósticas de Plasmodium malariae con corte geométrico 3D."
   },
   "p06": {
     parasiteId: "p06",
@@ -295,7 +295,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Cisticerco (Cysticercus cellulosae con escólex invaginado)",
       "Estróbilo adulto (cadena estrobilada progresiva)"
     ],
-    statusNote: "Modelo 3D multi-estadio disponible y validado."
+    statusNote: "Modelo 3D multi-estadio disponible."
   },
   "p25": {
     parasiteId: "p25",
@@ -310,7 +310,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Cisticerco",
       "Estróbilo adulto"
     ],
-    statusNote: "Modelo 3D multi-estadio disponible y validado."
+    statusNote: "Modelo 3D multi-estadio disponible."
   },
   "p26": {
     parasiteId: "p26",
@@ -385,7 +385,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Macho adulto (200–240 µm, ambulacros con ventosa en patas I, II y IV, cerda larga solo en pata III y aparato copulador ventral)",
       "Larva hexápoda y Huevo embrionado (larva de 3 pares de patas junto a huevo ovalado de 150 × 100 µm con embrión 3D interno)"
     ],
-    statusNote: "Reconstrucción 3D hiperrealista de las 4 formas de Sarcoptes scabiei var. hominis con órganos internos, huevo intrauterino gigante y galería epidérmica al activar el corte histológico."
+    statusNote: "Reconstrucción 3D educativa de las 4 formas de Sarcoptes scabiei var. hominis con órganos internos, huevo intrauterino gigante y galería epidérmica al activar el corte geométrico."
   },
   "p34-sarcoptes-scabiei": {
     parasiteId: "p34-sarcoptes-scabiei",
@@ -400,7 +400,7 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
       "Macho adulto (200–240 × 150–200 µm)",
       "Larva hexápoda (6 patas) y Huevo embrionado (150 × 100 µm)"
     ],
-    statusNote: "Reconstrucción 3D hiperrealista de las 4 formas de Sarcoptes scabiei var. hominis."
+    statusNote: "Reconstrucción 3D educativa de las 4 formas de Sarcoptes scabiei var. hominis."
   },
   "p35": {
     parasiteId: "p35",
@@ -410,12 +410,12 @@ export const PARASITE_3D_REGISTRY: Record<string, Parasite3DConfig> = {
     stagesCount: 4,
     badgeLabel: "Disponible · 4 Formas evolutivas",
     availableStages: [
-      "Hembra adulta grávida (2.4–3.3 mm, ápice bífido en W con gonópodos y huevos intrauterinos 3D en corte histológico)",
+      "Hembra adulta grávida (2.4–3.3 mm, ápice bífido en W con gonópodos y huevos intrauterinos 3D en corte geométrico)",
       "Macho adulto (2.0–2.6 mm, 1.er par de patas robusto, ápice redondeado y edeago quitinoso)",
       "Liendre viable adherida al cabello (0.8 mm, vaina de cemento, opérculo con aerópilos y embrión 3D interno)",
       "Ninfa hematófaga juvenil (1.1–2.0 mm, estadio hemimetábolo con mesenterón ingurgitado)"
     ],
-    statusNote: "Reconstrucción 3D educativa interactiva de las 4 formas de Pediculus humanus capitis con órganos y huevos internos 3D al activar el corte histológico."
+    statusNote: "Reconstrucción 3D educativa interactiva de las 4 formas de Pediculus humanus capitis con órganos y huevos internos 3D al activar el corte geométrico."
   },
   "p35-pediculus-humanus-capitis": {
     parasiteId: "p35-pediculus-humanus-capitis",

@@ -722,7 +722,7 @@ export async function supabaseCreateOrUpdateAdminDb(data: {
         email: normalizedEmail,
         password_hash: data.passwordHash,
         salt: data.salt,
-        nickname: data.name || "Administrador MedStudy",
+        nickname: data.name || "Administrador LYOH",
         university: "Administración Central",
         university_short: "ADMIN",
         career: "Responsable del Proyecto",

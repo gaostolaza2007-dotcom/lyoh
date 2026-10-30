@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -29,7 +31,7 @@ import {
 } from "lucide-react";
 
 /**
- * Visor 3D Hiperrealista Diferencial para las especies humanas de Plasmodium:
+ * Visor 3D Detallado Diferencial para las especies humanas de Plasmodium:
  * - P03: Plasmodium vivax (trofozoíto ameboide en reticulocito agrandado con puntos de Schüffner, esquizonte de 12–24 merozoítos, gametocito esférico e hipnozoíto hepático)
  * - P04: Plasmodium ovale (eritrocito ovalado y fimbriado/desflecado con puntos de James, trofozoíto compacto, esquizonte de 6–14 merozoítos e hipnozoíto hepático)
  * - P05: Plasmodium malariae (trofozoíto ecuatorial «en banda» en eritrocito senescente normo/microcítico con puntos de Ziemann, esquizonte «en margarita» de 6–12 merozoítos con pigmento central grueso y anillo «en ojo de pájaro»)
@@ -736,7 +738,7 @@ function buildPlasmodiumDifferentialGeometry(
     geo.setAttribute("aMeta1", new THREE.Float32BufferAttribute(meta1, 4));
     geo.setIndex(indices);
     geo.computeBoundingSphere();
-    return geo;
+    return orientSurfaceGeometry(geo);
   }
 
   // ===========================================================================
@@ -1534,11 +1536,11 @@ function buildPlasmodiumDifferentialGeometry(
   geometry.setAttribute("aMeta1", new THREE.Float32BufferAttribute(meta1, 4));
   geometry.setIndex(indices);
   geometry.computeBoundingSphere();
-  return geometry;
+  return orientSurfaceGeometry(geometry);
 }
 
 /**
- * Shaders GLSL hiperrealistas con perturbación analítica de normales (sin #extension)
+ * Shaders GLSL detalladas con perturbación analítica de normales (sin #extension)
  */
 const PLASMODIUM_DIFF_VERTEX_SHADER = `
   attribute vec4 aMeta1;
@@ -1570,7 +1572,7 @@ const PLASMODIUM_DIFF_VERTEX_SHADER = `
     vLocalPos = pos;
     vec4 worldPosition = modelMatrix * vec4(pos, 1.0);
     vWorldPos = worldPosition.xyz;
-    vNormal = normalize(normalMatrix * norm);
+    vNormal = normalize(mat3(modelMatrix) * norm);
     vUV = aMeta1.xy;
     vMask = aMeta1.z;
     vRegionId = aMeta1.w;
@@ -1635,7 +1637,8 @@ const PLASMODIUM_DIFF_FRAGMENT_SHADER = `
     vec3 B = normalize(cross(N, T));
 
     float freq = (rId == 1.0) ? 9.0 : 18.0;
-    float amp = (rId == 1.0) ? 0.08 : 0.14;
+    float amp = (rId == 1.0) ? 0.018 : 0.035;
+    amp *= 1.0 - smoothstep(0.02, 0.12, length(fwidth(pos)));
     float dU = cos(pos.x * freq + pos.z * freq * 0.7) * amp;
     float dV = sin(pos.z * freq - pos.x * freq * 0.7) * amp;
     return normalize(N - (T * dU + B * dV));
@@ -1745,11 +1748,11 @@ const PLASMODIUM_DIFF_FRAGMENT_SHADER = `
     vec3 finalRGB = baseCol;
 
     if (uShaderMode == 0) {
-      // Modo 0: Biológico 3D con dispersión subsuperficial (SSS hemoglobínico)
+      // Modo 0: Esquemático 3D con dispersión subsuperficial (SSS hemoglobínico)
       vec3 amb = baseCol * 0.36;
       vec3 diff = baseCol * (diff1 * 0.84 + diff2 * 0.38);
       vec3 sssCol = baseCol * vec3(1.15, 0.55, 0.45) * sss * 0.48;
-      finalRGB = amb + diff + sssCol + vec3(spec * 0.55) + baseCol * fresnel * 0.28;
+      finalRGB = amb + diff + sssCol + vec3(spec * 0.16) + baseCol * fresnel * 0.12;
     } else if (uShaderMode == 1) {
       // Modo 1: Tinción de Giemsa en Frotis Fino (Fondo blanco cálido #faf7f2)
       vec3 giemsaCol = baseCol;
@@ -1829,11 +1832,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 2.2,
         translucencyLabel: "Transparencia del reticulocito",
         translucencyHint:
-          "Ajusta la transparencia o activa el «Corte Histológico» para inspeccionar los seudópodos ameboides y los puntos de Schüffner",
+          "Ajusta la transparencia o activa el «Corte del modelo» para inspeccionar los seudópodos ameboides y los puntos de Schüffner",
         defaultTranslucency: 54,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.2, 6.4], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.36, 11.52], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.2, 3.2, 3.8], target: [0.0, 0.05, 0.0] },
         focusButtonLabel: "Enfocar Trofozoíto Ameboide",
         fullButtonLabel: "Ver Reticulocito Completo",
@@ -1880,7 +1883,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "En el frotis fino teñido con Giemsa parece fragmentado en varios lazos azules interconectados alrededor de una gran vacuola digestiva.",
             reconstruction3DNote:
-              "Al pulsar esta región se abre la hemimembrana superior en el Corte Histológico para ver la red 3D de seudópodos.",
+              "Al pulsar esta región se abre la hemimembrana superior en el Corte del modelo para ver la red 3D de seudópodos.",
           },
           {
             id: "pv-chromatin",
@@ -1958,11 +1961,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 2.2,
         translucencyLabel: "Transparencia del reticulocito y PVM",
         translucencyHint:
-          "Activa el «Corte Histológico / Sección 3D» para abrir la célula y contar los 16 merozoítos 3D individuales en su interior",
+          "Activa el «Corte del modelo / Sección 3D» para abrir la célula y contar los 16 merozoítos 3D individuales en su interior",
         defaultTranslucency: 58,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.2, 6.4], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.36, 11.52], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.0, 3.0, 3.6], target: [0.0, 0.0, 0.0] },
         focusButtonLabel: "Abrir Esquizonte (16 Merozoítos)",
         fullButtonLabel: "Vista general",
@@ -1989,7 +1992,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "Contar ≥12 merozoítos dentro de un eritrocito agrandado con puntos de Schüffner confirma P. vivax frente a P. ovale y P. malariae.",
             reconstruction3DNote:
-              "Dispuestos en doble corona tridimensional (10 periféricos + 6 internos) visibles al activar el Corte Histológico.",
+              "Dispuestos en doble corona tridimensional (10 periféricos + 6 internos) visibles al activar el Corte del modelo.",
           },
           {
             id: "pvs-nuclei",
@@ -2071,7 +2074,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         defaultTranslucency: 54,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.2, 6.4], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.36, 11.52], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [-0.8, 3.0, 3.6], target: [-0.3, 0.05, 0.0] },
         focusButtonLabel: "Enfocar Cromatina y Pigmento",
         fullButtonLabel: "Vista general",
@@ -2117,7 +2120,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "El hecho de poseer un solo núcleo con pigmento disperso permite distinguirlo de un esquizonte maduro (que tiene múltiples núcleos y pigmento concentrado).",
             reconstruction3DNote:
-              "Expuesto en 3D con su halo claro perinuclear al activar el Corte Histológico.",
+              "Expuesto en 3D con su halo claro perinuclear al activar el Corte del modelo.",
           },
           {
             id: "pvg-pigment",
@@ -2153,11 +2156,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 1.5,
         translucencyLabel: "Transparencia del hepatocito",
         translucencyHint:
-          "Activa el «Corte Histológico» para seccionar el hepatocito y la vacuola parasitófora UIS4+ exponiendo el hipnozoíto durmiente",
+          "Activa el «Corte del modelo» para seccionar el hepatocito y la vacuola parasitófora UIS4+ exponiendo el hipnozoíto durmiente",
         defaultTranslucency: 56,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.4, 6.8], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.72, 12.24], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.9, 2.6, 3.4], target: [0.88, 0.08, 0.24] },
         focusButtonLabel: "Enfocar Hipnozoíto Latente",
         fullButtonLabel: "Ver Hepatocito Completo",
@@ -2254,7 +2257,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         defaultTranslucency: 54,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.2, 6.4], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.36, 11.52], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.0, 3.2, 3.8], target: [0.0, 0.05, 0.0] },
         focusButtonLabel: "Enfocar Trofozoíto y Fimbrias",
         fullButtonLabel: "Ver Eritrocito Oval Completo",
@@ -2301,7 +2304,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "Esta morfología compacta junto con los puntos de James evita confundirlo con P. vivax.",
             reconstruction3DNote:
-              "Activa el Corte Histológico para examinar el anillo/trofozoíto robusto y su gran masa nuclear rubí.",
+              "Activa el Corte del modelo para examinar el anillo/trofozoíto robusto y su gran masa nuclear rubí.",
           },
           {
             id: "po-james-dots",
@@ -2336,11 +2339,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 2.2,
         translucencyLabel: "Transparencia del eritrocito",
         translucencyHint:
-          "Activa el «Corte Histológico» para observar los 8 merozoítos grandes (la mitad del número que presenta P. vivax)",
+          "Activa el «Corte del modelo» para observar los 8 merozoítos grandes (la mitad del número que presenta P. vivax)",
         defaultTranslucency: 58,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.2, 6.4], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.36, 11.52], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.0, 3.0, 3.6], target: [0.0, 0.0, 0.0] },
         focusButtonLabel: "Abrir Esquizonte (8 Merozoítos)",
         fullButtonLabel: "Vista general",
@@ -2367,7 +2370,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "Mientras tiene el mismo número de merozoítos que P. malariae (~8), la presencia del eritrocito ovalado fimbriado con puntos de James descarta de inmediato P. malariae.",
             reconstruction3DNote:
-              "Expuestos en 3D con sus núcleos individuales al activar el Corte Histológico.",
+              "Expuestos en 3D con sus núcleos individuales al activar el Corte del modelo.",
           },
           {
             id: "pos-pigment",
@@ -2427,7 +2430,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         defaultTranslucency: 54,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.2, 6.4], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.36, 11.52], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [-0.6, 3.0, 3.6], target: [-0.2, 0.05, 0.0] },
         focusButtonLabel: "Enfocar Gametocito",
         fullButtonLabel: "Vista general",
@@ -2473,7 +2476,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "Visible en la periferia del gametocito.",
             reconstruction3DNote:
-              "Expuesto al activar el Corte Histológico.",
+              "Expuesto al activar el Corte del modelo.",
           },
         ],
       },
@@ -2488,11 +2491,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 1.5,
         translucencyLabel: "Transparencia del hepatocito",
         translucencyHint:
-          "Activa el «Corte Histológico» para ver el hipnozoíto durmiente en el interior del hepatocito",
+          "Activa el «Corte del modelo» para ver el hipnozoíto durmiente en el interior del hepatocito",
         defaultTranslucency: 56,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.4, 6.8], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9.72, 12.24], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.9, 2.6, 3.4], target: [0.88, 0.08, 0.24] },
         focusButtonLabel: "Enfocar Hipnozoíto",
         fullButtonLabel: "Ver Hepatocito Completo",
@@ -2519,7 +2522,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "No confundir una recaída verdadera por hipnozoítos (P. vivax y P. ovale) con una recrudescencia eritrocitaria por persistencia en sangre (P. malariae y P. falciparum).",
             reconstruction3DNote:
-              "Secciona el hepatocito con el Corte Histológico para ver el núcleo y el apicoplasto del hipnozoíto.",
+              "Secciona el hepatocito con el Corte del modelo para ver el núcleo y el apicoplasto del hipnozoíto.",
           },
           {
             id: "poh-hepatocyte",
@@ -2565,11 +2568,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 2.4,
         translucencyLabel: "Transparencia del eritrocito",
         translucencyHint:
-          "Activa el «Corte Histológico» para ver cómo el trofozoíto «en banda» atraviesa ecuatorialmente el glóbulo rojo de lado a lado",
+          "Activa el «Corte del modelo» para ver cómo el trofozoíto «en banda» atraviesa ecuatorialmente el glóbulo rojo de lado a lado",
         defaultTranslucency: 54,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.0, 6.0], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9, 10.8], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.0, 3.0, 3.5], target: [0.0, 0.05, 0.0] },
         focusButtonLabel: "Enfocar «Forma en Banda»",
         fullButtonLabel: "Ver Eritrocito Completo",
@@ -2673,11 +2676,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 2.4,
         translucencyLabel: "Transparencia del eritrocito",
         translucencyHint:
-          "Activa el «Corte Histológico» para ver en 3D los pétalos de merozoítos dispuestos como una flor de margarita alrededor del pigmento central",
+          "Activa el «Corte del modelo» para ver en 3D los pétalos de merozoítos dispuestos como una flor de margarita alrededor del pigmento central",
         defaultTranslucency: 58,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.0, 6.0], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9, 10.8], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [0.0, 2.8, 3.3], target: [0.0, 0.0, 0.0] },
         focusButtonLabel: "Abrir «Flor de Margarita»",
         fullButtonLabel: "Vista general",
@@ -2744,7 +2747,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         defaultTranslucency: 54,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.0, 6.0], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9, 10.8], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [-0.5, 2.8, 3.4], target: [-0.2, 0.05, 0.0] },
         focusButtonLabel: "Enfocar Gametocito",
         fullButtonLabel: "Vista general",
@@ -2769,7 +2772,7 @@ export const PLASMODIUM_SPECIES_DATA: Record<
             microscopyNote:
               "Su abundancia de pigmento negro grueso y la ausencia de puntos de Schüffner lo distinguen de P. vivax y P. ovale.",
             reconstruction3DNote:
-              "Activa el Corte Histológico para ver el núcleo excéntrico y los cristales oscuros internos.",
+              "Activa el Corte del modelo para ver el núcleo excéntrico y los cristales oscuros internos.",
           },
           {
             id: "pmg-pigment",
@@ -2805,11 +2808,11 @@ export const PLASMODIUM_SPECIES_DATA: Record<
         scaleBarWorldUnits: 2.4,
         translucencyLabel: "Transparencia del eritrocito",
         translucencyHint:
-          "Activa el «Corte Histológico» para ver el punto de cromatina situado en el centro exacto de la vacuola («ojo de pájaro»)",
+          "Activa el «Corte del modelo» para ver el punto de cromatina situado en el centro exacto de la vacuola («ojo de pájaro»)",
         defaultTranslucency: 56,
         defaultCutPercent: 0,
         hasMovement: true,
-        defaultCamera: { position: [0.0, 5.0, 6.0], target: [0.0, 0.0, 0.0] },
+        defaultCamera: { position: [0, 9, 10.8], target: [0.0, 0.0, 0.0] },
         focusCamera: { position: [-0.6, 2.8, 3.3], target: [-0.65, 0.05, 0.0] },
         focusButtonLabel: "Enfocar «Ojo de Pájaro»",
         fullButtonLabel: "Vista general",
@@ -3013,7 +3016,7 @@ export function PlasmodiumDifferential3DViewer({
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -3023,6 +3026,7 @@ export function PlasmodiumDifferential3DViewer({
 
     const initMeta = stages[0];
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    configureParasiteViewport(camera, width, height);
     camera.position.set(...initMeta.defaultCamera.position);
     cameraRef.current = camera;
 
@@ -3030,7 +3034,7 @@ export function PlasmodiumDifferential3DViewer({
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.minDistance = 1.8;
-    controls.maxDistance = 16.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initMeta.defaultCamera.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.15;
@@ -3184,10 +3188,10 @@ export function PlasmodiumDifferential3DViewer({
 
           const dist = camera.position.distanceTo(controls.target);
           const vFovRad = (camera.fov * Math.PI) / 180;
-          const visibleWorldHeight = 2 * Math.tan(vFovRad / 2) * dist;
+          const visibleWorldHeight = 2 * Math.tan(vFovRad / 2) * dist / camera.zoom;
           const pxPerUnit = h / Math.max(visibleWorldHeight, 0.001);
           const rawPx = pxPerUnit * currentStage.scaleBarWorldUnits;
-          setScaleBarPx(Math.round(clampJS(rawPx, 38, 125)));
+          setScaleBarPx(visibleScaleLength(rawPx));
         }
       }
     };
@@ -3198,14 +3202,17 @@ export function PlasmodiumDifferential3DViewer({
       if (!holder || !rendererRef.current || !cameraRef.current) return;
       const newW = holder.clientWidth || 840;
       const newH = holder.clientHeight || 540;
-      cameraRef.current.aspect = newW / newH;
-      cameraRef.current.updateProjectionMatrix();
+      configureParasiteViewport(cameraRef.current, newW, newH);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
       rendererRef.current.setSize(newW, newH);
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -3635,7 +3642,7 @@ export function PlasmodiumDifferential3DViewer({
                 ? "SEM: topografía de la membrana eritrocitaria (reticulocito / fimbrias / normocito)."
                 : shaderMode === 3
                 ? "Rayos X: resalta núcleos de merozoítos, hemozoína e hipnozoítos."
-                : `Modo Biológico 3D de ${speciesData.scientificName}.`}
+                : `Modo Esquemático 3D de ${speciesData.scientificName}.`}
             </span>
           </div>
 
@@ -3666,7 +3673,7 @@ export function PlasmodiumDifferential3DViewer({
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -3674,7 +3681,7 @@ export function PlasmodiumDifferential3DViewer({
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -3682,7 +3689,7 @@ export function PlasmodiumDifferential3DViewer({
               <button
                 type="button"
                 onClick={handleViewFull}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -3707,6 +3714,7 @@ export function PlasmodiumDifferential3DViewer({
             </div>
 
             <div
+              style={{ display: scaleBarPx > 0 ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al estadio activo"
             >
@@ -3789,12 +3797,12 @@ export function PlasmodiumDifferential3DViewer({
             </p>
           </div>
 
-          {/* Deslizador 2: Corte Histológico / Sección 3D */}
+          {/* Deslizador 2: Corte del modelo / Sección 3D */}
           <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <label className="text-slate-200 font-bold flex items-center gap-1.5">
                 <Scissors className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Corte Histológico / Sección 3D</span>
+                <span>Corte del modelo / Sección 3D</span>
               </label>
               <div className="flex items-center gap-2">
                 {cutPercent > 0 && (

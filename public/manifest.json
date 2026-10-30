@@ -1,0 +1,31 @@
+{
+  "name": "LYOH - Plataforma de Aprendizaje Médico Interactivo",
+  "short_name": "LYOH",
+  "description": "Estudio médico de alto rendimiento con Anatomía 3D, Bioquímica interactiva, Histología con microscopía virtual y Microbiología clínica.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/images/brand/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/brand/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/brand/lyoh-emblem.png",
+      "sizes": "214x216",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "214x216",
+      "type": "image/png"
+    }
+  ]
+}

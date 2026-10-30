@@ -71,6 +71,35 @@ export default function MicrobiologiaInfecciosaPage() {
     } catch (e) {
       console.warn("Could not read studied microbes from localStorage", e);
     }
+
+    // Soporte para apertura directa desde enlaces externos (?id=... o ?pdfId=... o ?q=...)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const directId = params.get("id");
+      const directPdfId = params.get("pdfId");
+      const qParam = params.get("q");
+
+      let targetMicrobe: Microbe | undefined;
+      const targetNeedle = (directId || directPdfId)?.toLowerCase().trim();
+      if (targetNeedle) {
+        targetMicrobe = MICROBIOLOGY_DATA.find(
+          (m) => m.id.toLowerCase() === targetNeedle || m.pdfId.toLowerCase() === targetNeedle
+        );
+      }
+
+      if (targetMicrobe) {
+        setExpandedIds((prev) => Array.from(new Set([...prev, targetMicrobe!.id])));
+        setActiveCategory("Todos");
+        setTimeout(() => {
+          const el = document.getElementById(`microbe-${targetMicrobe!.id}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 400);
+      } else if (qParam) {
+        setSearchQuery(qParam);
+      }
+    }
   }, [updateUnitProgress]);
 
   // Marcar como estudiada evitando otorgar XP repetidos
@@ -257,6 +286,7 @@ export default function MicrobiologiaInfecciosaPage() {
             return (
               <GlassCard
                 key={microbe.id}
+                id={`microbe-${microbe.id}`}
                 className={`
                   p-5 rounded-3xl border transition-all duration-300
                   ${isExpanded ? "border-cyan-500/40 bg-slate-900/60 shadow-xl shadow-cyan-950/30" : "border-white/10 hover:border-white/20"}

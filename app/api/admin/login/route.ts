@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         email: envAdminEmail,
         passwordHash: hash,
         salt,
-        name: "Administrador MedStudy",
+        name: "Administrador LYOH",
       });
 
       const token = await createSession(adminUser.id, "admin");

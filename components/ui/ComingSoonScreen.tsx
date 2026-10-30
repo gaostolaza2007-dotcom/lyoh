@@ -47,7 +47,7 @@ export const ComingSoonScreen: React.FC<ComingSoonScreenProps> = ({
 
           <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto leading-relaxed mb-8">
             Estamos integrando casos clínicos, interactivos y evaluaciones pedagógicas
-            validadas para este módulo. Podrás acceder a su contenido completo en la siguiente fase de MedStudy.
+            validadas para este módulo. Podrás acceder a su contenido completo en la siguiente fase de LYOH.
           </p>
 
           {/* Botón requerido: Volver al inicio */}

@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -79,7 +81,7 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
     name: "Trofozoíto en anillo dentro de un eritrocito",
     shortName: "Trofozoíto en anillo",
     subtitle: "Fase asexual intraeritrocitaria temprana en glóbulo rojo normocítico (~7.5 µm)",
-    dimensionsNote: "Eritrocito: ~7.5 µm · Anillo intracelular: ~1.85 µm (~1/4 del diámetro celular)",
+    dimensionsNote: "Eritrocito: ~7.5 µm · Anillo intracelular: ~1.5 µm (~1/5 del diámetro celular)",
     overviewSummary:
       "En Plasmodium falciparum, el trofozoíto joven se aloja íntegramente dentro del estroma de un eritrocito de tamaño normal. Presenta un citoplasma anular sumamente fino y delicado con variación suave de espesor alrededor de una zona vacuolar, y uno o dos puntos de cromatina nuclear integrados en su margen.",
     microscopyComparison:
@@ -88,7 +90,7 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
     erythrocyteControlHint: "Regula la atenuación óptica del eritrocito hospedador para inspeccionar el parásito interior",
     defaultErythrocyteTransparency: 54,
     defaultCamera: {
-      position: [0.25, 4.35, 6.15],
+      position: [0.335, 8.0475, 11.3775],
       target: [0.15, 0.0, 0.0],
     },
     focusParasiteCamera: {
@@ -151,7 +153,7 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
           target: [1.02, 0.0, 0.0],
         },
         summary:
-          "Cuerpo citoplasmático intracelular delicado (~1.85 µm de diámetro exterior, equivalente a ~1/4 del eritrocito) con variación suave de espesor: forma una media luna citoplasmática esbelta en su arco metabólico y se adelgaza en un filamento fino hacia los puntos de cromatina.",
+          "Cuerpo citoplasmático intracelular delicado (~1.5 µm de diámetro exterior, equivalente a ~1/5 del eritrocito) con variación suave de espesor: forma una media luna citoplasmática esbelta en su arco metabólico y se adelgaza en un filamento fino hacia los puntos de cromatina.",
         microscopyNote:
           "En Giemsa se tiñe de azul celeste basófilo suave. Su trazo fino y delicado ayuda a diferenciar P. falciparum de los anillos más gruesos e irregulares de P. vivax.",
         reconstruction3DNote:
@@ -187,16 +189,16 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
     name: "Gametocito maduro con forma de media luna",
     shortName: "Gametocito maduro",
     subtitle: "Fase sexual eritrocitaria madura (estadio V) con morfología falciforme (~9.5–11 µm)",
-    dimensionsNote: "Longitud: ~9.8 µm · Ancho central: ~2.5 µm",
+    dimensionsNote: "Longitud proyectada: ~10.5 µm · Ancho central: ~1.8 µm",
     overviewSummary:
       "Los gametocitos maduros de Plasmodium falciparum presentan una forma característica de media luna, banana o salchicha. Poseen extremos redondeados-ahusados, cromatina nuclear central y gránulos oscuros de pigmento malárico (hemozoína) agrupados alrededor del núcleo.",
     microscopyComparison:
       "En frotis teñido con Giemsa (CDC DPDx), el gametocito distiende por completo al eritrocito hospedador, persistiendo a menudo un fino remanente membranoso en el lado cóncavo (velo de Laveran).",
     erythrocyteControlLabel: "Membrana eritrocitaria (velo de Laveran)",
     erythrocyteControlHint: "Ajusta la visibilidad del remanente de la célula hospedadora que envuelve al gametocito",
-    defaultErythrocyteTransparency: 45,
+    defaultErythrocyteTransparency: 72,
     defaultCamera: {
-      position: [0.0, 1.35, 8.8],
+      position: [0, 2.3275, 16.28],
       target: [0.0, 0.2, 0.0],
     },
     focusParasiteCamera: {
@@ -217,7 +219,7 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
           target: [-0.4, 0.2, 0.0],
         },
         summary:
-          "Cuerpo celular alargado y curvado (~9.8 µm de longitud) con polos redondeados-obtusos, sustentado por su complejo membranoso subpelicular.",
+          "Cuerpo celular alargado y curvado (longitud proyectada de ~10.5 µm) con polos redondeados-obtusos, sustentado por su complejo membranoso subpelicular.",
         microscopyNote:
           "En Giemsa el citoplasma se observa azul celeste más intenso en macrogametocitos y más pálido o violáceo suave en microgametocitos.",
         reconstruction3DNote:
@@ -231,7 +233,7 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
         shortLabel: "Cromatina central",
         category: "parasito",
         categoryLabel: "Parásito · Núcleo",
-        anchor3D: [0.0, 0.82, 0.3],
+        anchor3D: [0.0, 1.46, 0.3],
         labelOffset: [-45, -52],
         cameraGoal: {
           position: [0.2, 1.2, 4.8],
@@ -252,7 +254,7 @@ const PLASMODIUM_FORMS: Record<PlasmodiumFormId, PlasmodiumFormMetadata> = {
         shortLabel: "Pigmento (hemozoína)",
         category: "parasito",
         categoryLabel: "Parásito · Pigmento",
-        anchor3D: [0.95, 0.62, 0.35],
+        anchor3D: [0.95, 1.26, 0.35],
         labelOffset: [72, -38],
         cameraGoal: {
           position: [0.9, 1.1, 4.6],
@@ -322,7 +324,7 @@ function buildBiconcaveRBCGeometry(radialSegs = 80, angularSegs = 128): THREE.Bu
     const r = rho * RBC_RADIUS;
     const r2 = rho * rho;
     const r4 = r2 * r2;
-    // Perfil bicóncavo clásico de Evans-Fung (~0.86 µm en el centro, ~2.12 µm en el reborde)
+    // Perfil bicóncavo clásico de Evans-Fung (~0.86 µm en el centro, ~2.55 µm en el reborde)
     const poly = 0.23 + 2.04 * r2 - 1.15 * r4;
     const halfH = 0.5 * RBC_RADIUS * Math.abs(sinPsi) * poly;
     const y = signY * halfH;
@@ -348,7 +350,7 @@ function buildBiconcaveRBCGeometry(radialSegs = 80, angularSegs = 128): THREE.Bu
       const psiPrev = Math.max(-Math.PI * 0.5, psi - eps);
       const dPsi = evalSurface(psiNext, theta).pos.sub(evalSurface(psiPrev, theta).pos);
       const dTheta = evalSurface(psi, theta + eps).pos.sub(evalSurface(psi, theta - eps).pos);
-      const n = new THREE.Vector3().crossVectors(dTheta, dPsi).normalize();
+      const n = new THREE.Vector3().crossVectors(dPsi, dTheta).normalize();
       if (Math.abs(sinPsi) > 0.9992) {
         n.set(0, signY, 0);
       }
@@ -373,12 +375,12 @@ function buildBiconcaveRBCGeometry(radialSegs = 80, angularSegs = 128): THREE.Bu
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
  * Evalúa la línea media y sección transversal orgánica del citoplasma en anillo.
- * - Contorno ovoide suave (~1.85 µm de diámetro total, ~1/4 del eritrocito).
+ * - Contorno ovoide suave (~1.5 µm de diámetro total, ~1/5 del eritrocito).
  * - Variación continua de espesor: media luna citoplasmática suave en u = 0
  *   que se adelgaza hasta un filamento delicado en u = +-pi (zona cromatínica),
  *   con cuna perinuclear donde se asienta la cromatina y labio cupuliforme interno.
@@ -390,14 +392,14 @@ function evalRingCytoplasmPoint(u: number, v: number): { pos: THREE.Vector3; uvM
   const sinV = Math.sin(v);
 
   // Radio medio suavemente ovoide (no un círculo mecánico rígido)
-  const midR = 0.72 * (1.0 + 0.065 * cosU - 0.03 * Math.cos(2.0 * u));
+  const midR = 0.60 * (1.0 + 0.065 * cosU - 0.03 * Math.cos(2.0 * u));
 
   // Variación orgánica de espesor:
   // En u = 0 (arco citoplasmático principal): ancho ~0.21 µm
   // En u = pi (arco fino donde reside la cromatina): filamento delicado ~0.068 µm
   const crescentFactor = Math.pow(0.5 * (1.0 + cosU), 1.35);
-  let widthR = 0.068 + 0.145 * crescentFactor;
-  let heightY = 0.058 + 0.088 * crescentFactor;
+  let widthR = 0.045 + 0.075 * crescentFactor;
+  let heightY = 0.045 + 0.060 * crescentFactor;
 
   // Suave ensanchamiento de transición (cuna perinuclear) bajo los dos corpúsculos de cromatina
   const dU1 = Math.atan2(Math.sin(u - 2.52), Math.cos(u - 2.52));
@@ -469,7 +471,7 @@ function buildOrganicRingCytoplasmGeometry(uSegs = 112, vSegs = 48): THREE.Buffe
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -497,7 +499,7 @@ function buildCurvedChromatinBodyGeometry(
     const env = Math.pow(Math.max(0.0, cosLat), 0.85);
 
     const u = centerAngleU + sinLat * arcHalfSpan;
-    const midR = 0.72 * (1.0 + 0.065 * Math.cos(u) - 0.03 * Math.cos(2.0 * u));
+    const midR = 0.60 * (1.0 + 0.065 * Math.cos(u) - 0.03 * Math.cos(2.0 * u));
 
     const rLocal = midR + radialHalfThickness * env * Math.cos(phi);
     const yLocal = 0.018 + verticalHalfThickness * env * Math.sin(phi);
@@ -551,7 +553,7 @@ function buildCurvedChromatinBodyGeometry(
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -570,7 +572,7 @@ function buildVacuoleLensGeometry(radialSegs = 36, angularSegs = 64): THREE.Buff
     const rho = Math.abs(cosPsi);
     const signY = sinPsi >= 0 ? 1.0 : -1.0;
 
-    const maxR = 0.65 * (1.0 + 0.055 * Math.cos(u) - 0.025 * Math.cos(2.0 * u));
+    const maxR = 0.54 * (1.0 + 0.055 * Math.cos(u) - 0.025 * Math.cos(2.0 * u));
     const r = rho * maxR;
     // Perfil meniscal: suavemente deprimido en el centro y acoplado al borde interno del anillo
     const halfH = 0.075 * Math.abs(sinPsi) * (0.65 + 0.55 * rho * rho);
@@ -607,7 +609,7 @@ function buildVacuoleLensGeometry(radialSegs = 36, angularSegs = 64): THREE.Buff
       const pPrev = Math.max(-Math.PI * 0.5, psi - eps);
       const dPsi = evalVacPoint(pNext, u).pos.sub(evalVacPoint(pPrev, u).pos);
       const dU = evalVacPoint(psi, u + eps).pos.sub(evalVacPoint(psi, u - eps).pos);
-      const n = new THREE.Vector3().crossVectors(dU, dPsi).normalize();
+      const n = new THREE.Vector3().crossVectors(dPsi, dU).normalize();
       if (Math.abs(sinPsi) > 0.999) n.set(0, signY, 0);
       normals.push(n.x, n.y, n.z);
     }
@@ -630,7 +632,7 @@ function buildVacuoleLensGeometry(radialSegs = 36, angularSegs = 64): THREE.Buff
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -640,9 +642,9 @@ function evalGametocyteSpineAndRadius(s: number) {
   const clamped = Math.max(-1.0, Math.min(1.0, s));
   const u = (clamped + 1.0) * 0.5;
   const sinPiU = Math.sin(Math.PI * u);
-  const rBase = 1.24 * Math.pow(Math.max(0.0, sinPiU), 0.62);
-  const spineY = 1.18 * (1.0 - clamped * clamped) - 0.42;
-  return { spineY, rx: 4.35, ry: rBase, rz: rBase * 0.88 };
+  const rBase = 0.92 * Math.pow(Math.max(0.0, sinPiU), 0.62);
+  const spineY = 2.0 * (1.0 - clamped * clamped) - 0.60;
+  return { spineY, rx: 5.25, ry: rBase, rz: rBase * 0.88 };
 }
 
 function buildCrescentGametocyteGeometry(lengthSegs = 96, radialSegs = 48): THREE.BufferGeometry {
@@ -653,7 +655,7 @@ function buildCrescentGametocyteGeometry(lengthSegs = 96, radialSegs = 48): THRE
 
   const evalPoint = (uNorm: number, phi: number): THREE.Vector3 => {
     const s = uNorm * 2.0 - 1.0;
-    const x = s * 4.35;
+    const x = s * 5.25;
     const { spineY, ry, rz } = evalGametocyteSpineAndRadius(s);
     const y = spineY + ry * Math.sin(phi);
     const z = rz * Math.cos(phi);
@@ -673,7 +675,7 @@ function buildCrescentGametocyteGeometry(lengthSegs = 96, radialSegs = 48): THRE
       const uPrev = Math.max(0.0005, uNorm - 0.008);
       const dU = evalPoint(uNext, phi).sub(evalPoint(uPrev, phi));
       const dPhi = evalPoint(uNorm, phi + 0.025).sub(evalPoint(uNorm, phi - 0.025));
-      const n = new THREE.Vector3().crossVectors(dPhi, dU).normalize();
+      const n = new THREE.Vector3().crossVectors(dU, dPhi).normalize();
       if (i === 0) n.set(-1, 0, 0);
       if (i === lengthSegs) n.set(1, 0, 0);
       normals.push(n.x, n.y, n.z);
@@ -697,7 +699,7 @@ function buildCrescentGametocyteGeometry(lengthSegs = 96, radialSegs = 48): THRE
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 function buildLaveransBibGeometry(lengthSegs = 84, radialSegs = 44): THREE.BufferGeometry {
@@ -708,7 +710,7 @@ function buildLaveransBibGeometry(lengthSegs = 84, radialSegs = 44): THREE.Buffe
 
   const evalBibPoint = (uNorm: number, phi: number): THREE.Vector3 => {
     const s = uNorm * 2.0 - 1.0;
-    const x = s * 4.46;
+    const x = s * 5.38;
     const { spineY, ry, rz } = evalGametocyteSpineAndRadius(s);
     const envRy = ry * 1.06 + 0.03;
     const envRz = rz * 1.06 + 0.03;
@@ -740,7 +742,7 @@ function buildLaveransBibGeometry(lengthSegs = 84, radialSegs = 44): THREE.Buffe
       const uPrev = Math.max(0.001, uNorm - 0.009);
       const dU = evalBibPoint(uNext, phi).sub(evalBibPoint(uPrev, phi));
       const dPhi = evalBibPoint(uNorm, phi + 0.025).sub(evalBibPoint(uNorm, phi - 0.025));
-      const n = new THREE.Vector3().crossVectors(dPhi, dU).normalize();
+      const n = new THREE.Vector3().crossVectors(dU, dPhi).normalize();
       if (i === 0) n.set(-1, 0, 0);
       if (i === lengthSegs) n.set(1, 0, 0);
       normals.push(n.x, n.y, n.z);
@@ -764,7 +766,7 @@ function buildLaveransBibGeometry(lengthSegs = 84, radialSegs = 44): THREE.Buffe
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 // ============================================================================
@@ -822,7 +824,7 @@ const RBC_FRAGMENT_SHADER = `
     float ndotv = max(0.0, dot(N, V));
     float fresnel = pow(1.0 - ndotv, 2.4);
     // Brillo satinado orgánico muy suave (nunca plástico)
-    float sheen = pow(max(0.0, dot(N, H1)), 18.0) * 0.12;
+    float sheen = pow(max(0.0, dot(N, H1)), 20.0) * 0.045;
 
     float rho = clamp(v_uv.x, 0.0, 1.0);
     // Factor de espesor bicóncavo: menor en la depresión central (rho ~ 0), máximo en el reborde (rho ~ 0.7)
@@ -852,14 +854,14 @@ const RBC_FRAGMENT_SHADER = `
       alpha = clamp(u_baseOpacity * opticalPath, 0.05, 0.95);
     } else {
       // MODO 2: SIMULACIÓN DE GIEMSA (Coloración eosinofílica rosado-salmón con palidez central)
-      vec3 giemsaCenter = vec3(0.93, 0.81, 0.84);
-      vec3 giemsaRim    = vec3(0.83, 0.57, 0.64);
-      vec3 giemsaEdge   = vec3(0.70, 0.42, 0.50);
+      vec3 giemsaCenter = vec3(0.97, 0.88, 0.86);
+      vec3 giemsaRim    = vec3(0.89, 0.67, 0.66);
+      vec3 giemsaEdge   = vec3(0.80, 0.56, 0.58);
 
       vec3 baseGiemsa = mix(giemsaCenter, giemsaRim, smoothstep(0.18, 0.68, rho));
-      baseGiemsa = mix(baseGiemsa, giemsaEdge, fresnel * 0.55);
+      baseGiemsa = mix(baseGiemsa, giemsaEdge, fresnel * 0.22);
 
-      vec3 lit = baseGiemsa * (0.52 + 0.40 * wrap1 + 0.14 * diff2) * dimpleOcclusion;
+      vec3 lit = baseGiemsa * (0.76 + 0.20 * wrap1 + 0.04 * diff2) * dimpleOcclusion;
       lit += vec3(0.98, 0.92, 0.94) * sheen * 0.7;
       color = lit;
 
@@ -948,7 +950,7 @@ const PARASITE_FRAGMENT_SHADER = `
         vec3 chromDeep = vec3(0.46, 0.05, 0.18);
         vec3 chromRim  = vec3(0.96, 0.36, 0.52);
 
-        vec3 base = mix(chromCore, chromDeep, fresnel * 0.55);
+        vec3 base = mix(chromCore, chromDeep, fresnel * 0.22);
         color = base * (0.28 + 0.60 * wrap1 + 0.20 * diff2)
               + chromRim * fresnel * 0.25
               + vec3(1.0, 0.88, 0.92) * softSpec * 0.9;
@@ -1059,7 +1061,7 @@ const SECTION_CAP_FRAGMENT_SHADER = `
 
       float u = atan(lz, lx);
       float cosU = cos(u);
-      float midR = 0.72 * (1.0 + 0.065 * cosU - 0.03 * cos(2.0 * u));
+      float midR = 0.60 * (1.0 + 0.065 * cosU - 0.03 * cos(2.0 * u));
       float rLocal = length(vec2(lx, lz));
 
       // 1. Cromatina nuclear en sección
@@ -1079,8 +1081,8 @@ const SECTION_CAP_FRAGMENT_SHADER = `
 
       // 2. Citoplasma anular delicado en sección
       float crescentFactor = pow(0.5 * (1.0 + cosU), 1.35);
-      float widthR = 0.068 + 0.145 * crescentFactor + 0.038 * exp(-(dU1 * dU1) / 0.09) + 0.028 * exp(-(dU2 * dU2) / 0.075);
-      float heightY = 0.058 + 0.088 * crescentFactor;
+      float widthR = 0.045 + 0.075 * crescentFactor + 0.038 * exp(-(dU1 * dU1) / 0.09) + 0.028 * exp(-(dU2 * dU2) / 0.075);
+      float heightY = 0.045 + 0.060 * crescentFactor;
       float dCyto = length(vec2((rLocal - midR) / widthR, ly / heightY));
 
       if (dCyto <= 1.0) {
@@ -1092,7 +1094,7 @@ const SECTION_CAP_FRAGMENT_SHADER = `
       }
 
       // 3. Zona vacuolar intracelular en sección
-      float maxVacR = 0.65 * (1.0 + 0.055 * cosU - 0.025 * cos(2.0 * u));
+      float maxVacR = 0.54 * (1.0 + 0.055 * cosU - 0.025 * cos(2.0 * u));
       float rhoVac = rLocal / max(0.01, maxVacR);
       float vacHalfH = 0.075 * sqrt(max(0.0, 1.0 - rhoVac * rhoVac)) * (0.65 + 0.55 * rhoVac * rhoVac);
       if (rhoVac <= 1.0 && abs(ly) <= vacHalfH) {
@@ -1112,29 +1114,29 @@ const SECTION_CAP_FRAGMENT_SHADER = `
 
     } else {
       // --- SECCIÓN DEL GAMETOCITO MADURO EN MEDIA LUNA ---
-      float s = p.x / 4.35;
-      float sBib = p.x / 4.46;
+      float s = p.x / 5.25;
+      float sBib = p.x / 5.38;
       if (abs(sBib) > 1.0) discard;
 
       float u = clamp((s + 1.0) * 0.5, 0.0, 1.0);
-      float rBase = 1.24 * pow(max(0.0, sin(3.14159265 * u)), 0.62);
-      float spineY = 1.18 * (1.0 - s * s) - 0.42;
+      float rBase = 0.92 * pow(max(0.0, sin(3.14159265 * u)), 0.62);
+      float spineY = 2.0 * (1.0 - s * s) - 0.60;
       float ry = max(0.001, rBase);
       float rz = max(0.001, rBase * 0.88);
       float dGam = length(vec2((p.y - spineY) / ry, p.z / rz));
 
       if (abs(s) <= 1.0 && dGam <= 1.0) {
-        float dNuc = ellipsoidDist(p, vec3(0.0, 0.72, 0.0), vec3(0.82, 0.46, 0.44));
+        float dNuc = ellipsoidDist(p, vec3(0.0, 1.36, 0.0), vec3(0.82, 0.46, 0.44));
         if (dNuc <= 1.0) {
           vec3 col = (u_visualMode == 0) ? vec3(0.78, 0.14, 0.34) : vec3(0.58, 0.07, 0.27);
           gl_FragColor = vec4(col, 0.98);
           return;
         }
 
-        float dPig1 = ellipsoidDist(p, vec3(-0.92, 0.62, 0.0), vec3(0.20, 0.11, 0.14));
-        float dPig2 = ellipsoidDist(p, vec3(0.95, 0.64, 0.0), vec3(0.21, 0.11, 0.14));
-        float dPig3 = ellipsoidDist(p, vec3(-0.48, 0.22, 0.0), vec3(0.18, 0.10, 0.13));
-        float dPig4 = ellipsoidDist(p, vec3(0.52, 0.24, 0.0), vec3(0.19, 0.10, 0.13));
+        float dPig1 = ellipsoidDist(p, vec3(-0.92, 1.26, 0.0), vec3(0.20, 0.11, 0.14));
+        float dPig2 = ellipsoidDist(p, vec3(0.95, 1.28, 0.0), vec3(0.21, 0.11, 0.14));
+        float dPig3 = ellipsoidDist(p, vec3(-0.48, 0.86, 0.0), vec3(0.18, 0.10, 0.13));
+        float dPig4 = ellipsoidDist(p, vec3(0.52, 0.88, 0.0), vec3(0.19, 0.10, 0.13));
         if (min(min(dPig1, dPig2), min(dPig3, dPig4)) <= 1.0) {
           vec3 col = (u_visualMode == 0) ? vec3(0.68, 0.36, 0.08) : vec3(0.24, 0.15, 0.09);
           gl_FragColor = vec4(col, 0.98);
@@ -1152,7 +1154,7 @@ const SECTION_CAP_FRAGMENT_SHADER = `
       float topY = spineY - ry * 0.95;
       float botY = -0.68 - 0.36 * archMask;
       if (archMask > 0.02 && p.y <= topY && p.y >= botY && abs(p.z) <= 0.22) {
-        vec3 bibCol = (u_visualMode == 0) ? vec3(0.84, 0.28, 0.32) : vec3(0.83, 0.57, 0.64);
+        vec3 bibCol = (u_visualMode == 0) ? vec3(0.84, 0.28, 0.32) : vec3(0.89, 0.67, 0.66);
         gl_FragColor = vec4(bibCol, clamp(u_rbcOpacity * 0.8, 0.12, 0.85));
         return;
       }
@@ -1188,7 +1190,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
     goalTarget: THREE.Vector3;
   }>({
     active: false,
-    goalPos: new THREE.Vector3(0.25, 4.35, 6.15),
+    goalPos: new THREE.Vector3(0.25, 5.25, 6.15),
     goalTarget: new THREE.Vector3(0.15, 0.0, 0.0),
   });
 
@@ -1389,25 +1391,25 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
           side: THREE.DoubleSide,
         });
         const nucMesh = new THREE.Mesh(nucGeo, nucMat);
-        nucMesh.position.set(0.0, 0.72, 0.0);
+        nucMesh.position.set(0.0, 1.36, 0.0);
         nucMesh.userData = { structureId: "cromatina_gametocito", shaderType: "parasite" };
         nucMesh.renderOrder = 1;
         root.add(nucMesh);
 
         // 2. Pigmento malárico (hemozoína)
         const pigmentPositions: Array<{ pos: [number, number, number]; rot: [number, number, number] }> = [
-          { pos: [-0.92, 0.62, 0.0], rot: [0.1, 0.2, 0.35] },
-          { pos: [0.95, 0.64, 0.0], rot: [-0.1, -0.2, -0.3] },
-          { pos: [-0.48, 0.22, 0.0], rot: [0.2, 0.1, 0.15] },
-          { pos: [0.52, 0.24, 0.0], rot: [-0.15, 0.2, -0.2] },
-          { pos: [-0.72, 0.88, 0.32], rot: [0.3, -0.2, 0.4] },
-          { pos: [0.74, 0.86, 0.3], rot: [-0.25, 0.3, -0.35] },
-          { pos: [-0.68, 0.82, -0.34], rot: [0.2, 0.4, -0.25] },
-          { pos: [0.7, 0.84, -0.32], rot: [-0.3, -0.25, 0.3] },
-          { pos: [-1.15, 0.48, 0.24], rot: [0.15, 0.3, 0.45] },
-          { pos: [1.18, 0.46, 0.22], rot: [-0.2, -0.35, -0.4] },
-          { pos: [-0.25, 0.45, 0.46], rot: [0.4, 0.1, 0.12] },
-          { pos: [0.28, 0.48, -0.45], rot: [-0.35, -0.15, 0.18] },
+          { pos: [-0.92, 1.26, 0.0], rot: [0.1, 0.2, 0.35] },
+          { pos: [0.95, 1.28, 0.0], rot: [-0.1, -0.2, -0.3] },
+          { pos: [-0.48, 0.86, 0.0], rot: [0.2, 0.1, 0.15] },
+          { pos: [0.52, 0.88, 0.0], rot: [-0.15, 0.2, -0.2] },
+          { pos: [-0.72, 1.52, 0.32], rot: [0.3, -0.2, 0.4] },
+          { pos: [0.74, 1.50, 0.3], rot: [-0.25, 0.3, -0.35] },
+          { pos: [-0.68, 1.46, -0.34], rot: [0.2, 0.4, -0.25] },
+          { pos: [0.7, 1.48, -0.32], rot: [-0.3, -0.25, 0.3] },
+          { pos: [-1.15, 1.12, 0.24], rot: [0.15, 0.3, 0.45] },
+          { pos: [1.18, 1.10, 0.22], rot: [-0.2, -0.35, -0.4] },
+          { pos: [-0.25, 1.09, 0.46], rot: [0.4, 0.1, 0.12] },
+          { pos: [0.28, 1.12, -0.45], rot: [-0.35, -0.15, 0.18] },
         ];
 
         const pigMat = new THREE.ShaderMaterial({
@@ -1450,7 +1452,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
           },
           transparent: true,
           depthWrite: false,
-          side: THREE.DoubleSide,
+          side: THREE.FrontSide,
         });
         const gamMesh = new THREE.Mesh(gamGeo, gamMat);
         gamMesh.userData = { structureId: "cuerpo_gametocito", shaderType: "parasite" };
@@ -1470,7 +1472,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
           },
           transparent: true,
           depthWrite: false,
-          side: THREE.DoubleSide,
+          side: THREE.FrontSide,
         });
         const bibMesh = new THREE.Mesh(bibGeo, bibMat);
         bibMesh.userData = { structureId: "velo_laveran", shaderType: "rbc" };
@@ -1596,7 +1598,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -1605,6 +1607,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    configureParasiteViewport(camera, width, height);
     const initCam = PLASMODIUM_FORMS.ring.defaultCamera;
     camera.position.set(...initCam.position);
     cameraRef.current = camera;
@@ -1613,7 +1616,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
     controls.enableDamping = true;
     controls.dampingFactor = 0.075;
     controls.minDistance = 1.65;
-    controls.maxDistance = 16.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initCam.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.25;
@@ -1747,9 +1750,9 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
           // Escala geométrica vinculada al tamaño del modelo (1 unidad = 1 µm) y distancia de cámara
           const dist = camera.position.distanceTo(controls.target);
           const fovRad = THREE.MathUtils.degToRad(camera.fov);
-          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5);
+          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5) / camera.zoom;
           const pxPerMicron = h / Math.max(0.1, worldHeightAtTarget);
-          setScaleBarPx(Math.max(28, Math.min(180, Math.round(pxPerMicron * 2.0))));
+          setScaleBarPx(visibleScaleLength(pxPerMicron * 2.0));
         }
       }
     };
@@ -1760,15 +1763,18 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
       const newW = holder.clientWidth;
       const newH = holder.clientHeight;
       if (newW > 0 && newH > 0) {
-        cameraRef.current.aspect = newW / newH;
-        cameraRef.current.updateProjectionMatrix();
+        configureParasiteViewport(cameraRef.current, newW, newH);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
         rendererRef.current.setSize(newW, newH);
       }
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       renderer.domElement.removeEventListener("pointerdown", onPointerDown);
@@ -1882,7 +1888,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
     const cam = cameraRef.current;
     const target = controlsRef.current.target;
     const dir = new THREE.Vector3().subVectors(cam.position, target);
-    const nextLen = Math.max(1.75, Math.min(15.0, dir.length() * factor));
+    const nextLen = Math.max(1.75, Math.min(60.0, dir.length() * factor));
     dir.setLength(nextLen);
     cam.position.copy(target).add(dir);
     controlsRef.current.update();
@@ -1926,100 +1932,12 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
   return (
     <div
       ref={viewportRef}
-      className="w-full space-y-3 select-none"
+      className="w-full min-w-0 space-y-3 select-none"
       onClick={(e) => e.stopPropagation()}
     >
       {/* 1. VISOR 3D PROTAGONISTA: Los paneles principales están fuera del lienzo para no ocultar nunca la anatomía */}
-      <div className="relative w-full h-[460px] sm:h-[540px] lg:h-[580px] rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-[#070b14]">
-        {/* Lienzo WebGL Three.js */}
-        <div
-          ref={canvasHolderRef}
-          className={`w-full h-full cursor-grab active:cursor-grabbing ${
-            !mobileTouchInteractive ? "touch-pan-y md:touch-none" : "touch-none"
-          }`}
-        />
-
-        {/* Líneas guía SVG y Marcadores 3D sin superposiciones (desaparecen por completo al ocultarlos) */}
-        {showMarkers && (
-          <>
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
-              {formMeta.structures.map((st) => {
-                const pin = projectedPins[st.id];
-                if (!pin || !pin.visible) return null;
-                const isSelected = selectedStructureId === st.id;
-                const strokeCol = isSelected
-                  ? "#fb7185"
-                  : isGiemsa
-                  ? "rgba(71, 85, 105, 0.75)"
-                  : "rgba(148, 163, 184, 0.65)";
-
-                return (
-                  <g key={`line-${st.id}`}>
-                    <line
-                      x1={pin.anchorX}
-                      y1={pin.anchorY}
-                      x2={pin.labelX}
-                      y2={pin.labelY}
-                      stroke={strokeCol}
-                      strokeWidth={isSelected ? "2" : "1.25"}
-                      strokeDasharray={isSelected ? undefined : "3 2"}
-                    />
-                    <circle
-                      cx={pin.anchorX}
-                      cy={pin.anchorY}
-                      r={isSelected ? 4.5 : 3.5}
-                      fill={isGiemsa ? st.colorGiemsa : st.colorSchematic}
-                      stroke={isGiemsa ? "#334155" : "#ffffff"}
-                      strokeWidth="1.5"
-                    />
-                  </g>
-                );
-              })}
-            </svg>
-
-            <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
-              {formMeta.structures.map((st, idx) => {
-                const pin = projectedPins[st.id];
-                if (!pin || !pin.visible) return null;
-                const isSelected = selectedStructureId === st.id;
-                const dotColor = isGiemsa ? st.colorGiemsa : st.colorSchematic;
-
-                return (
-                  <button
-                    key={st.id}
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectStructure(st.id);
-                    }}
-                    style={{
-                      left: `${pin.labelX}px`,
-                      top: `${pin.labelY}px`,
-                    }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 shadow-lg border backdrop-blur-md ${
-                      isSelected
-                        ? "bg-rose-600 text-white border-rose-300 scale-105 ring-4 ring-rose-500/30 z-30"
-                        : isGiemsa
-                        ? "bg-slate-900/90 text-slate-100 border-slate-700 hover:bg-slate-900"
-                        : "bg-slate-950/85 text-slate-100 border-slate-700/80 hover:border-cyan-400/70"
-                    }`}
-                  >
-                    <span
-                      style={{ backgroundColor: isSelected ? "#ffffff" : dotColor }}
-                      className="w-2 h-2 rounded-full shrink-0"
-                    />
-                    <span className="whitespace-nowrap">
-                      {idx + 1}. {st.shortLabel}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
-
-        {/* BARRA SUPERIOR COMPACTA: Selector «Elegir forma», «Enfocar parásito» / «Ver eritrocito completo», Modos y Marcadores */}
-        <header className="absolute top-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+      <div className="relative w-full rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl bg-[#070b14]">
+        <header className="relative p-3 border-b border-slate-800 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none [&_button]:min-h-11 sm:[&_button]:min-h-8">
           {/* Izquierda: Selector desplegable «Elegir forma» + Botones de encuadre contextual */}
           <div className="flex flex-wrap items-center gap-1.5 pointer-events-auto">
             <div ref={dropdownRef} className="relative">
@@ -2044,7 +1962,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
                 <div
                   role="listbox"
                   aria-label="Elegir forma de Plasmodium falciparum"
-                  className="absolute left-0 mt-1.5 w-80 sm:w-96 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-700 shadow-2xl p-2 z-50 space-y-1.5"
+                  className="absolute left-0 mt-1.5 w-[min(24rem,calc(100vw-8rem))] rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-700 shadow-2xl p-2 z-50 space-y-1.5"
                 >
                   <div className="flex items-center justify-between px-2.5 py-1 border-b border-slate-800">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
@@ -2094,7 +2012,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
             </div>
 
             {/* Botones de encuadre rápido: «Enfocar parásito» y «Ver eritrocito completo» */}
-            <div className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 p-0.5 flex items-center gap-0.5 shadow-lg">
+            <div className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/80 p-0.5 hidden md:flex items-center gap-0.5 shadow-lg">
               <button
                 type="button"
                 onClick={handleFocusParasite}
@@ -2178,9 +2096,101 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
             )}
           </div>
         </header>
+        <div className="relative h-[380px] sm:h-[460px] lg:h-[520px]">
+        {/* Lienzo WebGL Three.js */}
+        <div
+          ref={canvasHolderRef}
+          className={`w-full h-full cursor-grab active:cursor-grabbing ${
+            !mobileTouchInteractive ? "touch-pan-y md:touch-none" : "touch-none"
+          }`}
+        />
+
+        {/* Líneas guía SVG y Marcadores 3D sin superposiciones (desaparecen por completo al ocultarlos) */}
+        {showMarkers && (
+          <>
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-hidden">
+              {formMeta.structures.map((st) => {
+                const pin = projectedPins[st.id];
+                if (!pin || !pin.visible) return null;
+                const isSelected = selectedStructureId === st.id;
+                const strokeCol = isSelected
+                  ? "#fb7185"
+                  : isGiemsa
+                  ? "rgba(71, 85, 105, 0.75)"
+                  : "rgba(148, 163, 184, 0.65)";
+
+                return (
+                  <g key={`line-${st.id}`}>
+                    <line
+                      x1={pin.anchorX}
+                      y1={pin.anchorY}
+                      x2={pin.labelX}
+                      y2={pin.labelY}
+                      stroke={strokeCol}
+                      strokeWidth={isSelected ? "2" : "1.25"}
+                      strokeDasharray={isSelected ? undefined : "3 2"}
+                    />
+                    <circle
+                      cx={pin.anchorX}
+                      cy={pin.anchorY}
+                      r={isSelected ? 4.5 : 3.5}
+                      fill={isGiemsa ? st.colorGiemsa : st.colorSchematic}
+                      stroke={isGiemsa ? "#334155" : "#ffffff"}
+                      strokeWidth="1.5"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+
+            <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
+              {formMeta.structures.map((st, idx) => {
+                const pin = projectedPins[st.id];
+                if (!pin || !pin.visible) return null;
+                const isSelected = selectedStructureId === st.id;
+                const dotColor = isGiemsa ? st.colorGiemsa : st.colorSchematic;
+
+                return (
+                  <button
+                    key={st.id}
+                    aria-label={`${idx + 1}. ${st.shortLabel}`}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectStructure(st.id);
+                    }}
+                    style={{
+                      left: `${pin.labelX}px`,
+                      top: `${pin.labelY}px`,
+                    }}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center justify-center min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-150 shadow-lg border backdrop-blur-md ${
+                      isSelected
+                        ? "bg-rose-600 text-white border-rose-300 scale-105 ring-4 ring-rose-500/30 z-30"
+                        : isGiemsa
+                        ? "bg-slate-900/90 text-slate-100 border-slate-700 hover:bg-slate-900"
+                        : "bg-slate-950/85 text-slate-100 border-slate-700/80 hover:border-cyan-400/70"
+                    }`}
+                  >
+                    <span
+                      style={{ backgroundColor: isSelected ? "#ffffff" : dotColor }}
+                      className="w-2 h-2 rounded-full shrink-0"
+                    />
+                    <span className="whitespace-nowrap">
+                      {idx + 1}<span className="hidden sm:inline">. {st.shortLabel}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {/* BARRA SUPERIOR COMPACTA: Selector «Elegir forma», «Enfocar parásito» / «Ver eritrocito completo», Modos y Marcadores */}
+
 
         {/* BARRA INFERIOR COMPACTA DEL VISOR: Aviso educativo, Cámara rápida y Escala geométrica */}
-        <footer className="absolute bottom-3 left-3 right-3 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        </div>
+        <footer className="relative p-3 border-t border-slate-800 z-30 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
           <div className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-3 py-1.5 text-[11px] text-slate-200 flex items-center gap-2 pointer-events-auto shadow-lg">
             <span className="font-semibold text-amber-300">
               Reconstrucción 3D educativa; no sustituye la observación microscópica.
@@ -2193,7 +2203,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 pointer-events-auto">
+          <div className="flex flex-wrap items-center gap-1.5 pointer-events-auto">
             {/* Activar interacción táctil en celular sin bloquear el scroll de la página */}
             <button
               type="button"
@@ -2218,11 +2228,11 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
             </button>
 
             {/* Controles rápidos de cámara */}
-            <div className="hidden sm:flex items-center gap-1 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 p-1 shadow-lg">
+            <div className="flex items-center gap-1 rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 p-1 shadow-lg">
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -2230,7 +2240,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -2238,7 +2248,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
               <button
                 type="button"
                 onClick={handleViewFullCell}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -2258,6 +2268,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
 
             {/* Escala dinámica de 2 µm */}
             <div
+              style={{ display: scaleBarPx > 0 ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al tamaño del modelo (1 unidad = 1 µm) y a la cámara"
             >
@@ -2274,7 +2285,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
       {/* 2. PANEL DE CONTROLES Y ESTRUCTURAS FUERA DEL ÁREA PRINCIPAL DEL MODELO (Plegable en pantallas estrechas) */}
       <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-3.5 sm:p-4 space-y-3.5">
         {/* Cabecera plegable para pantallas estrechas (celular) */}
-        <div className="flex md:hidden items-center justify-between gap-2">
+        <div className="flex flex-wrap md:hidden items-center gap-2 [&_button]:min-h-11">
           <div className="flex items-center gap-1.5">
             <button
               type="button"
@@ -2370,7 +2381,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
               className="w-full accent-cyan-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
             />
             <p className="text-[11px] text-slate-400 leading-snug">
-              Herramienta geométrica de exploración interna (en 50% secciona el centro bicóncavo y el anillo).
+              Desplaza el plano para explorar el interior de la forma seleccionada. El corte es geométrico y no representa una preparación histológica.
             </p>
           </div>
         </div>
@@ -2469,7 +2480,7 @@ export const Plasmodium3DViewer: React.FC<Plasmodium3DViewerProps> = ({ onClose 
                 <Info className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
                 <span>{formMeta.overviewSummary}</span>
               </div>
-              <span className="text-slate-400 font-mono shrink-0">{formMeta.dimensionsNote}</span>
+              <span className="text-slate-400 font-mono sm:max-w-[45%]">{formMeta.dimensionsNote}</span>
             </div>
           )}
         </div>

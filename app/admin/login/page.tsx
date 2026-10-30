@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ShieldCheck, Lock, Mail, ArrowRight, Activity, AlertCircle } from "lucide-react";
@@ -47,10 +48,17 @@ export default function AdminLoginPage() {
 
         <GlassCard className="p-8 border border-white/15 shadow-2xl rounded-3xl relative z-10 bg-slate-900/90">
           <div className="text-center mb-6">
-            <div className="inline-flex p-3 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 mb-3">
-              <ShieldCheck className="w-7 h-7" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-950/80 p-2.5 mb-3 border border-white/10 shadow-lg">
+              <Image
+                src="/images/brand/lyoh-emblem.png"
+                alt="LYOH"
+                width={44}
+                height={44}
+                className="w-11 h-11 object-contain"
+                priority
+              />
             </div>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">Acceso Administrativo</h1>
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">Acceso Administrativo · LYOH</h1>
             <p className="text-xs text-slate-400 mt-1">
               Panel privado de control docente y seguimiento de la prueba de evaluación.
             </p>

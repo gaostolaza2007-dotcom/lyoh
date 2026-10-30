@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -482,7 +484,7 @@ function appendSensorySeta(
  * - 3 pares de patas articuladas pieza por pieza (coxa, trocánter, fémur, tibia con espolón/pulgar oponible armado de espina, tarso y gran garra tarsal falciforme) (rId = 9)
  * - 2 tallos de cabello humano sujetados directamente por las pinzas tibiotarsales en adultos (rId = 10)
  * - Quetotaxia entomológica: cerdas sensoriales (setas) en cada festón abdominal, cabeza, antenas, patas y ápice caudal
- * - Órganos internos 3D expuestos al activar el Corte Histológico / Sección 3D:
+ * - Órganos internos 3D expuestos al activar el Corte del modelo / Sección 3D:
  *   - Esófago, Mesenterón hematófago lobulado con 2 ciegos gástricos anteriores llenos de sangre y túbulos de Malpighi (rId = 5)
  *   - En la hembra: 9 huevos/ovocitos maduros 3D con opérculo y collar aerífero en los ovariolos laterales (rId = 6) + glándulas del cemento y oviductos (rId = 7)
  *   - En el macho: 4 folículos testiculares piriformes, vesículas seminales (rId = 7) y aparato copulador con placa basal y edeago quitinoso (rId = 8)
@@ -1197,7 +1199,7 @@ function buildPediculusCompleteGeometry(variant: "female" | "male" | "nymph"): T
 
       const dU = vec3Sub(pU1, pU0);
       const dP = vec3Sub(pP1, pP0);
-      let N = vec3Norm(vec3Cross(dP, dU));
+      let N = vec3Norm(vec3Cross(dU, dP));
       if (u < 0.006) {
         N = vec3Norm([-1.0, surf.pos[1] * 2.0, surf.pos[2] * 2.0]);
       }
@@ -1238,7 +1240,7 @@ function buildPediculusCompleteGeometry(variant: "female" | "male" | "nymph"): T
   geo.setAttribute("a_meta", new THREE.Float32BufferAttribute(meta1, 4));
   geo.setIndex(indices);
   geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 14.0);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -1374,7 +1376,8 @@ const PEDICULUS_BODY_FRAGMENT_SHADER = `
       bumpStrength = 0.065;
     }
 
-    vec3 N = perturbNormalAnalytical(N0, dU, dV, bumpStrength);
+    bumpStrength *= 1.0 - smoothstep(0.02, 0.09, length(fwidth(v_localPos)));
+    vec3 N = perturbNormalAnalytical(N0, dU, dV, bumpStrength * 0.55);
     vec3 V = normalize(cameraPosition - v_worldPos);
 
     // Iluminación de estudio entomológico a 3 puntos (Key cálida, Fill azulada y Rim dorsal)
@@ -1389,7 +1392,7 @@ const PEDICULUS_BODY_FRAGMENT_SHADER = `
     float diff2 = max(0.0, dot(N, L2));
     float ndotv = max(0.0, dot(N, V));
     float fresnel = pow(1.0 - ndotv, 2.5);
-    float specHard = pow(max(0.0, dot(N, H1)), 64.0) + 0.45 * pow(max(0.0, dot(N, H3)), 48.0);
+    float specHard = 0.32 * pow(max(0.0, dot(N, H1)), 40.0) + 0.14 * pow(max(0.0, dot(N, H3)), 32.0);
     float specSoft = pow(max(0.0, dot(N, H1)), 18.0);
 
     vec3 color = vec3(0.0);
@@ -1822,12 +1825,12 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
     scaleBarWorldUnits: 1.4,
     translucencyLabel: "Translucidez de la cutícula quitinosa",
     translucencyHint:
-      "Aumenta la translucidez o activa el Corte Histológico para observar el mesenterón con sangre y los huevos maduros 3D dentro del abdomen.",
+      "Aumenta la translucidez o activa el Corte del modelo para observar el mesenterón con sangre y los huevos maduros 3D dentro del abdomen.",
     defaultTranslucency: 42,
     defaultCutPercent: 0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 5.8, 7.4],
+      position: [0, 8.7, 11.1],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -1837,7 +1840,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
     focusButtonLabel: "Enfocar abdomen y huevos 3D",
     fullButtonLabel: "Ver hembra completa",
     overviewSummary:
-      "Pediculus humanus capitis es un insecto ectoparásito hematófago obligado que completa todo su ciclo vital en el cuero cabelludo humano. La hembra adulta (2.4–3.3 mm) se distingue del macho por su mayor tamaño, su extremo abdominal posterior bífido (en «V» invertida) provisto de gonópodos y la presencia de huevos maduros en el interior de su abdomen (que se visualizan directamente en 3D al activar el Corte Histológico).",
+      "Pediculus humanus capitis es un insecto ectoparásito hematófago obligado que completa todo su ciclo vital en el cuero cabelludo humano. La hembra adulta (2.4–3.3 mm) se distingue del macho por su mayor tamaño, su extremo abdominal posterior bífido (en «V» invertida) provisto de gonópodos y la presencia de huevos maduros en el interior de su abdomen (que se visualizan directamente en 3D al activar el Corte del modelo).",
     regions: [
       {
         id: "head_antennae_female",
@@ -1917,7 +1920,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
       {
         id: "internal_eggs_midgut_female",
         number: 4,
-        name: "Huevos intrauterinos 3D y mesenterón con sangre (Corte Histológico)",
+        name: "Huevos intrauterinos 3D y mesenterón con sangre (Corte del modelo)",
         shortLabel: "Huevos internos y mesenterón",
         badge: "Interior en Sección 3D",
         scale: "8 huevos + mesenterón",
@@ -1937,7 +1940,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
         microscopyNote:
           "Cada hembra adulta deposita de 6 a 10 huevos diarios (hasta 100–150 a lo largo de sus ~30 días de vida adulta) y necesita ingerir sangre varias veces al día.",
         reconstruction3DNote:
-          "Al activar el Corte Histológico / Sección 3D se abre la pared dorsal del abdomen y quedan expuestos los 8 huevos 3D con opérculo y el mesenterón rojo rubí central.",
+          "Al activar el Corte del modelo / Sección 3D se abre la pared dorsal del abdomen y quedan expuestos los 8 huevos 3D con opérculo y el mesenterón rojo rubí central.",
       },
       {
         id: "bifid_terminalia_female",
@@ -1978,12 +1981,12 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
     scaleBarWorldUnits: 1.4,
     translucencyLabel: "Translucidez de la cutícula quitinosa",
     translucencyHint:
-      "Aumenta la translucidez o activa el Corte Histológico para observar el edeago interno, los testículos bilobulados y el mesenterón.",
+      "Aumenta la translucidez o activa el Corte del modelo para observar el edeago interno, los testículos bilobulados y el mesenterón.",
     defaultTranslucency: 45,
     defaultCutPercent: 0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 5.4, 6.8],
+      position: [0, 8.1, 10.2],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2023,7 +2026,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
       {
         id: "midgut_testes_male",
         number: 2,
-        name: "Mesenterón hematófago y testículos bilobulados (Corte Histológico)",
+        name: "Mesenterón hematófago y testículos bilobulados (Corte del modelo)",
         shortLabel: "Mesenterón y testículos",
         badge: "Anatomía Interna 3D",
         scale: "Interior abdominal",
@@ -2043,7 +2046,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
         microscopyNote:
           "Tanto machos como hembras y ninfas son hematófagos estrictos e inyectan saliva anticoagulante y vasodilatadora responsable del prurito intenso del cuero cabelludo.",
         reconstruction3DNote:
-          "Al activar el Corte Histológico se exponen en 3D el mesenterón rojo rubí y los 4 lóbulos testiculares/vesículas seminales.",
+          "Al activar el Corte del modelo se exponen en 3D el mesenterón rojo rubí y los 4 lóbulos testiculares/vesículas seminales.",
       },
       {
         id: "aedeagus_male",
@@ -2084,12 +2087,12 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
     scaleBarWorldUnits: 1.0,
     translucencyLabel: "Transparencia del corion de la liendre",
     translucencyHint:
-      "Aumenta la transparencia o activa el Corte Histológico para ver la ninfa embrionaria con sus ojos y patas dentro de la liendre.",
+      "Aumenta la transparencia o activa el Corte del modelo para ver la ninfa embrionaria con sus ojos y patas dentro de la liendre.",
     defaultTranslucency: 44,
     defaultCutPercent: 45,
     hasMovement: false,
     defaultCamera: {
-      position: [1.4, 0.8, 6.8],
+      position: [2.1, 1.15, 10.2],
       target: [0.0, 0.1, 0.0],
     },
     focusCamera: {
@@ -2174,7 +2177,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
         microscopyNote:
           "Como muchos pediculicidas (permetrina 1%) no son 100% ovicidas en una sola aplicación, se recomienda repetir el tratamiento a los 7–10 días para eliminar las ninfas recién nacidas.",
         reconstruction3DNote:
-          "Cápsula ovoide en doble pasada que se secciona limpiamente al activar el Corte Histológico.",
+          "Cápsula ovoide en doble pasada que se secciona limpiamente al activar el Corte del modelo.",
       },
       {
         id: "embryo_nymph_nit",
@@ -2199,7 +2202,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
         microscopyNote:
           "En dermatoscopía (entomoscopía), la presencia del embrión ambarino con mancha ocular dentro de una liendre próxima a la raíz pilosa confirma viabilidad y necesidad de tratamiento.",
         reconstruction3DNote:
-          "Al activar el Corte Histológico / Sección 3D se abre la pared anterior de la liendre y queda expuesto el embrión 3D completo en su interior.",
+          "Al activar el Corte del modelo / Sección 3D se abre la pared anterior de la liendre y queda expuesto el embrión 3D completo en su interior.",
       },
     ],
   },
@@ -2215,12 +2218,12 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
     scaleBarWorldUnits: 1.4,
     translucencyLabel: "Translucidez de la cutícula juvenil",
     translucencyHint:
-      "Observa a través de la fina cutícula ninfal o mediante el Corte Histológico el gran mesenterón distendido por sangre fresca.",
+      "Observa a través de la fina cutícula ninfal o mediante el Corte del modelo el gran mesenterón distendido por sangre fresca.",
     defaultTranslucency: 56,
     defaultCutPercent: 0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 4.8, 5.8],
+      position: [0, 7.2, 8.7],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2280,7 +2283,7 @@ export const PEDICULUS_STAGES: Record<PediculusStageId, PediculusStageMeta> = {
         microscopyNote:
           "El hallazgo de ninfas móviles o adultos vivos en el cuero cabelludo (especialmente en las regiones retroauricular y occipital) constituye el criterio de certeza de pediculosis activa.",
         reconstruction3DNote:
-          "Visible tanto por transparencia de la cutícula juvenil como en relieve 3D al activar el Corte Histológico.",
+          "Visible tanto por transparencia de la cutícula juvenil como en relieve 3D al activar el Corte del modelo.",
       },
       {
         id: "immature_abdomen_nymph",
@@ -2718,7 +2721,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -2727,6 +2730,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 120);
+    configureParasiteViewport(camera, width, height);
     const initCam = PEDICULUS_STAGES.female_adult.defaultCamera;
     camera.position.set(...initCam.position);
     cameraRef.current = camera;
@@ -2735,7 +2739,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.minDistance = 1.4;
-    controls.maxDistance = 24.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initCam.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.15;
@@ -2857,10 +2861,10 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
 
           const dist = camera.position.distanceTo(controls.target);
           const vFovRad = (camera.fov * Math.PI) / 180;
-          const visibleWorldHeight = 2 * Math.tan(vFovRad / 2) * dist;
+          const visibleWorldHeight = 2 * Math.tan(vFovRad / 2) * dist / camera.zoom;
           const pxPerUnit = h / Math.max(visibleWorldHeight, 0.001);
           const rawPx = pxPerUnit * currentStage.scaleBarWorldUnits;
-          setScaleBarPx(Math.round(clampJS(rawPx, 38, 125)));
+          setScaleBarPx(visibleScaleLength(rawPx));
         }
       }
     };
@@ -2871,14 +2875,17 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
       if (!holder || !rendererRef.current || !cameraRef.current) return;
       const newW = holder.clientWidth || 840;
       const newH = holder.clientHeight || 540;
-      cameraRef.current.aspect = newW / newH;
-      cameraRef.current.updateProjectionMatrix();
+      configureParasiteViewport(cameraRef.current, newW, newH);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
       rendererRef.current.setSize(newW, newH);
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -2992,7 +2999,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
     const cam = cameraRef.current;
     const target = controlsRef.current.target;
     const dir = new THREE.Vector3().subVectors(cam.position, target);
-    const nextLen = Math.max(1.5, Math.min(22.0, dir.length() * factor));
+    const nextLen = Math.max(1.5, Math.min(60.0, dir.length() * factor));
     cam.position.copy(target).add(dir.normalize().multiplyScalar(nextLen));
     controlsRef.current.update();
   };
@@ -3324,7 +3331,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -3332,7 +3339,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -3340,7 +3347,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
               <button
                 type="button"
                 onClick={handleViewFull}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -3361,6 +3368,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
             </div>
 
             <div
+              style={{ display: scaleBarPx > 0 ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al estadio activo y a la distancia de cámara"
             >
@@ -3440,7 +3448,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
             <p className="text-[11px] text-slate-400 leading-snug">{stageMeta.translucencyHint}</p>
           </div>
 
-          {/* Deslizador 2: Corte Histológico / Sección 3D */}
+          {/* Deslizador 2: Corte del modelo / Sección 3D */}
           <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <label
@@ -3448,7 +3456,7 @@ export const Pediculus3DViewer: React.FC<Pediculus3DViewerProps> = ({ onClose })
                 className="text-slate-200 font-bold flex items-center gap-1.5"
               >
                 <Scissors className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Corte Histológico / Sección 3D</span>
+                <span>Corte del modelo / Sección 3D</span>
               </label>
               <div className="flex items-center gap-2">
                 {cutPercent > 0 && (

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -271,10 +272,15 @@ export default function OnboardingPage() {
           
           {/* Logo y Encabezado */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 p-[1px] shadow-xl shadow-purple-500/20 mb-4">
-              <div className="w-full h-full bg-slate-950 rounded-[23px] flex items-center justify-center">
-                <Activity className="w-8 h-8 text-purple-400" />
-              </div>
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-950/80 p-2.5 mb-4 border border-white/10 shadow-xl shadow-teal-500/10">
+              <Image
+                src="/images/brand/lyoh-emblem.png"
+                alt="LYOH"
+                width={48}
+                height={48}
+                className="w-12 h-12 object-contain"
+                priority
+              />
             </div>
 
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-400/30 text-purple-300 text-xs font-semibold mb-2">
@@ -283,7 +289,7 @@ export default function OnboardingPage() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              ¡Te damos la bienvenida a MedStudy!
+              ¡Te damos la bienvenida a LYOH!
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-md mx-auto leading-relaxed">
               Configura tu expediente para la sesión de estudio clínico. Tus datos se guardarán de forma individual en el servidor.
@@ -615,7 +621,7 @@ export default function OnboardingPage() {
                       Aviso de Transparencia de la Evaluación
                     </span>
                     <p className="text-[11px] text-slate-300 leading-relaxed">
-                      Para evaluar la herramienta MedStudy, durante esta prueba se registrarán de forma segura tu avance, tiempos de estudio y respuestas a cuestionarios. Estos datos serán consultados exclusivamente por el responsable del proyecto con fines de análisis metodológico. No se solicita información personal sensible ni se mostrarán tus resultados a otros estudiantes.
+                      Para evaluar la herramienta LYOH, durante esta prueba se registrarán de forma segura tu avance, tiempos de estudio y respuestas a cuestionarios. Estos datos serán consultados exclusivamente por el responsable del proyecto con fines de análisis metodológico. No se solicita información personal sensible ni se mostrarán tus resultados a otros estudiantes.
                     </p>
                   </div>
                 </div>
@@ -651,7 +657,7 @@ export default function OnboardingPage() {
           {/* Footer Informativo */}
           <div className="mt-8 pt-4 border-t border-white/10 text-center text-[11px] text-slate-400 flex items-center justify-center space-x-1.5">
             <Stethoscope className="w-3.5 h-3.5 text-purple-400" />
-            <span>MedStudy adapta los contenidos clínicos según tu plan universitario</span>
+            <span>LYOH adapta los contenidos clínicos según tu plan universitario</span>
           </div>
 
         </GlassCard>

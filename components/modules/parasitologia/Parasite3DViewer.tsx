@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -158,6 +160,19 @@ function poreSideForSegment(k: number): number {
   return Math.sin(k * 2.3 + Math.cos(k * 1.7)) >= 0.0 ? 1.0 : -1.0;
 }
 
+// Representative shortened strobila: immature, mature and elongated gravid segments.
+// The inverse is also used by internal organs so they stay inside the same segment.
+function taeniaSegmentPhase(x: number): number {
+  if (x < 9.5) return (x - 3.55) * 8 / 5.95;
+  if (x < 18) return 8 + (x - 9.5) * 4 / 8.5;
+  return 12 + (x - 18) * 3 / 10;
+}
+function taeniaSegmentX(p: number): number {
+  if (p < 8) return 3.55 + p * 5.95 / 8;
+  if (p < 12) return 9.5 + (p - 8) * 8.5 / 4;
+  return 18 + (p - 12) * 10 / 3;
+}
+
 function evaluateTaeniaBodySurface(x: number, phi: number, isSaginata = false) {
   let W = 0.35;
   let H = 0.35;
@@ -170,7 +185,7 @@ function evaluateTaeniaBodySurface(x: number, phi: number, isSaginata = false) {
       // Taenia saginata: Escólex inerme cuadrangular/piriforme (1.5–2.0 mm), con depresión apical sin rostelo ni ganchos
       regionId = x < 0.36 ? 1.0 : 2.0;
       const cap = Math.pow(Math.sin(Math.min(1.0, x / 0.34) * (Math.PI * 0.5)), 0.56);
-      const apicalPit = -0.075 * Math.exp(-Math.pow(x / 0.16, 2.0));
+      const apicalPit = -0.035 * cap * Math.exp(-Math.pow(x / 0.16, 2.0));
       const bulbBell = Math.exp(-Math.pow((x - 1.02) / 0.56, 2.0));
       const quadCorner = 1.0 + 0.085 * Math.cos(4.0 * phi) * bulbBell;
       let R =
@@ -250,7 +265,7 @@ function evaluateTaeniaBodySurface(x: number, phi: number, isSaginata = false) {
       W += nascent;
     } else {
       const L = x - 3.55;
-      const p = L / (0.5 + 0.0185 * L);
+      const p = taeniaSegmentPhase(x);
       segIndex = Math.floor(p);
       segU = p - segIndex;
 
@@ -318,8 +333,8 @@ function buildTaeniaWormBufferGeometry(isSaginata = false): THREE.BufferGeometry
   const indices: number[] = [];
 
   const xSamples: number[] = [];
-  const nScolex = 95;
-  const nStrobila = 265;
+  const nScolex = 144;
+  const nStrobila = 420;
   for (let i = 0; i <= nScolex; i++) {
     xSamples.push((i / nScolex) * 2.05);
   }
@@ -329,7 +344,7 @@ function buildTaeniaWormBufferGeometry(isSaginata = false): THREE.BufferGeometry
   }
 
   const nRings = xSamples.length;
-  const nRadial = 64;
+  const nRadial = 96;
 
   for (let i = 0; i < nRings; i++) {
     const x = xSamples[i];
@@ -349,7 +364,7 @@ function buildTaeniaWormBufferGeometry(isSaginata = false): THREE.BufferGeometry
 
       const dX = vec3Sub(pX1, pX0);
       const dP = vec3Sub(pP1, pP0);
-      let N = vec3Norm(vec3Cross(dP, dX));
+      let N = vec3Norm(vec3Cross(dX, dP));
       if (x < 0.015) {
         N = vec3Norm([-1.0, surf.pos[1] * 2.0, surf.pos[2] * 2.0]);
       }
@@ -503,14 +518,14 @@ function appendTaeniaInternalSphere(
 }
 
   // --- ÓRGANOS REPRODUCTORES 3D EN PROGLÓTIDES MADURAS (segIndex 10..17, x: ~9.6 -> 17.8, regionId = 8.0) ---
-  for (let segIdx = 10; segIdx <= 17; segIdx++) {
+  for (let segIdx = 8; segIdx <= 11; segIdx++) {
     const pSide = poreSideForSegment(segIdx);
     // Ovario bilobulado (T. saginata) o trilobulado con lóbulo accesorio (T. solium)
     for (const sideSign of [-1.0, 1.0]) {
       for (let k = 0; k < 4; k++) {
         const uOv = 0.64 + (k - 1.5) * 0.04;
         const pVal = segIdx + uOv;
-        const L = (0.5 * pVal) / (1.0 - 0.0185 * pVal);
+        const L = (taeniaSegmentX(pVal) - 3.55);
         const xOv = 3.55 + L;
         const wApprox = 0.33 + 1.18 * Math.pow(smoothstepJS(2.0, 22.5, xOv), 0.85);
         const zOv = sideSign * (0.20 + k * 0.045) * wApprox;
@@ -535,7 +550,7 @@ function appendTaeniaInternalSphere(
     if (!isSaginata) {
       // Tercer lóbulo ovárico accesorio en Taenia solium
       const pVal = segIdx + 0.56;
-      const xAcc = 3.55 + (0.5 * pVal) / (1.0 - 0.0185 * pVal);
+      const xAcc = 3.55 + (taeniaSegmentX(pVal) - 3.55);
       const wApprox = 0.33 + 1.18 * Math.pow(smoothstepJS(2.0, 22.5, xAcc), 0.85);
       appendTaeniaInternalSphere(
         positions,
@@ -559,7 +574,7 @@ function appendTaeniaInternalSphere(
       const uT = 0.16 + ((t * 0.37) % 0.64);
       const vT = ((t % 2 === 0 ? 1 : -1) * (0.28 + ((t * 0.19) % 0.36)));
       const pVal = segIdx + uT;
-      const xT = 3.55 + (0.5 * pVal) / (1.0 - 0.0185 * pVal);
+      const xT = 3.55 + (taeniaSegmentX(pVal) - 3.55);
       const wApprox = 0.33 + 1.18 * Math.pow(smoothstepJS(2.0, 22.5, xT), 0.85);
       appendTaeniaInternalSphere(
         positions,
@@ -583,12 +598,12 @@ function appendTaeniaInternalSphere(
   // --- HUEVOS EMBRIONADOS 3D EN EL INTERIOR DE LAS PROGLÓTIDES GRÁVIDAS (segIndex 18..24, x: 18.0 -> 27.6, regionId = 7.0) ---
   // Distribuidos a lo largo del tallo uterino central y de las ramas laterales (7–13 dendríticas en T. solium vs 15–20 dicotómicas en T. saginata)
   let taeniaEggCounter = 0;
-  for (let segIdx = 18; segIdx <= 24; segIdx++) {
+  for (let segIdx = 12; segIdx <= 14; segIdx++) {
     const nBranches = isSaginata ? 15 : 9;
     for (let bIdx = 0; bIdx < nBranches; bIdx++) {
       const uBranch = 0.09 + ((bIdx + 0.5) / nBranches) * 0.82;
       const pVal = segIdx + uBranch;
-      const L = (0.5 * pVal) / (1.0 - 0.0185 * pVal);
+      const L = (taeniaSegmentX(pVal) - 3.55);
       const xBase = 3.55 + L;
       if (xBase > 27.55) continue;
 
@@ -628,7 +643,7 @@ function appendTaeniaInternalSphere(
           const forkSign = e >= nEggsPerBranch - 2 ? (e % 2 === 0 ? 1.0 : -1.0) : 0.0;
           const uForkOffset = forkSign * 0.018 * smoothstepJS(0.25, 0.62, vAbs);
           const pEgg = segIdx + uBranch + uForkOffset;
-          const xEgg = 3.55 + (0.5 * pEgg) / (1.0 - 0.0185 * pEgg);
+          const xEgg = taeniaSegmentX(pEgg);
           if (xEgg > 27.55) continue;
 
           const yEgg = ((e + bIdx) % 2 === 0 ? 0.18 : -0.16) * H;
@@ -662,7 +677,7 @@ function appendTaeniaInternalSphere(
   geo.setAttribute("a_meta", new THREE.Float32BufferAttribute(meta1, 4));
   geo.setIndex(indices);
   geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 30.0);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -725,7 +740,7 @@ function buildFalciformHookGeometry(length = 0.52, baseRadius = 0.042): THREE.Bu
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -959,7 +974,7 @@ const TAENIA_WORM_FRAGMENT_SHADER = `
     int rId = int(v_meta.w + 0.5);
 
     // Los huevos embrionados 3D internos (rId == 7) y los órganos reproductores maduros 3D (rId == 8)
-    // se revelan al activar el Corte Histológico / Sección 3D (u_cutPlane > 0.01).
+    // se revelan al activar el Corte del modelo / Sección 3D (u_cutPlane > 0.01).
     if (u_cutPlane <= 0.01 && rId >= 7) {
       discard;
     }
@@ -1049,7 +1064,8 @@ const TAENIA_WORM_FRAGMENT_SHADER = `
       return;
     }
 
-    float microTex = sin(v_localPos.x * 45.0) * cos(v_meta.y * 35.0) * 0.025;
+    float detailFade = 1.0 - smoothstep(0.015, 0.07, length(fwidth(v_localPos)));
+    float microTex = (sin(v_localPos.x * 45.0 + sin(v_meta.y * 13.0)) * cos(v_meta.y * 35.0)) * 0.008 * detailFade;
 
     vec3 anatomy = computeInternalAnatomy(v_meta.x, v_meta.y, v_meta.z, v_meta.w, v_localPos.x);
     float organPrimary = anatomy.x;
@@ -1090,7 +1106,7 @@ const TAENIA_WORM_FRAGMENT_SHADER = `
         baseBio = mix(baseBio, organCol, organPrimary * internalVis * 0.88);
 
         vec3 lit = baseBio * (0.22 + 0.62 * diff1 + 0.25 * diff2) + sssWarm * (wrap1 * 0.28 * (1.0 - diff1 * 0.5));
-        color = lit + vec3(1.0, 0.98, 0.95) * spec * 0.55 + vec3(0.65, 0.78, 0.88) * fresnel * 0.28;
+        color = lit + vec3(1.0, 0.98, 0.95) * spec * 0.20 + vec3(0.80, 0.75, 0.68) * fresnel * 0.12;
       }
     } else if (u_shaderMode == 1) {
       // MODO 1: TINCIÓN CARMÍN / HISTOLÓGICA (Sobre fondo blanco ligeramente cálido #faf7f2)
@@ -1325,8 +1341,8 @@ export const TAENIA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 42,
     hasPeristalsis: true,
     defaultCamera: {
-      position: [-8.6, 5.2, 14.2],
-      target: [-2.0, 0.0, 0.0],
+      position: [-8, 9, 32],
+      target: [1.0, 0.0, 0.0],
     },
     focusCamera: {
       position: [-11.8, 0.8, 2.2],
@@ -1475,7 +1491,7 @@ export const TAENIA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 24,
     hasPeristalsis: true,
     defaultCamera: {
-      position: [-11.8, 0.9, 2.5],
+      position: [-11.9075, 0.9375, 2.6225],
       target: [-9.65, 0.15, 0.05],
     },
     focusCamera: {
@@ -1577,7 +1593,7 @@ export const TAENIA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 48,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.2, 0.9, 7.6],
+      position: [1.5, 1.125, 9.5],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -1679,7 +1695,7 @@ export const TAENIA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 52,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.5, 1.1, 8.2],
+      position: [1.875, 1.375, 10.25],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -1787,8 +1803,8 @@ export const TAENIA_SAGINATA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 45,
     hasPeristalsis: true,
     defaultCamera: {
-      position: [-8.6, 5.2, 14.2],
-      target: [-2.0, 0.0, 0.0],
+      position: [-8, 9, 32],
+      target: [1.0, 0.0, 0.0],
     },
     focusCamera: {
       position: [-11.8, 0.8, 2.2],
@@ -1937,7 +1953,7 @@ export const TAENIA_SAGINATA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 24,
     hasPeristalsis: true,
     defaultCamera: {
-      position: [-11.8, 0.9, 2.5],
+      position: [-11.9075, 0.9375, 2.6225],
       target: [-9.65, 0.15, 0.05],
     },
     focusCamera: {
@@ -2039,7 +2055,7 @@ export const TAENIA_SAGINATA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 48,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.2, 0.9, 7.6],
+      position: [1.5, 1.125, 9.5],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2141,7 +2157,7 @@ export const TAENIA_SAGINATA_STAGES: Record<TaeniaStageId, TaeniaStageMeta> = {
     defaultTranslucency: 54,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.5, 1.1, 8.2],
+      position: [1.875, 1.375, 10.25],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2706,7 +2722,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -2715,6 +2731,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 120);
+    configureParasiteViewport(camera, width, height);
     const initCam = stagesDictRef.current.strobila.defaultCamera;
     camera.position.set(...initCam.position);
     cameraRef.current = camera;
@@ -2723,7 +2740,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.minDistance = 1.25;
-    controls.maxDistance = 32.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initCam.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.15;
@@ -2850,14 +2867,9 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
           // Escala geométrica dinámica según la distancia de cámara
           const dist = camera.position.distanceTo(controls.target);
           const fovRad = THREE.MathUtils.degToRad(camera.fov);
-          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5);
+          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5) / camera.zoom;
           const pxPerUnit = h / Math.max(0.1, worldHeightAtTarget);
-          setScaleBarPx(
-            Math.max(
-              28,
-              Math.min(180, Math.round(pxPerUnit * currentStage.scaleBarWorldUnits))
-            )
-          );
+          setScaleBarPx(visibleScaleLength(pxPerUnit * currentStage.scaleBarWorldUnits));
         }
       }
     };
@@ -2869,15 +2881,18 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
       const newW = holder.clientWidth;
       const newH = holder.clientHeight;
       if (newW > 0 && newH > 0) {
-        cameraRef.current.aspect = newW / newH;
-        cameraRef.current.updateProjectionMatrix();
+        configureParasiteViewport(cameraRef.current, newW, newH);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
         rendererRef.current.setSize(newW, newH);
       }
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -3000,7 +3015,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
     const cam = cameraRef.current;
     const target = controlsRef.current.target;
     const dir = new THREE.Vector3().subVectors(cam.position, target);
-    const nextLen = Math.max(1.35, Math.min(30.0, dir.length() * factor));
+    const nextLen = Math.max(1.35, Math.min(60.0, dir.length() * factor));
     dir.setLength(nextLen);
     cam.position.copy(target).add(dir);
     controlsRef.current.update();
@@ -3040,7 +3055,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
   return (
     <div
       ref={viewportRef}
-      className="w-full space-y-3 select-none"
+      className="w-full min-w-0 space-y-3 select-none"
       onClick={(e) => e.stopPropagation()}
     >
       {/* 1. VISOR 3D PROTAGONISTA: Los paneles de control están fuera del lienzo para no tapar nunca el modelo */}
@@ -3360,7 +3375,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -3368,7 +3383,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -3376,7 +3391,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
               <button
                 type="button"
                 onClick={handleViewFull}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -3396,6 +3411,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
 
             {/* Escala dinámica */}
             <div
+              style={{ display: scaleBarPx > 0 && activeStage !== "strobila" ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al estadio activo y a la distancia de cámara"
             >
@@ -3449,7 +3465,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
           </button>
         </div>
 
-        {/* Deslizadores: Translucidez Cuticular, Corte Histológico Dorsal y Ondulación Peristáltica */}
+        {/* Deslizadores: Translucidez Cuticular, Corte del modelo Dorsal y Ondulación Peristáltica */}
         <div
           className={`${
             mobileControlsOpen ? "grid" : "hidden md:grid"
@@ -3477,7 +3493,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
             <p className="text-[11px] text-slate-400 leading-snug">{stageMeta.translucencyHint}</p>
           </div>
 
-          {/* Deslizador 2: Corte Histológico Dorsal / Sección 3D */}
+          {/* Deslizador 2: Corte del modelo Dorsal / Sección 3D */}
           <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <label
@@ -3485,7 +3501,7 @@ export const Parasite3DViewer: React.FC<Parasite3DViewerProps> = ({
                 className="text-slate-200 font-bold flex items-center gap-1.5"
               >
                 <Scissors className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Corte Histológico / Sección 3D</span>
+                <span>Corte del modelo / Sección 3D</span>
               </label>
               <div className="flex items-center gap-2">
                 {cutPercent > 0 && (

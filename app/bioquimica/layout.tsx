@@ -3,8 +3,8 @@ import { CLINICAL_MODULES } from "@/lib/modules-config";
 import { ComingSoonScreen } from "@/components/ui/ComingSoonScreen";
 
 export const metadata = {
-  title: "Bioquímica Médica | MedStudy",
-  description: "Módulo de Bioquímica Médica - MedStudy",
+  title: "Bioquímica Médica | LYOH",
+  description: "Módulo de Bioquímica Médica - LYOH",
 };
 
 export default function BioquimicaLayout({

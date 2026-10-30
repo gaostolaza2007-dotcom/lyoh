@@ -3,8 +3,8 @@ import { CLINICAL_MODULES } from "@/lib/modules-config";
 import { ComingSoonScreen } from "@/components/ui/ComingSoonScreen";
 
 export const metadata = {
-  title: "Histología Tisular | MedStudy",
-  description: "Módulo de Histología Tisular - MedStudy",
+  title: "Histología Tisular | LYOH",
+  description: "Módulo de Histología Tisular - LYOH",
 };
 
 export default function HistologiaLayout({

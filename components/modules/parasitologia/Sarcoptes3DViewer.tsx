@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -1601,7 +1603,7 @@ function appendCompleteMiteInstance(
 
       const tangU = vec3Sub(evalU1.pos, evalU0.pos);
       const tangPhi = vec3Sub(evalP1.pos, evalP0.pos);
-      const norm = vec3Norm(vec3Cross(tangPhi, tangU));
+      const norm = vec3Norm(vec3Cross(tangU, tangPhi));
 
       positions.push(evalC.pos[0], evalC.pos[1], evalC.pos[2]);
       normals.push(norm[0], norm[1], norm[2]);
@@ -2097,7 +2099,7 @@ function buildSarcoptesCompleteGeometry(
   geometry.setAttribute("aMeta1", new THREE.Float32BufferAttribute(meta1, 4));
   geometry.setIndex(indices);
   geometry.computeBoundingSphere();
-  return geometry;
+  return orientSurfaceGeometry(geometry);
 }
 
 /**
@@ -2147,7 +2149,7 @@ const SARCOPTES_VERTEX_SHADER = `
     vLocalPos = pos;
     vec4 worldPosition = modelMatrix * vec4(pos, 1.0);
     vWorldPos = worldPosition.xyz;
-    vNormal = normalize(normalMatrix * norm);
+    vNormal = normalize(mat3(modelMatrix) * norm);
     vSegUV = aMeta1.xy;
     vScleriteMask = aMeta1.z;
     vRegionId = aMeta1.w;
@@ -2287,7 +2289,8 @@ const SARCOPTES_FRAGMENT_SHADER = `
     float fineNoise = fbm3(vLocalPos * 20.0);
 
     // Patrón de estriaciones transversales finas («huellas dactilares») sobre el idiosoma
-    float striaePattern = 0.5 + 0.5 * sin(vSegUV.x * 360.0 + 1.8 * sin(vSegUV.y * 6.28318));
+    float striaePhase = vSegUV.x * 360.0 + 1.8 * sin(vSegUV.y * 6.28318);
+    float striaePattern = 0.5 + 0.5 * sin(striaePhase) * (1.0 - smoothstep(0.6, 2.5, fwidth(striaePhase)));
 
     vec3 baseCol = vec3(0.92, 0.86, 0.75);
     float rough = 0.34;
@@ -2299,7 +2302,7 @@ const SARCOPTES_FRAGMENT_SHADER = `
       vec3 darkJaw = vec3(0.19, 0.09, 0.04);
       baseCol = mix(baseChitin, darkJaw, smoothstep(0.65, 0.98, vScleriteMask));
       baseCol *= 0.90 + 0.16 * microNoise;
-      rough = 0.20;
+      rough = 0.38;
       alpha = 0.99;
     } else if (rId == 2.0) {
       // 2. Idiosoma en forma de tortuga: cutícula perlada crema-marfil translúcida con estriaciones transversales
@@ -2315,7 +2318,7 @@ const SARCOPTES_FRAGMENT_SHADER = `
       float internalGlow = exp(-pow(vLocalPos.z / 0.85, 2.0)) * smoothstep(0.18, 0.85, vSegUV.x);
       baseCol = mix(baseCol, vec3(0.85, 0.68, 0.45), internalGlow * 0.28 * uTranslucency);
 
-      rough = 0.30;
+      rough = 0.48;
       // Cutícula dorsal translúcida para dejar ver el huevo gigante intrauterino y el mesenterón
       bool isDorsal = vLocalPos.y > -0.02;
       alpha = isDorsal
@@ -2350,7 +2353,7 @@ const SARCOPTES_FRAGMENT_SHADER = `
         // Artejos cónicos anillados de la pata y cerdas largas quitinosas
         float ringBand = sin(vSegUV.x * 31.4159);
         baseCol = mix(vec3(0.58, 0.34, 0.15), vec3(0.30, 0.15, 0.06), smoothstep(-0.2, 0.6, ringBand));
-        rough = 0.20;
+        rough = 0.38;
         alpha = 0.99;
       }
     } else if (rId == 7.0) {
@@ -2376,7 +2379,7 @@ const SARCOPTES_FRAGMENT_SHADER = `
       } else if (vScleriteMask < 0.45) {
         // Singanglio nervioso central blanco-nacarado
         baseCol = vec3(0.92, 0.89, 0.82);
-        rough = 0.30;
+        rough = 0.48;
         alpha = 0.96;
       } else {
         // Ciegos gástricos del mesenterón con queratina e histolinfa digerida
@@ -2422,7 +2425,7 @@ const SARCOPTES_FRAGMENT_SHADER = `
       vec3 ambient = baseCol * vec3(0.38, 0.36, 0.34);
       vec3 diffuse = baseCol * (diff1 * 0.86 + diff2 * 0.42);
       vec3 sssCol = baseCol * vec3(1.08, 0.78, 0.46) * (sss * 0.52 + backLight * 0.24) * (0.45 + 0.55 * uTranslucency);
-      vec3 specCol = vec3(1.0, 0.96, 0.88) * spec * 0.64;
+      vec3 specCol = vec3(1.0, 0.96, 0.88) * spec * 0.24;
       vec3 rimCol = vec3(0.96, 0.86, 0.68) * fresnel * 0.34;
       finalRGB = ambient + diffuse + sssCol + specCol + rimCol;
     } else if (uShaderMode == 1) {
@@ -2505,12 +2508,12 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
     scaleBarWorldUnits: 1.2,
     translucencyLabel: "Translucidez cuticular (KOH / Aceite mineral)",
     translucencyHint:
-      "Ajusta la diafanización de la cutícula o activa el «Corte Histológico» para ver el huevo gigante intrauterino (150 µm) y el mesenterón bilobulado en H",
+      "Ajusta la diafanización de la cutícula o activa el «Corte del modelo» para ver el huevo gigante intrauterino (150 µm) y el mesenterón bilobulado en H",
     defaultTranslucency: 0.52,
     defaultCutPercent: 0.0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 5.2, 6.2],
+      position: [0, 7.54, 8.99],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2520,7 +2523,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
     focusButtonLabel: "Enfocar Gnatosoma y Epímeros en Y",
     fullButtonLabel: "Vista general del idiosoma",
     overviewSummary:
-      "La hembra adulta grávida de Sarcoptes scabiei var. hominis mide 300–450 µm y posee un idiosoma oval-hemisférico («en forma de tortuga»), convexo dorsalmente y aplanado ventralmente, desprovisto de ojos y espiráculos. Su dorso exhibe finas estriaciones transversales paralelas, un campo central de escamas triangulares dirigidas hacia atrás y 7 pares (14) de espinas cónicas posterodorsales. Los pares de patas I y II terminan en largos pedicelos no segmentados con ventosas acampanadas (pulvilos) y sus epímeros I se fusionan en la línea media formando una «Y», mientras que los pares III y IV terminan en largas cerdas flageliformes. En su interior aloja un huevo gigante de 150 × 100 µm visible por translucidez y al activar el Corte Histológico.",
+      "La hembra adulta grávida de Sarcoptes scabiei var. hominis mide 300–450 µm y posee un idiosoma oval-hemisférico («en forma de tortuga»), convexo dorsalmente y aplanado ventralmente, desprovisto de ojos y espiráculos. Su dorso exhibe finas estriaciones transversales paralelas, un campo central de escamas triangulares dirigidas hacia atrás y 7 pares (14) de espinas cónicas posterodorsales. Los pares de patas I y II terminan en largos pedicelos no segmentados con ventosas acampanadas (pulvilos) y sus epímeros I se fusionan en la línea media formando una «Y», mientras que los pares III y IV terminan en largas cerdas flageliformes. En su interior aloja un huevo gigante de 150 × 100 µm visible por translucidez y al activar el Corte del modelo.",
     regions: [
       {
         id: "f-gnathosoma",
@@ -2665,7 +2668,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         number: 7,
         name: "Huevo gigante intrauterino 3D (150 × 100 µm) y ovario",
         shortLabel: "Huevo intrauterino 3D",
-        badge: "Corte Histológico",
+        badge: "Corte del modelo",
         scale: "150 × 100 µm",
         regionCode: 7,
         colorBio: "#fde047",
@@ -2683,7 +2686,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         microscopyNote:
           "En los montajes microscópicos de raspado cutáneo es muy frecuente observar el gran huevo elipsoidal de cáscara hialina ocupando el centro del idiosoma de la hembra.",
         reconstruction3DNote:
-          "Al seleccionar esta región se activa automáticamente el «Corte Histológico / Sección 3D» para exponer el huevo gigante intrauterino y los ovocitos ováricos en el interior de la hembra.",
+          "Al seleccionar esta región se activa automáticamente el «Corte del modelo / Sección 3D» para exponer el huevo gigante intrauterino y los ovocitos ováricos en el interior de la hembra.",
       },
       {
         id: "f-digestive-scybala",
@@ -2723,12 +2726,12 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
     scaleBarWorldUnits: 1.5,
     translucencyLabel: "Aclaramiento epidérmico (KOH / Aceite mineral)",
     translucencyHint:
-      "Usa el control de «Corte Histológico» para levantar el techo de estrato córneo y abrir el corion de los huevos exponiendo la larva 3D interna",
+      "Usa el control de «Corte del modelo» para levantar el techo de estrato córneo y abrir el corion de los huevos exponiendo la larva 3D interna",
     defaultTranslucency: 0.58,
     defaultCutPercent: 0.0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 6.2, 8.6],
+      position: [-0.09, 9.035, 12.47],
       target: [0.2, -0.1, 0.0],
     },
     focusCamera: {
@@ -2791,7 +2794,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         number: 3,
         name: "Larva hexápoda 3D intraovular lista para eclosionar",
         shortLabel: "Embrión 3D en huevo",
-        badge: "Corte Histológico",
+        badge: "Corte del modelo",
         scale: "110–130 µm intraovular",
         regionCode: 9,
         colorBio: "#f59e0b",
@@ -2809,7 +2812,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         microscopyNote:
           "Como los acaricidas tópicos (permetrina 5%) y la ivermectina oral no son 100% ovicidas frente a estos embriones protegidos por el corion, es indispensable repetir la 2.ª dosis a los 7–14 días.",
         reconstruction3DNote:
-          "Al pulsar esta región se activa el «Corte Histológico» abriendo el techo del surco y el polo dorsal del corion para mostrar la larva 3D en su interior.",
+          "Al pulsar esta región se activa el «Corte del modelo» abriendo el techo del surco y el polo dorsal del corion para mostrar la larva 3D en su interior.",
       },
       {
         id: "b-scybala",
@@ -2856,7 +2859,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         microscopyNote:
           "Para realizar el Acarotest correctamente se debe aplicar una gota de aceite mineral sobre el surco intacto y raspar con hoja de bisturí n.º 15 levantando todo el techo epidérmico del túnel.",
         reconstruction3DNote:
-          "Desliza el control de «Corte Histológico / Sección 3D» para retirar progresivamente el techo del estrato córneo y explorar la galería abierta.",
+          "Desliza el control de «Corte del modelo / Sección 3D» para retirar progresivamente el techo del estrato córneo y explorar la galería abierta.",
       },
     ],
   },
@@ -2876,7 +2879,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
     defaultCutPercent: 0.0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 4.8, 5.8],
+      position: [0, 6.96, 8.41],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2932,7 +2935,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         microscopyNote:
           "En la cara ventral del macho los epímeros posteriores III y IV se fusionan lateralmente articulándose con el armazón esclerotizado del aparato genital.",
         reconstruction3DNote:
-          "Gira el modelo hacia la cara ventral o activa el «Corte Histológico» para ver los testículos bilaterales conectados al edeago.",
+          "Gira el modelo hacia la cara ventral o activa el «Corte del modelo» para ver los testículos bilaterales conectados al edeago.",
       },
       {
         id: "m-anterior-legs-epimeres",
@@ -2993,12 +2996,12 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
     scaleBarWorldUnits: 1.4,
     translucencyLabel: "Translucidez del corion y cutícula larval",
     translucencyHint:
-      "Activa el «Corte Histológico / Sección 3D» para abrir el corion del huevo de 150 µm y ver la larva hexápoda 3D acurrucada en su interior",
+      "Activa el «Corte del modelo / Sección 3D» para abrir el corion del huevo de 150 µm y ver la larva hexápoda 3D acurrucada en su interior",
     defaultTranslucency: 0.56,
     defaultCutPercent: 0.0,
     hasMovement: true,
     defaultCamera: {
-      position: [0.0, 5.0, 6.6],
+      position: [-0.045, 7.25, 9.57],
       target: [0.1, 0.0, 0.0],
     },
     focusCamera: {
@@ -3084,7 +3087,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         number: 4,
         name: "Embrión hexápodo 3D acurrucado dentro del huevo",
         shortLabel: "Embrión 3D interno",
-        badge: "Corte Histológico",
+        badge: "Corte del modelo",
         scale: "Larva pre-eclosión",
         regionCode: 9,
         colorBio: "#f59e0b",
@@ -3102,7 +3105,7 @@ export const SARCOPTES_STAGES: SarcoptesStageMeta[] = [
         microscopyNote:
           "La visualización del embrión hexápodo dentro del huevo en muestras clínicas confirma viabilidad parasitaria activa.",
         reconstruction3DNote:
-          "Al hacer clic en esta región se activa el «Corte Histológico / Sección 3D» abriendo la mitad superior del huevo para exponer la larva 3D interna.",
+          "Al hacer clic en esta región se activa el «Corte del modelo / Sección 3D» abriendo la mitad superior del huevo para exponer la larva 3D interna.",
       },
     ],
   },
@@ -3252,7 +3255,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -3262,6 +3265,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
 
     const initMeta = SARCOPTES_STAGES[0];
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+    configureParasiteViewport(camera, width, height);
     camera.position.set(...initMeta.defaultCamera.position);
     cameraRef.current = camera;
 
@@ -3269,7 +3273,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.minDistance = 1.8;
-    controls.maxDistance = 18.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initMeta.defaultCamera.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.15;
@@ -3280,7 +3284,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
     };
     controls.addEventListener("start", stopCamTransition);
 
-    // Material GLSL hiperrealista
+    // Material GLSL detallada
     const material = new THREE.ShaderMaterial({
       vertexShader: SARCOPTES_VERTEX_SHADER,
       fragmentShader: SARCOPTES_FRAGMENT_SHADER,
@@ -3424,10 +3428,10 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
 
           const dist = camera.position.distanceTo(controls.target);
           const vFovRad = (camera.fov * Math.PI) / 180;
-          const visibleWorldHeight = 2 * Math.tan(vFovRad / 2) * dist;
+          const visibleWorldHeight = 2 * Math.tan(vFovRad / 2) * dist / camera.zoom;
           const pxPerUnit = h / Math.max(visibleWorldHeight, 0.001);
           const rawPx = pxPerUnit * currentStage.scaleBarWorldUnits;
-          setScaleBarPx(Math.round(clampJS(rawPx, 38, 125)));
+          setScaleBarPx(visibleScaleLength(rawPx));
         }
       }
     };
@@ -3438,14 +3442,17 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
       if (!holder || !rendererRef.current || !cameraRef.current) return;
       const newW = holder.clientWidth || 840;
       const newH = holder.clientHeight || 540;
-      cameraRef.current.aspect = newW / newH;
-      cameraRef.current.updateProjectionMatrix();
+      configureParasiteViewport(cameraRef.current, newW, newH);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
       rendererRef.current.setSize(newW, newH);
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -3926,7 +3933,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -3934,7 +3941,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -3942,7 +3949,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
               <button
                 type="button"
                 onClick={handleViewFull}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -3967,6 +3974,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
             </div>
 
             <div
+              style={{ display: scaleBarPx > 0 ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al estadio activo y a la distancia de cámara"
             >
@@ -4055,7 +4063,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
             </p>
           </div>
 
-          {/* Deslizador 2: Corte Histológico / Sección 3D */}
+          {/* Deslizador 2: Corte del modelo / Sección 3D */}
           <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <label
@@ -4063,7 +4071,7 @@ export function Sarcoptes3DViewer({ onClose }: Sarcoptes3DViewerProps) {
                 className="text-slate-200 font-bold flex items-center gap-1.5"
               >
                 <Scissors className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Corte Histológico / Sección 3D</span>
+                <span>Corte del modelo / Sección 3D</span>
               </label>
               <div className="flex items-center gap-2">
                 {cutPercent > 0 && (

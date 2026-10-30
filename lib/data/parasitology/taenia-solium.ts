@@ -100,8 +100,8 @@ export const TAENIA_SOLIUM_CARD: ParasiteCard = {
   hasLifeCycle: true,
   hasGeography: true,
   hasCases: true,
-  reviewDate: "2026-10-15",
-  reviewer: "Comité Editorial MedStudy · Parasitología Médica",
+  reviewDate: "2026-10-20",
+  reviewer: "Verificación documental (CDC DPDx / ISP Chile / MINSAL)",
   sources: [
     {
       title: "CDC DPDx · Laboratory Identification of Parasitic Diseases of Public Health Concern: Taeniasis",

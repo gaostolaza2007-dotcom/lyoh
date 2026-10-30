@@ -28,7 +28,7 @@ interface OftalmoCardData {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge: string;
-  badgeType: "3d" | "pending";
+  badgeType: "3d" | "pending" | "active";
   color: string;
   borderColor: string;
   iconColor: string;
@@ -59,17 +59,17 @@ const OFTALMO_CARDS: OftalmoCardData[] = [
     id: "exploracion",
     title: "2. Exploración oftalmológica",
     subtitle: "Pruebas funcionales básicas y biométricas",
-    desc: "Preparado para actividades formativas sobre agudeza visual, respuesta pupilar a la luz, motilidad ocular extrínseca y tonometría intraocular.",
+    desc: "Actividad formativa sobre reflejos pupilares normales (fotomotor directo y consensual), y preparación de agudeza visual, motilidad ocular y tonometría.",
     href: "/oftalmologia/exploracion",
     icon: Activity,
-    badge: "En preparación",
-    badgeType: "pending",
+    badge: "1 actividad disponible",
+    badgeType: "active",
     color: "from-indigo-500/20 to-purple-500/10",
     borderColor: "border-indigo-500/30",
     iconColor: "text-indigo-400",
     features: [
+      "Simulador de reflejos pupilares directo y consensual",
       "Conceptos de agudeza visual de lejos y cerca",
-      "Reflejos fotomotor directo y consensual",
       "Evaluación motora de pares craneales III, IV y VI",
       "Presión intraocular (PIO) y rango fisiológico",
     ],
@@ -258,7 +258,12 @@ export default function OftalmologiaHubPage() {
                     <Icon className="w-6 h-6" />
                   </div>
 
-                  {card.badgeType === "3d" ? (
+                  {card.badgeType === "active" ? (
+                    <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold text-right">
+                      <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span>{card.badge}</span>
+                    </span>
+                  ) : card.badgeType === "3d" ? (
                     <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-semibold text-right">
                       <Clock className="w-3 h-3 text-amber-400 shrink-0" />
                       <span>{card.badge}</span>

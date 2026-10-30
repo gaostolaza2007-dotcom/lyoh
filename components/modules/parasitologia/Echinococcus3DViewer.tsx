@@ -1,5 +1,7 @@
 "use client";
 
+import { configureParasiteViewport, parasitePixelRatio, visibleScaleLength, orientSurfaceGeometry } from "./viewer-quality";
+
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -340,7 +342,7 @@ function buildEchinococcusAdultBufferGeometry(): THREE.BufferGeometry {
   }
 
   const nRings = xSamples.length;
-  const nRadial = 60;
+  const nRadial = 96;
 
   for (let i = 0; i < nRings; i++) {
     const x = xSamples[i];
@@ -360,7 +362,7 @@ function buildEchinococcusAdultBufferGeometry(): THREE.BufferGeometry {
 
       const dX = vec3Sub(pX1, pX0);
       const dP = vec3Sub(pP1, pP0);
-      let N = vec3Norm(vec3Cross(dP, dX));
+      let N = vec3Norm(vec3Cross(dX, dP));
       if (x < 0.015) {
         N = vec3Norm([-1.0, surf.pos[1] * 2.0, surf.pos[2] * 2.0]);
       }
@@ -619,7 +621,7 @@ function buildEchinococcusAdultBufferGeometry(): THREE.BufferGeometry {
   geo.setAttribute("a_meta", new THREE.Float32BufferAttribute(meta1, 4));
   geo.setIndex(indices);
   geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 18.0);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -682,7 +684,7 @@ function buildHydatidHookGeometry(length = 0.48, baseRadius = 0.042): THREE.Buff
   geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
   geo.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
   geo.setIndex(indices);
-  return geo;
+  return orientSurfaceGeometry(geo);
 }
 
 /**
@@ -834,7 +836,7 @@ const ECHINOCOCCUS_ADULT_FRAGMENT_SHADER = `
     int rId = int(v_meta.w + 0.5);
 
     // Los huevos embrionados 3D internos (rId == 6) y órganos maduros 3D (rId == 7)
-    // se revelan específicamente al activar el Corte Histológico / Sección 3D (u_cutPlane > 0.01).
+    // se revelan específicamente al activar el Corte del modelo / Sección 3D (u_cutPlane > 0.01).
     if (u_cutPlane <= 0.01 && rId >= 6) {
       discard;
     }
@@ -956,7 +958,7 @@ const ECHINOCOCCUS_ADULT_FRAGMENT_SHADER = `
         baseBio = mix(baseBio, organCol, organPrimary * internalVis * 0.88);
 
         vec3 lit = baseBio * (0.22 + 0.62 * diff1 + 0.25 * diff2) + sssWarm * (wrap1 * 0.28 * (1.0 - diff1 * 0.5));
-        color = lit + vec3(1.0, 0.98, 0.95) * spec * 0.55 + vec3(0.65, 0.78, 0.88) * fresnel * 0.28;
+        color = lit + vec3(1.0, 0.98, 0.95) * spec * 0.20 + vec3(0.80, 0.75, 0.68) * fresnel * 0.12;
       }
     } else if (u_shaderMode == 1) {
       // Tinción Carmín sobre fondo blanco cálido (#faf7f2)
@@ -1074,7 +1076,7 @@ const ECHINOCOCCUS_STAGE_FRAGMENT_SHADER = `
     float diff2 = max(0.0, dot(N, L2));
     float ndotv = max(0.0, dot(N, V));
     float fresnel = pow(1.0 - ndotv, 2.25);
-    float spec = pow(max(0.0, dot(N, H1)), 32.0) * 0.28;
+    float spec = pow(max(0.0, dot(N, H1)), 28.0) * 0.13;
 
     vec3 color = vec3(0.0);
     float alpha = 1.0;
@@ -1272,7 +1274,7 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
     defaultCutPercent: 48,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.6, 1.2, 7.8],
+      position: [2.16, 1.62, 10.53],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -1423,12 +1425,12 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
     scaleBarWorldUnits: 1.5,
     translucencyLabel: "Translucidez Tegumentaria (órganos internos)",
     translucencyHint:
-      "Aumenta la translucidez o activa el Corte Histológico para ver los huevos 3D dentro del útero sacular de la 3.ª proglótide.",
+      "Aumenta la translucidez o activa el Corte del modelo para ver los huevos 3D dentro del útero sacular de la 3.ª proglótide.",
     defaultTranslucency: 46,
     defaultCutPercent: 0,
     hasPeristalsis: true,
     defaultCamera: {
-      position: [-1.8, 3.2, 9.8],
+      position: [-2.36, 4.32, 13.23],
       target: [-0.2, 0.0, 0.0],
     },
     focusCamera: {
@@ -1438,7 +1440,7 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
     focusButtonLabel: "Enfocar escólex armado",
     fullButtonLabel: "Ver adulto completo (3 proglótides)",
     overviewSummary:
-      "A diferencia de las grandes tenias humanas (que miden metros y tienen más de mil segmentos), el adulto de Echinococcus granulosus habita exclusivamente en el intestino delgado del perro y otros cánidos, mide apenas 2 a 7 mm de longitud total y posee tan solo 3 proglótides: una inmadura, una madura hermafrodita y una grávida terminal que representa más de la mitad del cuerpo. Al activar el Corte Histológico 3D se observan directamente los huevos embrionados alojados dentro de su útero sacular.",
+      "A diferencia de las grandes tenias humanas (que miden metros y tienen más de mil segmentos), el adulto de Echinococcus granulosus habita exclusivamente en el intestino delgado del perro y otros cánidos, mide apenas 2 a 7 mm de longitud total y posee tan solo 3 proglótides: una inmadura, una madura hermafrodita y una grávida terminal que representa más de la mitad del cuerpo. Al activar el Corte del modelo 3D se observan directamente los huevos embrionados alojados dentro de su útero sacular.",
     regions: [
       {
         id: "rostellum_echinococcus",
@@ -1538,7 +1540,7 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
         microscopyNote:
           "En preparaciones teñidas con carmín destaca la bolsa del cirro piriforme lateral y el menor número de testículos respecto del género Taenia.",
         reconstruction3DNote:
-          "Al activar el Corte Histológico se observan en relieve 3D el ovario bilobulado en herradura, el vitelario posterior y los folículos testiculares.",
+          "Al activar el Corte del modelo se observan en relieve 3D el ovario bilobulado en herradura, el vitelario posterior y los folículos testiculares.",
       },
       {
         id: "proglotide_gravida",
@@ -1563,7 +1565,7 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
         microscopyNote:
           "A diferencia de Taenia spp. (ramas laterales arborescentes largas), el útero grávido de Echinococcus granulosus es un saco longitudinal con bolsas o divertículos laterales cortos llenos de huevos.",
         reconstruction3DNote:
-          "Al activar el Corte Histológico / Sección 3D se abre la pared dorsal de la proglótide y quedan expuestos en su interior los huevos embrionados 3D con su embrióforo estriado.",
+          "Al activar el Corte del modelo / Sección 3D se abre la pared dorsal de la proglótide y quedan expuestos en su interior los huevos embrionados 3D con su embrióforo estriado.",
       },
     ],
   },
@@ -1584,7 +1586,7 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
     defaultCutPercent: 0,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.1, 0.85, 6.8],
+      position: [1.485, 1.1475, 9.18],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -1687,7 +1689,7 @@ export const ECHINOCOCCUS_STAGES: Record<EchinococcusStageId, EchinococcusStageM
     defaultCutPercent: 0,
     hasPeristalsis: false,
     defaultCamera: {
-      position: [1.2, 0.9, 7.6],
+      position: [1.62, 1.215, 10.26],
       target: [0.0, 0.0, 0.0],
     },
     focusCamera: {
@@ -2232,7 +2234,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
     }
 
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(parasitePixelRatio(width, height, window.devicePixelRatio || 1));
     holder.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -2241,6 +2243,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 120);
+    configureParasiteViewport(camera, width, height);
     const initCam = ECHINOCOCCUS_STAGES.hydatid_cyst.defaultCamera;
     camera.position.set(...initCam.position);
     cameraRef.current = camera;
@@ -2249,7 +2252,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.minDistance = 1.25;
-    controls.maxDistance = 28.0;
+    controls.maxDistance = 60.0;
     controls.target.set(...initCam.target);
     controls.autoRotate = false;
     controls.autoRotateSpeed = 1.15;
@@ -2373,14 +2376,9 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
 
           const dist = camera.position.distanceTo(controls.target);
           const fovRad = THREE.MathUtils.degToRad(camera.fov);
-          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5);
+          const worldHeightAtTarget = 2.0 * dist * Math.tan(fovRad * 0.5) / camera.zoom;
           const pxPerUnit = h / Math.max(0.1, worldHeightAtTarget);
-          setScaleBarPx(
-            Math.max(
-              28,
-              Math.min(180, Math.round(pxPerUnit * currentStage.scaleBarWorldUnits))
-            )
-          );
+          setScaleBarPx(visibleScaleLength(pxPerUnit * currentStage.scaleBarWorldUnits));
         }
       }
     };
@@ -2392,15 +2390,18 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
       const newW = holder.clientWidth;
       const newH = holder.clientHeight;
       if (newW > 0 && newH > 0) {
-        cameraRef.current.aspect = newW / newH;
-        cameraRef.current.updateProjectionMatrix();
+        configureParasiteViewport(cameraRef.current, newW, newH);
+        rendererRef.current.setPixelRatio(parasitePixelRatio(newW, newH, window.devicePixelRatio || 1));
         rendererRef.current.setSize(newW, newH);
       }
     };
 
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(holder);
     window.addEventListener("resize", handleResize);
 
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", handleResize);
       controls.removeEventListener("start", stopCamTransition);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -2524,7 +2525,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
     const cam = cameraRef.current;
     const target = controlsRef.current.target;
     const dir = new THREE.Vector3().subVectors(cam.position, target);
-    const nextLen = Math.max(1.35, Math.min(26.0, dir.length() * factor));
+    const nextLen = Math.max(1.35, Math.min(60.0, dir.length() * factor));
     dir.setLength(nextLen);
     cam.position.copy(target).add(dir);
     controlsRef.current.update();
@@ -2564,7 +2565,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
   return (
     <div
       ref={viewportRef}
-      className="w-full space-y-3 select-none"
+      className="w-full min-w-0 space-y-3 select-none"
       onClick={(e) => e.stopPropagation()}
     >
       {/* 1. VISOR 3D PROTAGONISTA */}
@@ -2882,7 +2883,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
               <button
                 type="button"
                 onClick={() => handleZoom(0.8)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Acercar (Zoom +)"
               >
                 <ZoomIn className="w-3.5 h-3.5 text-cyan-400" />
@@ -2890,7 +2891,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
               <button
                 type="button"
                 onClick={() => handleZoom(1.25)}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Alejar (Zoom -)"
               >
                 <ZoomOut className="w-3.5 h-3.5 text-cyan-400" />
@@ -2898,7 +2899,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
               <button
                 type="button"
                 onClick={handleViewFull}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-200"
+                className="min-h-11 min-w-11 sm:min-h-8 sm:min-w-8 flex items-center justify-center p-1 rounded-lg hover:bg-slate-800 text-slate-200"
                 title="Restablecer cámara"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
@@ -2917,6 +2918,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
             </div>
 
             <div
+              style={{ display: scaleBarPx > 0 ? undefined : "none" }}
               className="rounded-xl bg-slate-950/85 backdrop-blur-md border border-slate-700/70 px-2.5 py-1.5 flex items-center gap-2 shadow-lg"
               title="Escala geométrica correspondiente al estadio activo y a la distancia de cámara"
             >
@@ -3004,7 +3006,7 @@ export const Echinococcus3DViewer: React.FC<Echinococcus3DViewerProps> = ({ onCl
                 className="text-slate-200 font-bold flex items-center gap-1.5"
               >
                 <Scissors className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Corte Histológico / Sección 3D</span>
+                <span>Corte del modelo / Sección 3D</span>
               </label>
               <div className="flex items-center gap-2">
                 {cutPercent > 0 && (

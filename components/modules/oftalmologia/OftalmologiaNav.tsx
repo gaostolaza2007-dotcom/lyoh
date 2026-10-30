@@ -38,7 +38,7 @@ export const OFTALMOLOGIA_SECTIONS: OftalmoSectionNav[] = [
     shortTitle: "Exploración",
     href: "/oftalmologia/exploracion",
     icon: Activity,
-    badge: "En preparación",
+    badge: "1 actividad",
   },
   {
     id: "instrumentos",

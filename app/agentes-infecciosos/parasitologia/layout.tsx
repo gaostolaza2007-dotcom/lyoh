@@ -2,7 +2,7 @@ import React from "react";
 import { ParasitologyNav } from "@/components/modules/parasitologia/ParasitologyNav";
 
 export const metadata = {
-  title: "Parasitología Médica | MedStudy",
+  title: "Parasitología Médica | LYOH",
   description: "Estudio integral de parásitos de relevancia médica: atlas taxonómico, morfología 3D, microscopía virtual, comparador diferencial, ciclos biológicos, mapas epidemiológicos y autoevaluación clínica.",
 };
 

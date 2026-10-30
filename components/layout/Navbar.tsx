@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { 
   Flame, 
@@ -38,34 +39,31 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }
         {/* Lado Izquierdo: Brand y Toggle Mobile/Sidebar */}
         <div className="flex items-center space-x-3">
           <button
+            type="button"
             onClick={onToggleSidebar}
-            className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-            aria-label="Alternar barra lateral"
+            className="p-2 min-w-[44px] min-h-[44px] rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/50 flex items-center justify-center shrink-0"
+            aria-label={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}
+            title={isSidebarOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isSidebarOpen}
+            aria-controls="main-sidebar"
           >
             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
           <Link href="/" className="flex items-center space-x-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 p-[1px] shadow-lg shadow-purple-500/20 group-hover:shadow-purple-500/40 transition-all">
-              <div className="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center">
-                <Activity className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center space-x-1.5">
-                <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
-                  MedStudy
-                </span>
-                {user.universityShort && (
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
-                    {user.universityShort}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px] text-slate-400 font-medium tracking-wider uppercase">
-                Interactive Learning
+            <Image
+              src="/images/brand/lyoh-logo-dark.png"
+              alt="LYOH"
+              width={106}
+              height={35}
+              className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+              priority
+            />
+            {user.universityShort && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                {user.universityShort}
               </span>
-            </div>
+            )}
           </Link>
         </div>
 
@@ -186,12 +184,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar, isSidebarOpen }
               <X className="w-5 h-5" />
             </button>
             <div className="text-center mb-6">
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 p-[1px] mb-3">
-                <div className="w-full h-full bg-slate-950 rounded-[15px] flex items-center justify-center">
-                  <BrainCircuit className="w-7 h-7 text-purple-400" />
-                </div>
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-slate-950/80 p-2.5 mb-3 border border-white/10 shadow-lg flex items-center justify-center">
+                <Image
+                  src="/images/brand/lyoh-emblem.png"
+                  alt="LYOH"
+                  width={44}
+                  height={44}
+                  className="w-11 h-11 object-contain"
+                />
               </div>
-              <h3 className="text-xl font-bold text-slate-100">Acceso a MedStudy</h3>
+              <h3 className="text-xl font-bold text-slate-100">Acceso a LYOH</h3>
               <p className="text-xs text-slate-400 mt-1">
                 Sincroniza tus rachas, flashcards y progreso en la nube.
               </p>
